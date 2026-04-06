@@ -81,7 +81,7 @@
       }
 
       .landing-hero .event-block { margin-top: 0; }
-      .landing-hero .countdown { margin-top: 32px; }
+      .landing-hero .countdown { margin-top: 8px; }
       .landing-hero .auth-section { margin-top: 0; }
 
       /* Below-fold info sections side by side */
@@ -92,7 +92,7 @@
       }
       .info-columns .info-section {
         margin-top: 0;
-        padding-top: 28px;
+        padding-top: 24px;
         border-top: 2px solid var(--text);
       }
 
@@ -156,21 +156,23 @@
       color: var(--text);
     }
 
+    /* Spacing system: 8px tight / 24px block / 48px section */
+
     .rule {
       border: none;
       border-top: 2px solid var(--text);
-      margin: 32px 0 0;
+      margin: 8px 0 0;            /* tight — rule is the header's underline */
     }
 
     /* Event block */
-    .event-block { margin-top: 32px; }
+    .event-block { margin-top: 24px; } /* block — entering content area */
     .event-context {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       color: var(--text-3);
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 8px;          /* tight — label for the name below */
     }
     .event-name {
       font-family: 'Bebas Neue', Impact, sans-serif;
@@ -182,12 +184,12 @@
     .event-meta {
       font-size: 12px;
       color: var(--text-3);
-      margin-top: 8px;
+      margin-top: 8px;             /* tight — date is part of event name group */
     }
 
     /* Countdown */
     .countdown {
-      margin-top: 32px;
+      margin-top: 8px;             /* tight — countdown is part of the event info */
     }
     .cd-type {
       display: flex;
@@ -218,17 +220,17 @@
 
     /* Auth section — elevated card */
     .auth-section {
-      margin-top: 32px;
+      margin-top: 24px;            /* block — distinct action zone */
       padding: 24px;
       background: #F8F7F5;
-      border-radius: 6px;
+      border-radius: 4px;
     }
 
     .auth-input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 14px;              /* uniform internal padding */
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 4px;
       font-family: 'DM Sans', sans-serif;
       font-size: 16px;
       font-variant-numeric: tabular-nums;
@@ -245,12 +247,12 @@
 
     .auth-btn {
       width: 100%;
-      margin-top: 16px;
-      padding: 16px 14px 12px;
+      margin-top: 8px;            /* tight — input and button are one action */
+      padding: 14px;              /* same as input */
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       font-family: 'Bebas Neue', Impact, sans-serif;
       font-size: 18px;
       letter-spacing: 0.08em;
@@ -270,19 +272,19 @@
 
     .auth-fine {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 8px;            /* tight — fine print belongs to the button */
       font-size: 11px;
       color: var(--text-3);
     }
     .auth-error {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 8px;
       font-size: 13px;
       color: var(--error);
     }
     .auth-success {
       text-align: center;
-      margin-top: 16px;
+      margin-top: 8px;
       font-size: 13px;
       color: var(--success);
     }
@@ -303,8 +305,8 @@
     }
 
     .disclaimer {
-      margin-top: 48px;
-      padding-top: 32px;
+      margin-top: 48px;            /* section — major break */
+      padding-top: 24px;           /* block — breathing room after rule */
       border-top: 1px solid #F0EFED;
       font-size: 10px;
       color: var(--text-3);
@@ -313,8 +315,8 @@
 
     /* ── Info Sections (buyer + dealer pages) ── */
     .info-section {
-      margin-top: 48px;
-      padding-top: 32px;
+      margin-top: 48px;            /* section — major break */
+      padding-top: 24px;           /* block — breathing room after rule */
       border-top: 2px solid var(--text);
     }
     .info-section-title {
@@ -322,43 +324,41 @@
       font-size: 22px;
       color: var(--text);
       letter-spacing: 0.03em;
-      margin-bottom: 24px;
+      margin-bottom: 24px;         /* block — title labels the list */
     }
 
     /* How it works steps */
     .steps { list-style: none; }
     .step {
       display: flex;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 8px;                    /* tight — number and text are one unit */
+      margin-bottom: 24px;         /* block — each step is its own thought */
       align-items: flex-start;
     }
     .step:last-child { margin-bottom: 0; }
     .step-num {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 32px;
+      font-size: 28px;
       color: var(--accent);
       line-height: 1;
       flex-shrink: 0;
-      width: 32px;
-      opacity: 0.7;
+      width: 24px;
+      opacity: 0.5;
     }
     .step-text {
       font-size: 14px;
       color: var(--text-2);
       line-height: 1.6;
-      padding-top: 4px;
+      padding-top: 3px;
     }
     .step-text strong {
       color: var(--text);
       font-weight: 600;
-      display: block;
-      margin-bottom: 2px;
     }
 
     /* FAQ */
     .faq-item {
-      margin-bottom: 24px;
+      margin-bottom: 24px;         /* block — each FAQ is its own thought */
       padding-bottom: 24px;
       border-bottom: 1px solid #F0EFED;
     }
@@ -371,7 +371,7 @@
       font-size: 14px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 8px;
+      margin-bottom: 4px;          /* tight within FAQ item */
     }
     .faq-a {
       font-size: 13px;
@@ -400,14 +400,14 @@
       font-size: 28px;
       color: var(--text);
       line-height: 1.05;
-      margin: 32px 0 16px;
+      margin: 24px 0 8px;         /* block above, tight to sub below */
     }
     .dealer-hero-text .accent { color: var(--accent); }
     .dealer-sub {
       font-size: 14px;
       color: var(--text-2);
       line-height: 1.6;
-      margin-bottom: 24px;
+      margin-bottom: 24px;        /* block — sub to badge */
     }
     .dealer-free-badge {
       display: inline-block;
@@ -416,9 +416,9 @@
       letter-spacing: 0.1em;
       color: var(--success);
       background: #EDF7F0;
-      padding: 8px 16px;
-      border-radius: 6px;
-      margin-bottom: 32px;
+      padding: 8px 14px;
+      border-radius: 4px;
+      margin-bottom: 24px;        /* block — badge to next section */
     }
 
     /* ── Verify Screen ───────────────────── */
