@@ -344,8 +344,25 @@ async function handleGetItems(url, env) {
 
   if (!Array.isArray(items)) return json({ error: 'Failed to load items', detail: items }, 500);
 
+  // Check if we need to redact photos (pre-drop)
+  // Get market drop_time if filtering by market
+  let dropRedact = false;
+  if (marketId) {
+    const marketRes = await supabase(env, `markets?id=eq.${marketId}&select=drop_time`);
+    const markets = await marketRes.json();
+    if (markets[0]?.drop_time && new Date(markets[0].drop_time) > new Date()) {
+      // Only redact for non-dealers (don't redact dealer's own items)
+      dropRedact = true;
+    }
+  }
+
   // Attach buyer info for sold items
   for (const item of items) {
+    // Redact photos if pre-drop (but not for the item's own dealer)
+    if (dropRedact && item.dealer_id !== dealerId) {
+      item.photos = (item.photos || []).map(() => '/pre-drop-placeholder.svg');
+    }
+
     if (item.status === 'sold' && item.buyer_id) {
       const buyerRes = await supabase(env, `dealers?id=eq.${item.buyer_id}&select=id,name,business_name,show_name_on_sold`);
       const buyers = await buyerRes.json();
@@ -368,7 +385,9 @@ async function handleCreateItem(request, env, dealer) {
   const item = {
     dealer_id: dealer.id,
     market_id: body.market_id,
+    title: body.title || null,
     price: body.price,
+    price_posture: body.price_posture || 'firm',
     condition: body.condition || null,
     firm: body.firm || false,
     deposit_required: body.deposit_required || false,

@@ -1014,6 +1014,49 @@
       color: var(--muted);
       margin-top: 2px;
     }
+    .my-item-title {
+      font-size: 12px;
+      color: var(--text);
+      margin-top: 1px;
+    }
+    .my-item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .my-item-action {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+    .my-item-action-hold {
+      background: #FDF6E3;
+      color: #B8960C;
+    }
+    .my-item-action-sold {
+      background: #EEE;
+      color: var(--muted);
+    }
+    .my-item-action-live {
+      background: #EDF7F0;
+      color: var(--success);
+    }
+    .my-item-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
 
     /* ── Messages ────────────────────────── */
     #messages {
@@ -1322,6 +1365,11 @@
   <input type="file" id="photo-file" accept="image/*" multiple class="hidden" onchange="handleItemPhotos(this)">
 
   <div class="form-field">
+    <label class="form-label">Title (optional)</label>
+    <input type="text" class="form-input" id="item-title" placeholder="What is it?">
+  </div>
+
+  <div class="form-field">
     <label class="form-label">Price</label>
     <input type="text" class="form-input" id="item-price" placeholder="$" inputmode="decimal">
   </div>
@@ -1344,10 +1392,12 @@
   </div>
 
   <div class="form-field">
-    <label class="form-toggle">
-      <input type="checkbox" id="item-firm">
-      Price is firm
-    </label>
+    <label class="form-label">Price posture</label>
+    <div style="display:flex;gap:8px;">
+      <button type="button" class="msg-option-btn msg-option-active" onclick="selectPricePosture(this, 'firm')">Firm</button>
+      <button type="button" class="msg-option-btn" onclick="selectPricePosture(this, 'flexible')">Flexible</button>
+      <button type="button" class="msg-option-btn" onclick="selectPricePosture(this, 'make_offer')">Make me an offer</button>
+    </div>
   </div>
 
   <div class="form-field">
@@ -1669,6 +1719,7 @@ async function loadFeed() {
         </div>
         <div class="item-card-info">
           <div class="item-card-price">${price}</div>
+          ${item.title ? `<div class="item-card-meta" style="color:var(--text);font-weight:500;">${item.title}</div>` : ''}
           <div class="item-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
           ${badge}
         </div>
@@ -1774,6 +1825,68 @@ async function loadDealerHome() {
     document.getElementById('dealer-event-date').textContent =
       date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   }
+
+  // Load dealer's items
+  if (!currentUser?.id) return;
+  const list = document.getElementById('my-items-list');
+  const emptyState = document.getElementById('dealer-empty');
+
+  try {
+    const q = currentMarket ? `?dealer_id=${currentUser.id}&market_id=${currentMarket.id}` : `?dealer_id=${currentUser.id}`;
+    const items = await api(`/api/items${q}`);
+
+    if (!items.length) {
+      list.innerHTML = '';
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    list.innerHTML = items.map(item => {
+      const price = '$' + (item.price / 100).toLocaleString();
+      const photo = item.photos?.[0] || '';
+      const titleText = item.title ? `<div class="my-item-title">${item.title}</div>` : '';
+      let badge = '';
+      if (item.status === 'hold') badge = '<span class="my-item-badge badge-hold">Hold</span>';
+      if (item.status === 'sold') badge = '<span class="my-item-badge badge-sold">Sold</span>';
+
+      let actions = '';
+      if (item.status === 'live') {
+        actions = `
+          <div class="my-item-actions">
+            <button class="my-item-action my-item-action-hold" onclick="updateItemStatus('${item.id}', 'hold')">Hold</button>
+            <button class="my-item-action my-item-action-sold" onclick="updateItemStatus('${item.id}', 'sold')">Sold</button>
+          </div>`;
+      } else {
+        actions = `
+          <div class="my-item-actions">
+            <button class="my-item-action my-item-action-live" onclick="updateItemStatus('${item.id}', 'live')">Mark Live</button>
+          </div>`;
+      }
+
+      return `<li class="my-item">
+        <div class="my-item-thumb">${photo ? `<img src="${photo}">` : ''}</div>
+        <div class="my-item-info">
+          <div class="my-item-price">${price}</div>
+          ${titleText}
+          ${badge}
+        </div>
+        ${actions}
+      </li>`;
+    }).join('');
+  } catch (e) {
+    console.error('Failed to load dealer items:', e);
+    list.innerHTML = '<li style="padding:14px 0;color:var(--muted);font-size:12px;">Failed to load items.</li>';
+  }
+}
+
+async function updateItemStatus(itemId, status) {
+  try {
+    await api(`/api/items/${itemId}`, { method: 'PATCH', body: { status } });
+    loadDealerHome();
+  } catch (e) {
+    console.error('Failed to update item status:', e);
+  }
 }
 
 // ── Router ────────────────────────────────────────────────────
@@ -1873,8 +1986,12 @@ async function loadItemDetail(itemId) {
     const price = '$' + (item.price / 100).toLocaleString();
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
     const biz = item.dealer?.business_name && item.dealer?.name ? item.dealer.business_name : '';
-    let html = `<div class="detail-price">${price}</div>`;
-    if (item.firm) html += `<div class="detail-price-note">Firm</div>`;
+    let html = '';
+    if (item.title) html += `<div style="font-size:14px;color:var(--muted);margin-bottom:4px;">${item.title}</div>`;
+    html += `<div class="detail-price">${price}</div>`;
+    if (item.price_posture === 'make_offer') html += `<div class="detail-price-note">Make me an offer</div>`;
+    else if (item.price_posture === 'flexible') html += `<div class="detail-price-note">Flexible</div>`;
+    else if (item.firm) html += `<div class="detail-price-note">Firm</div>`;
     else html += `<div class="detail-price-note">Open to offers</div>`;
     if (item.condition) html += `<div class="detail-condition">${item.condition}</div>`;
     if (item.notes) html += `<div class="detail-notes">${item.notes}</div>`;
@@ -2076,15 +2193,27 @@ async function sendReply(token) {
 
 // ── Add Item ─────────────────────────────────────────────────
 let itemPhotos = []; // array of { file, dataUrl }
+let selectedPricePosture = 'firm';
+
+function selectPricePosture(btn, posture) {
+  selectedPricePosture = posture;
+  btn.parentElement.querySelectorAll('.msg-option-btn').forEach(b => b.classList.remove('msg-option-active'));
+  btn.classList.add('msg-option-active');
+}
 
 function showAddItem() {
   itemPhotos = [];
   renderPhotoSlots();
+  document.getElementById('item-title').value = '';
   document.getElementById('item-price').value = '';
   document.getElementById('item-condition').value = '';
-  document.getElementById('item-firm').checked = false;
   document.getElementById('item-notes').value = '';
   document.getElementById('post-item-msg').textContent = '';
+  selectedPricePosture = 'firm';
+  // Reset price posture buttons
+  const postureButtons = document.querySelectorAll('#add-item [onclick^="selectPricePosture"]');
+  postureButtons.forEach(b => b.classList.remove('msg-option-active'));
+  if (postureButtons[0]) postureButtons[0].classList.add('msg-option-active');
 
   // Populate market dropdown
   const sel = document.getElementById('item-market');
@@ -2128,10 +2257,11 @@ function renderPhotoSlots() {
 }
 
 async function postItem() {
+  const title = document.getElementById('item-title').value.trim() || null;
   const price = parseFloat(document.getElementById('item-price').value.replace(/[^0-9.]/g, ''));
   const marketId = document.getElementById('item-market').value;
   const condition = document.getElementById('item-condition').value || null;
-  const firm = document.getElementById('item-firm').checked;
+  const firm = selectedPricePosture === 'firm';
   const notes = document.getElementById('item-notes').value.trim() || null;
   const btn = document.getElementById('post-item-btn');
   const msg = document.getElementById('post-item-msg');
@@ -2154,10 +2284,12 @@ async function postItem() {
       method: 'POST',
       body: {
         market_id: marketId,
+        title,
         price: Math.round(price * 100),
         photos: photoUrls,
         condition,
         firm,
+        price_posture: selectedPricePosture,
         notes,
       }
     });
