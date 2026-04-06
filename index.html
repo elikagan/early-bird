@@ -4,1802 +4,888 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Early Bird</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --bg: #faf9f7;
-      --text: #222;
-      --text-muted: #888;
-      --border: #e5e3df;
-      --card-bg: #fff;
-      --accent: #333;
-      --sold-bg: #f0eeeb;
-      --hold-bg: #fef9e7;
-      --new-badge: #d44;
-      --green: #2d8a4e;
+      --bg: #FFFFFF;
+      --text: #111111;
+      --text-2: #444444;
+      --text-3: #999999;
+      --border: #E0E0E0;
+      --accent: #2E7EBF;
+      --accent-hover: #1D6BA8;
+      --error: #CC4444;
+      --success: #2D8A4E;
+      --hold: #B8960C;
     }
 
     body {
-      font-family: -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
+      font-family: 'DM Sans', -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
     }
 
-    /* ── Login Screen ─────────────────────── */
+    /* ── Screens ─────────────────────────── */
     .screen { display: none; }
-    .screen.active { display: flex; }
-    .screen.active-block { display: block; }
+    .screen.active { display: block; }
 
-    #login-screen {
+    /* ── Landing Page ────────────────────── */
+    #landing {
       min-height: 100vh;
+      min-height: 100dvh;
+      padding: 0 24px;
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-bottom: max(32px, env(safe-area-inset-bottom));
+    }
+
+    .landing-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-top: 8px;
+    }
+
+    .logo-stack { line-height: 0.85; }
+    .logo-early {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 44px;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      display: block;
+      line-height: 0.9;
+    }
+    .logo-bird {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 44px;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      display: block;
+      line-height: 0.9;
+    }
+
+    .dealer-link {
+      font-size: 11px;
+      color: var(--text-3);
+      text-decoration: none;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .rule {
+      border: none;
+      border-top: 2px solid var(--text);
+      margin: 20px 0 0;
+    }
+
+    /* Event block */
+    .event-block { margin-top: 20px; }
+    .event-context {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-3);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .event-name {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.03em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .event-meta {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    /* Countdown */
+    .countdown {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .cd-type {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+    .cd-num {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 52px;
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: 0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .cd-word {
+      font-size: 11px;
+      color: var(--text-3);
+      font-weight: 500;
+      text-transform: lowercase;
+      padding-bottom: 7px;
+    }
+    .cd-sep {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 34px;
+      color: var(--border);
+      padding-bottom: 4px;
+    }
+
+    /* Auth section */
+    .auth-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+    }
+    .auth-input::placeholder { color: #C0C0C0; }
+    .auth-input:focus { border-color: var(--accent); }
+
+    .auth-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+    }
+    .auth-btn:hover { background: var(--accent-hover); }
+    .auth-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .auth-fine {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-3);
+    }
+    .auth-error {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--error);
+    }
+    .auth-success {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--success);
+    }
+
+    /* Hero image (below fold) */
+    .hero-image {
+      margin-top: 32px;
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 3px;
+      overflow: hidden;
+      display: none;
+    }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .disclaimer {
+      margin-top: 24px;
+      font-size: 10px;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    /* ── Verify Screen ───────────────────── */
+    #verify {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
-    }
-
-    #login-screen h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-      letter-spacing: -0.02em;
-    }
-
-    #login-screen .subtitle {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-    }
-
-    #login-screen input {
-      width: 100%;
-      max-width: 300px;
-      padding: 0.85rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1.1rem;
-      font-family: -apple-system, 'SF Mono', 'Menlo', monospace;
-      text-align: center;
-      outline: none;
-      letter-spacing: 0.05em;
-    }
-
-    #login-screen input:focus { border-color: var(--accent); }
-
-    #login-screen button {
-      width: 100%;
-      max-width: 300px;
-      margin-top: 0.75rem;
-      padding: 0.85rem;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    #login-screen button:disabled { opacity: 0.5; }
-
-    #login-screen .error {
-      color: var(--new-badge);
-      font-size: 0.85rem;
-      margin-top: 0.75rem;
-      max-width: 300px;
       text-align: center;
     }
+    #verify .logo-stack { margin-bottom: 24px; }
+    .verify-status { font-size: 15px; color: var(--text-2); margin-top: 12px; }
+    .verify-error { font-size: 14px; color: var(--error); margin-top: 12px; }
 
-    #login-screen .invite-note {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      margin-top: 2rem;
-      text-align: center;
-    }
-
-    #login-screen .link-sent {
-      color: var(--green);
-      font-size: 0.9rem;
-      margin-top: 0.75rem;
-      max-width: 300px;
-      text-align: center;
-    }
-
-    /* ── Onboarding Screen ────────────────── */
-    #onboard-screen {
+    /* ── Onboarding Screen ───────────────── */
+    #onboarding {
       min-height: 100vh;
-      flex-direction: column;
+      min-height: 100dvh;
+      padding: 0 24px;
+      padding-top: max(60px, env(safe-area-inset-top));
+    }
+    .onboard-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 32px;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .onboard-sub {
+      font-size: 13px;
+      color: var(--text-3);
+      margin-bottom: 24px;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .field input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+    }
+    .field input[type="text"]:focus { border-color: var(--accent); }
+
+    .selfie-area { margin-bottom: 20px; }
+    .selfie-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #F0EDE8;
+      margin: 0 auto 10px;
+      overflow: hidden;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
-    }
-
-    #onboard-screen h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
-    #onboard-screen .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
-
-    #onboard-screen .field { width: 100%; max-width: 300px; margin-bottom: 0.75rem; }
-    #onboard-screen .field label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem; }
-
-    #onboard-screen .field input {
-      width: 100%;
-      padding: 0.7rem 0.85rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    #onboard-screen .field input:focus { border-color: var(--accent); }
-    #onboard-screen .optional { color: var(--text-muted); font-size: 0.75rem; }
-
-    #onboard-screen button {
-      width: 100%;
-      max-width: 300px;
-      margin-top: 0.75rem;
-      padding: 0.85rem;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      border: 2px solid var(--border);
       cursor: pointer;
     }
+    .selfie-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .selfie-preview .placeholder {
+      font-size: 11px;
+      color: var(--text-3);
+      text-align: center;
+      line-height: 1.3;
+    }
+    .selfie-label {
+      text-align: center;
+      font-size: 11px;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 500;
+    }
 
-    /* ── Feed Header ──────────────────────── */
+    /* ── Feed Screen ─────────────────────── */
+    #feed {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: max(70px, calc(56px + env(safe-area-inset-bottom)));
+    }
     .feed-header {
-      position: fixed;
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
       z-index: 100;
-      background: rgba(250, 249, 247, 0.92);
+      background: rgba(255,255,255,0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      padding: 0.75rem 1rem;
-      padding-top: max(0.75rem, env(safe-area-inset-top));
+      padding: 0 24px;
+      padding-top: max(12px, env(safe-area-inset-top));
       border-bottom: 1px solid var(--border);
     }
-
     .feed-header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding-bottom: 12px;
     }
+    .feed-logo {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.02em;
+    }
+    .feed-logo .early { color: var(--text); }
+    .feed-logo .bird { color: var(--accent); }
+    .feed-event { font-size: 12px; color: var(--text-3); }
 
-    .feed-header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; }
-    .feed-header .market-info { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.15rem; }
-    .feed-header .stats { font-family: 'SF Mono', 'Menlo', monospace; font-size: 0.75rem; color: var(--text-muted); }
+    /* Item grid */
+    .item-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+    .item-card { background: var(--bg); cursor: pointer; }
+    .item-card-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: #F0EDE8;
+      overflow: hidden;
+    }
+    .item-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .item-card-info { padding: 10px 12px; }
+    .item-card-price {
+      font-size: 16px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .item-card-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .item-card-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+    }
+    .badge-hold { background: #FDF6E3; color: var(--hold); }
+    .badge-sold { background: #EEE; color: var(--text-3); }
 
-    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
-
-    .header-actions button {
-      background: none;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      padding: 0.25rem;
+    .empty-state { text-align: center; padding: 60px 24px; }
+    .empty-state h2 {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 28px;
       color: var(--text);
+      margin-bottom: 8px;
     }
+    .empty-state p { font-size: 14px; color: var(--text-3); line-height: 1.5; }
 
     /* ── Bottom Nav ───────────────────────── */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(250, 249, 247, 0.95);
+      background: rgba(255,255,255,0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-top: 1px solid var(--border);
       display: flex;
-      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
     }
-
     .nav-tab {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0.5rem 0;
-      font-size: 0.65rem;
-      color: var(--text-muted);
+      padding: 8px 0;
+      font-size: 10px;
+      color: var(--text-3);
+      text-decoration: none;
+      font-weight: 500;
+      gap: 2px;
       cursor: pointer;
       border: none;
       background: none;
-      gap: 0.15rem;
     }
+    .nav-tab.active { color: var(--accent); }
+    .nav-tab svg { width: 22px; height: 22px; }
 
-    .nav-tab .nav-icon { font-size: 1.2rem; }
-    .nav-tab.active { color: var(--text); font-weight: 600; }
-    .nav-tab .badge {
-      position: absolute;
-      top: 2px;
-      right: -6px;
-      background: var(--new-badge);
-      color: #fff;
-      font-size: 0.55rem;
-      min-width: 14px;
-      height: 14px;
-      border-radius: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-    }
-
-    .nav-tab .icon-wrap {
-      position: relative;
-      display: inline-block;
-    }
-
-    /* ── Filter Bar ───────────────────────── */
-    .filter-bar {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .filter-bar::-webkit-scrollbar { display: none; }
-
-    .filter-chip {
-      flex-shrink: 0;
-      padding: 0.35rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 0.8rem;
-      background: var(--card-bg);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-    /* ── Feed Items ───────────────────────── */
-    .feed {
-      padding-top: 110px;
-      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0));
-    }
-
-    .feed-item { margin-bottom: 1px; background: var(--card-bg); }
-    .feed-item.status-sold { opacity: 0.6; }
-    .feed-item.status-hold { background: var(--hold-bg); }
-
-    .carousel { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #f0eeeb; }
-    .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-out; }
-    .carousel-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
-
-    .carousel-dots {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-    }
-    .carousel-dots .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); }
-    .carousel-dots .dot.active { background: #fff; }
-
-    .new-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: var(--new-badge);
-      color: #fff;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .item-info { padding: 0.85rem 1rem 1rem; }
-    .item-info .price-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.35rem; }
-    .item-info .price { font-family: 'SF Mono', 'Menlo', monospace; font-size: 1.2rem; font-weight: 700; }
-    .item-info .price-tag { font-size: 0.8rem; color: var(--text-muted); }
-
-    .item-info .condition-badge {
-      display: inline-block;
-      font-size: 0.75rem;
-      padding: 0.15rem 0.5rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text-muted);
-      margin-right: 0.35rem;
-    }
-
-    .item-info .notes { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4; }
-
-    .item-info .seller-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 0.65rem;
-    }
-
-    .item-info .seller { font-size: 0.85rem; }
-    .item-info .seller .name { font-weight: 600; }
-    .item-info .seller .biz { color: var(--text-muted); }
-
-    .sold-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-    .hold-label { font-size: 0.8rem; font-weight: 600; color: #b8860b; }
-
-    .item-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-
-    .item-actions button {
-      flex: 1;
-      padding: 0.65rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-save { background: var(--bg); color: var(--text); border: 1px solid var(--border) !important; }
-    .btn-save.saved { background: #fce4ec; border-color: #e57373 !important; color: #c62828; }
-    .btn-message { background: var(--accent); color: #fff; }
-
-    /* ── Message Compose Modal ────────────── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 300;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .modal-overlay.show { display: flex; }
-
-    .modal {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 480px;
-      border-radius: 16px 16px 0 0;
-      padding: 1.25rem;
-      padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.15rem; }
-    .modal .modal-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
-
-    .modal textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: inherit;
-      outline: none;
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .modal textarea:focus { border-color: var(--accent); }
-
-    .modal .modal-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-    }
-
-    .modal .modal-actions button {
-      flex: 1;
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-    }
-
-    .modal .btn-cancel { background: var(--bg); color: var(--text); border: 1px solid var(--border) !important; }
-    .modal .btn-send { background: var(--accent); color: #fff; }
-    .modal .btn-send:disabled { opacity: 0.5; }
-
-    .modal .deposit-info {
-      background: var(--hold-bg);
-      padding: 0.65rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin-bottom: 0.75rem;
-      line-height: 1.4;
-    }
-
-    /* ── Conversation Page ────────────────── */
-    #convo-screen {
+    /* ── Dealer Home ─────────────────────── */
+    #dealer-home {
       min-height: 100vh;
-      flex-direction: column;
+      min-height: 100dvh;
+      padding: 0 24px;
+      padding-top: max(60px, env(safe-area-inset-top));
+      padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
     }
-
-    .convo-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      background: rgba(250, 249, 247, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 0.75rem 1rem;
-      padding-top: max(0.75rem, env(safe-area-inset-top));
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .convo-back {
-      background: none;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
+    .dealer-event-name {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 24px;
       color: var(--text);
-      padding: 0;
+      line-height: 1;
     }
+    .dealer-event-date { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+    .dealer-countdown { font-size: 13px; color: var(--text-2); margin-top: 8px; }
+    .dealer-countdown strong { font-variant-numeric: tabular-nums; }
 
-    .convo-header-info { flex: 1; }
-    .convo-header-info .name { font-weight: 700; font-size: 1rem; }
-    .convo-header-info .item-price { font-size: 0.85rem; color: var(--text-muted); }
-
-    .convo-messages {
-      flex: 1;
-      padding: 80px 1rem 80px;
-      overflow-y: auto;
+    .free-notice {
+      background: #F0F8F0;
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin: 20px 0;
+      font-size: 13px;
+      color: var(--success);
+      font-weight: 500;
     }
-
-    .msg {
-      max-width: 80%;
-      padding: 0.65rem 0.85rem;
-      border-radius: 12px;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-      line-height: 1.4;
-      word-wrap: break-word;
-    }
-
-    .msg.mine {
-      margin-left: auto;
+    .add-item-btn {
+      width: 100%;
+      padding: 16px;
       background: var(--accent);
-      color: #fff;
-      border-bottom-right-radius: 4px;
-    }
-
-    .msg.theirs {
-      margin-right: auto;
-      background: #e8e6e3;
-      color: var(--text);
-      border-bottom-left-radius: 4px;
-    }
-
-    .msg .msg-sender {
-      font-size: 0.7rem;
-      font-weight: 600;
-      margin-bottom: 0.15rem;
-      opacity: 0.7;
-    }
-
-    .msg .msg-time {
-      font-size: 0.65rem;
-      opacity: 0.6;
-      margin-top: 0.2rem;
-      text-align: right;
-    }
-
-    .convo-item-card {
-      display: flex;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: var(--bg);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-
-    .convo-item-card img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 6px;
-      flex-shrink: 0;
-    }
-
-    .convo-item-card .card-info { font-size: 0.85rem; }
-    .convo-item-card .card-price { font-family: 'SF Mono', 'Menlo', monospace; font-weight: 700; }
-
-    .convo-compose {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(250, 249, 247, 0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
-      padding: 0.65rem 1rem;
-      padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .convo-compose input {
-      flex: 1;
-      padding: 0.65rem 0.85rem;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 1rem;
-      font-family: inherit;
-      outline: none;
-    }
-
-    .convo-compose input:focus { border-color: var(--accent); }
-
-    .convo-compose button {
-      padding: 0.65rem 1rem;
-      background: var(--accent);
-      color: #fff;
+      color: white;
       border: none;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      border-radius: 4px;
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.06em;
       cursor: pointer;
+      margin-bottom: 20px;
     }
+    .add-item-btn:hover { background: var(--accent-hover); }
 
-    .convo-compose button:disabled { opacity: 0.5; }
-
-    /* ── Messages List Screen ─────────────── */
-    .messages-list {
-      padding-top: 70px;
-      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0));
-    }
-
-    .messages-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      background: rgba(250, 249, 247, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 0.75rem 1rem;
-      padding-top: max(0.75rem, env(safe-area-inset-top));
-      border-bottom: 1px solid var(--border);
-    }
-
-    .messages-header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; }
-
-    .convo-preview {
+    .my-items-list { list-style: none; }
+    .my-item {
       display: flex;
-      gap: 0.75rem;
-      padding: 0.85rem 1rem;
+      gap: 12px;
+      padding: 14px 0;
       border-bottom: 1px solid var(--border);
-      background: var(--card-bg);
-      cursor: pointer;
-    }
-
-    .convo-preview:active { background: #f5f4f2; }
-
-    .convo-preview img {
-      width: 48px;
-      height: 48px;
-      object-fit: cover;
-      border-radius: 6px;
-      flex-shrink: 0;
-    }
-
-    .convo-preview .preview-info { flex: 1; min-width: 0; }
-    .convo-preview .preview-name { font-weight: 600; font-size: 0.9rem; }
-    .convo-preview .preview-price { font-family: 'SF Mono', 'Menlo', monospace; font-size: 0.8rem; color: var(--text-muted); }
-    .convo-preview .preview-role { font-size: 0.75rem; color: var(--text-muted); }
-
-    .convo-section-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.75rem 1rem 0.35rem;
-    }
-
-    .empty-state {
-      padding: 3rem 2rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    /* ── Post Screen ──────────────────────── */
-    #post-screen { min-height: 100vh; padding: 1rem; padding-top: max(1rem, env(safe-area-inset-top)); }
-    #post-screen .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-    #post-screen h2 { font-size: 1.3rem; font-weight: 700; }
-
-    .post-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
-
-    .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.25rem; }
-
-    .photo-slot {
-      aspect-ratio: 1;
-      border: 2px dashed var(--border);
-      border-radius: 8px;
-      display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
+    }
+    .my-item-thumb {
+      width: 60px; height: 60px;
+      border-radius: 4px;
+      background: #F0EDE8;
+      flex-shrink: 0;
       overflow: hidden;
-      position: relative;
-      background: var(--card-bg);
     }
+    .my-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .my-item-info { flex: 1; }
+    .my-item-price { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .my-item-status { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
-    .photo-slot.has-photo { border-style: solid; }
-    .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
-    .photo-slot .add-icon { font-size: 1.5rem; color: var(--text-muted); }
-
-    .photo-slot .remove {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.6);
-      color: #fff;
-      border: none;
-      font-size: 0.75rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* ── Messages ────────────────────────── */
+    #messages {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 0 24px;
+      padding-top: max(60px, env(safe-area-inset-top));
+      padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
     }
-
-    .post-field { margin-bottom: 1rem; }
-    .post-field label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
-
-    .post-field input,
-    .post-field select,
-    .post-field textarea {
-      width: 100%;
-      padding: 0.7rem 0.85rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-      font-family: inherit;
-      outline: none;
-      background: var(--card-bg);
+    .messages-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 28px;
+      color: var(--text);
+      margin-bottom: 16px;
     }
-
-    .post-field input:focus,
-    .post-field select:focus,
-    .post-field textarea:focus { border-color: var(--accent); }
-    .post-field textarea { resize: vertical; min-height: 60px; }
-
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0; }
-    .toggle-row label { font-size: 0.9rem; margin-bottom: 0; }
-
-    .toggle {
-      width: 48px;
-      height: 28px;
-      border-radius: 14px;
-      background: var(--border);
-      position: relative;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .toggle.on { background: var(--green); }
-
-    .toggle::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #fff;
-      transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    }
-
-    .toggle.on::after { transform: translateX(20px); }
-
-    .btn-post {
-      width: 100%;
-      padding: 0.85rem;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    .btn-post:disabled { opacity: 0.5; }
 
     /* ── Utility ──────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .hidden { display: none !important; }
-
-    .toast {
-      position: fixed;
-      bottom: 5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #fff;
-      padding: 0.65rem 1.25rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      z-index: 500;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .toast.show { opacity: 1; }
-
-    @media (min-width: 600px) {
-      .feed, .messages-list { max-width: 480px; margin: 0 auto; }
-      #post-screen, .modal { max-width: 480px; margin: 0 auto; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Login Screen -->
-  <div id="login-screen" class="screen">
-    <h1>Early Bird</h1>
-    <p class="subtitle">Trade-only pre-market</p>
-    <input type="tel" id="phone-input" placeholder="(310) 555-1234" autocomplete="tel" inputmode="tel">
-    <button id="login-btn" onclick="requestLogin()">Send Login Link</button>
-    <div id="login-error" class="error hidden"></div>
-    <div id="login-success" class="link-sent hidden"></div>
-    <p class="invite-note">Invite-only. Ask a member to get you in.</p>
+<!-- LANDING PAGE -->
+<div id="landing" class="screen active">
+  <div class="landing-header">
+    <div class="logo-stack">
+      <span class="logo-early">EARLY</span>
+      <span class="logo-bird">BIRD</span>
+    </div>
+    <a href="#" class="dealer-link" onclick="document.getElementById('phone-input').focus(); return false;">I'm a dealer</a>
   </div>
 
-  <!-- Onboarding Screen -->
-  <div id="onboard-screen" class="screen">
-    <h2>Welcome to Early Bird</h2>
-    <p class="subtitle">Quick setup, one time only</p>
-    <div class="field">
-      <label>Your name</label>
-      <input type="text" id="onboard-name" placeholder="Eli" autocomplete="given-name">
-    </div>
-    <div class="field">
-      <label>Business name <span class="optional">(optional)</span></label>
-      <input type="text" id="onboard-biz" placeholder="Object Lesson">
-    </div>
-    <div class="field">
-      <label>Venmo <span class="optional">(optional)</span></label>
-      <input type="text" id="onboard-venmo" placeholder="@eli-kagan">
-    </div>
-    <div class="field">
-      <label>Zelle <span class="optional">(optional)</span></label>
-      <input type="text" id="onboard-zelle" placeholder="eli@email.com">
-    </div>
-    <button onclick="completeOnboarding()">Let's go</button>
+  <hr class="rule">
+
+  <div class="event-block" id="event-block">
+    <div class="event-context">Early access to the best stuff at</div>
+    <div class="event-name" id="landing-event-name">—</div>
+    <div class="event-meta" id="landing-event-meta"></div>
   </div>
 
-  <!-- Feed Screen -->
-  <div id="feed-screen" class="screen">
-    <div class="feed-header">
-      <div class="feed-header-top">
-        <div>
-          <h1>Early Bird</h1>
-          <div class="market-info" id="market-info">Loading...</div>
-        </div>
-        <div class="header-actions">
-          <button onclick="showPost()" title="Post an item">+</button>
-          <button onclick="toggleFilters()" title="Filters">&#9776;</button>
-        </div>
-      </div>
-      <div class="filter-bar hidden" id="filter-bar">
-        <div class="filter-chip active" data-filter="all">All</div>
-        <div class="filter-chip" data-filter="art">Art</div>
-        <div class="filter-chip" data-filter="furniture">Furniture</div>
-        <div class="filter-chip" data-filter="lighting">Lighting</div>
-        <div class="filter-chip" data-filter="objects">Objects</div>
-        <div class="filter-chip" data-filter="decor">Decor</div>
-      </div>
-    </div>
-    <div class="feed" id="feed"></div>
-  </div>
-
-  <!-- Messages List Screen -->
-  <div id="messages-screen" class="screen">
-    <div class="messages-header">
-      <h1>Messages</h1>
-    </div>
-    <div class="messages-list" id="messages-list"></div>
-  </div>
-
-  <!-- Conversation Screen -->
-  <div id="convo-screen" class="screen">
-    <div class="convo-header">
-      <button class="convo-back" onclick="navigateBack()">&larr;</button>
-      <div class="convo-header-info">
-        <div class="name" id="convo-other-name"></div>
-        <div class="item-price" id="convo-item-price"></div>
-      </div>
-    </div>
-    <div class="convo-messages" id="convo-messages"></div>
-    <div class="convo-compose">
-      <input type="text" id="convo-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendReply()">
-      <button id="convo-send-btn" onclick="sendReply()">Send</button>
+  <div class="countdown" id="landing-countdown">
+    <div class="cd-type">
+      <span class="cd-num" id="cd-days">--</span>
+      <span class="cd-word">days</span>
+      <span class="cd-sep">:</span>
+      <span class="cd-num" id="cd-hrs">--</span>
+      <span class="cd-word">hrs</span>
+      <span class="cd-sep">:</span>
+      <span class="cd-num" id="cd-min">--</span>
+      <span class="cd-word">min</span>
     </div>
   </div>
 
-  <!-- Post Screen -->
-  <div id="post-screen" class="screen">
-    <div class="post-header">
-      <h2>Post an item</h2>
-      <button class="post-close" onclick="hidePost()">&times;</button>
-    </div>
-
-    <div class="photo-grid" id="photo-grid">
-      <div class="photo-slot" onclick="addPhoto(0)"><span class="add-icon">+</span></div>
-      <div class="photo-slot" onclick="addPhoto(1)"><span class="add-icon">+</span></div>
-      <div class="photo-slot" onclick="addPhoto(2)"><span class="add-icon">+</span></div>
-      <div class="photo-slot" onclick="addPhoto(3)"><span class="add-icon">+</span></div>
-      <div class="photo-slot" onclick="addPhoto(4)"><span class="add-icon">+</span></div>
-    </div>
-
-    <div class="post-field">
-      <label>Price</label>
-      <input type="number" id="post-price" placeholder="350" inputmode="numeric">
-    </div>
-
-    <div class="post-field">
-      <label>Market</label>
-      <select id="post-market"></select>
-    </div>
-
-    <div class="post-field">
-      <label>Category <span class="optional" style="color:var(--text-muted)">(optional)</span></label>
-      <select id="post-category">
-        <option value="">--</option>
-        <option value="art">Art</option>
-        <option value="furniture">Furniture</option>
-        <option value="lighting">Lighting</option>
-        <option value="objects">Objects</option>
-        <option value="decor">Decor</option>
-      </select>
-    </div>
-
-    <div class="post-field">
-      <label>Condition</label>
-      <select id="post-condition">
-        <option value="good">Good</option>
-        <option value="mint">Mint</option>
-        <option value="fair">Fair</option>
-        <option value="as-is">As-Is</option>
-      </select>
-    </div>
-
-    <div class="post-field">
-      <label>Notes <span class="optional" style="color:var(--text-muted)">(optional)</span></label>
-      <textarea id="post-notes" placeholder="Small chip on base, barely visible"></textarea>
-    </div>
-
-    <div class="toggle-row">
-      <label>Firm price</label>
-      <div class="toggle" id="toggle-firm" onclick="this.classList.toggle('on')"></div>
-    </div>
-
-    <div class="toggle-row">
-      <label>Deposit required</label>
-      <div class="toggle" id="toggle-deposit" onclick="toggleDeposit()"></div>
-    </div>
-
-    <div class="post-field hidden" id="deposit-amount-field">
-      <label>Deposit amount</label>
-      <input type="number" id="post-deposit-amount" placeholder="50" inputmode="numeric">
-    </div>
-
-    <button class="btn-post" id="btn-post" onclick="submitPost()">Post</button>
-  </div>
-
-  <!-- Bottom Navigation (shared) -->
-  <div class="bottom-nav hidden" id="bottom-nav">
-    <button class="nav-tab active" id="nav-feed" onclick="showFeed()">
-      <span class="nav-icon">&#9633;</span>
-      Feed
+  <div class="auth-section">
+    <input type="tel" class="auth-input" id="phone-input" placeholder="(310) 555-1234"
+           inputmode="tel" autocomplete="tel">
+    <button class="auth-btn" id="auth-btn" onclick="requestMagicLink()">
+      REGISTER FOR EARLY ACCESS
     </button>
-    <button class="nav-tab" id="nav-messages" onclick="showMessages()">
-      <span class="icon-wrap">
-        <span class="nav-icon">&#9993;</span>
-      </span>
-      Messages
-    </button>
-    <button class="nav-tab" id="nav-post" onclick="showPost()">
-      <span class="nav-icon">+</span>
-      Post
-    </button>
+    <div class="auth-fine" id="auth-msg">We'll text you when inventory goes live.</div>
   </div>
 
-  <!-- Message Compose Modal -->
-  <div class="modal-overlay" id="compose-modal">
-    <div class="modal">
-      <h3 id="compose-title">Message Seller</h3>
-      <div class="modal-sub" id="compose-sub"></div>
-      <div id="compose-deposit-info"></div>
-      <textarea id="compose-message" placeholder="Hey, interested in this piece..."></textarea>
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeCompose()">Cancel</button>
-        <button class="btn-send" id="compose-send-btn" onclick="sendCompose()">Send</button>
-      </div>
+  <div class="hero-image" id="hero-image"></div>
+
+  <div class="disclaimer">
+    Early Bird is not affiliated with or endorsed by any market listed here. All listings are posted by independent dealers.
+  </div>
+</div>
+
+<!-- VERIFY -->
+<div id="verify" class="screen">
+  <div class="logo-stack">
+    <span class="logo-early">EARLY</span>
+    <span class="logo-bird">BIRD</span>
+  </div>
+  <div class="verify-status" id="verify-status">Verifying...</div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding" class="screen">
+  <div class="onboard-title">ALMOST THERE</div>
+  <div class="onboard-sub">Quick setup, then you're in.</div>
+
+  <div class="selfie-area">
+    <div class="selfie-preview" id="selfie-preview" onclick="document.getElementById('selfie-input').click()">
+      <div class="placeholder">Tap to<br>take selfie</div>
+    </div>
+    <div class="selfie-label" onclick="document.getElementById('selfie-input').click()">Add a photo</div>
+    <input type="file" id="selfie-input" accept="image/*" capture="user" class="hidden"
+           onchange="handleSelfie(this)">
+  </div>
+
+  <div class="field">
+    <label>Your name</label>
+    <input type="text" id="onboard-name" placeholder="How dealers/buyers will know you">
+  </div>
+
+  <button class="auth-btn" onclick="completeOnboarding()" style="margin-top: 8px;">LET'S GO</button>
+</div>
+
+<!-- FEED -->
+<div id="feed" class="screen">
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo"><span class="early">EARLY </span><span class="bird">BIRD</span></div>
+      <div class="feed-event" id="feed-event-name"></div>
     </div>
   </div>
+  <div id="feed-content"></div>
+</div>
 
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
+<!-- DEALER HOME -->
+<div id="dealer-home" class="screen">
+  <div class="dealer-event-header">
+    <div class="dealer-event-name" id="dealer-event-name"></div>
+    <div class="dealer-event-date" id="dealer-event-date"></div>
+    <div class="dealer-countdown" id="dealer-countdown"></div>
+  </div>
+  <div class="free-notice">Selling on Early Bird is 100% free. Handle all payments directly with your buyers.</div>
+  <button class="add-item-btn">+ ADD ITEM</button>
+  <ul class="my-items-list" id="my-items-list"></ul>
+  <div class="empty-state" id="dealer-empty">
+    <h2>YOUR BOOTH IS EMPTY</h2>
+    <p>Post the items you're bringing. Buyers will see them when inventory goes live.</p>
+  </div>
+</div>
 
-  <!-- Hidden file input for photos -->
-  <input type="file" id="photo-input" accept="image/*" class="hidden" onchange="handlePhoto(event)">
+<!-- MESSAGES -->
+<div id="messages" class="screen">
+  <div class="messages-title">MESSAGES</div>
+  <div class="empty-state">
+    <p>No messages yet. When buyers inquire about your items, they'll show up here.</p>
+  </div>
+</div>
 
-  <script>
-    // ── Config ────────────────────────────────────────────────
-    const API = 'https://early-bird.objectlesson.workers.dev';
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav hidden" id="bottom-nav">
+  <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+    </svg>
+    Browse
+  </button>
+  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+    Messages
+  </button>
+  <button class="nav-tab" data-tab="dealer-home" onclick="switchTab('dealer-home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
+    </svg>
+    My Items
+  </button>
+</nav>
 
-    // ── State ─────────────────────────────────────────────────
-    let currentDealer = null;
-    let currentMarket = null;
-    let markets = [];
-    let items = [];
-    let savedItems = JSON.parse(localStorage.getItem('eb_saved') || '[]');
-    let postPhotos = [];
-    let activePhotoSlot = 0;
-    let activeFilter = 'all';
-    let composeItemId = null;
-    let currentConvoToken = null;
-    let currentConvoData = null;
+<script>
+const API = 'https://early-bird.objectlesson.workers.dev';
 
-    // ── Auth helpers ──────────────────────────────────────────
-    function getDealerId() {
-      return localStorage.getItem('eb_dealer_id');
-    }
+let currentUser = null;
+let currentMarket = null;
+let countdownInterval = null;
 
-    function setDealerId(id) {
-      localStorage.setItem('eb_dealer_id', id);
-    }
+// ── Auth ──────────────────────────────────────────────────────
+function getDealerId() { return localStorage.getItem('eb_dealer_id'); }
+function setDealerId(id) { localStorage.setItem('eb_dealer_id', id); }
+function authHeaders() {
+  const id = getDealerId();
+  return id ? { 'Authorization': `Bearer ${id}` } : {};
+}
 
-    function clearAuth() {
-      localStorage.removeItem('eb_dealer_id');
-      currentDealer = null;
-    }
+async function api(path, opts = {}) {
+  const res = await fetch(`${API}${path}`, {
+    method: opts.method || 'GET',
+    headers: { 'Content-Type': 'application/json', ...authHeaders(), ...opts.headers },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  return res.json();
+}
 
-    function authHeaders(extra = {}) {
-      const h = { 'Content-Type': 'application/json', ...extra };
-      const id = getDealerId();
-      if (id) h['Authorization'] = `Bearer ${id}`;
-      return h;
-    }
+// ── Screens ───────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-    // ── Hash Router ───────────────────────────────────────────
-    function getRoute() {
-      const hash = location.hash.slice(1) || '/';
-      return hash;
-    }
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  showScreen(tab);
+  if (tab === 'feed') loadFeed();
+  if (tab === 'dealer-home') loadDealerHome();
+}
 
-    async function handleRoute() {
-      const route = getRoute();
-
-      // Magic link verify
-      const verifyMatch = route.match(/^\/verify\/(.+)$/);
-      if (verifyMatch) {
-        await verifyMagicLink(verifyMatch[1]);
-        return;
-      }
-
-      // Conversation page
-      const convoMatch = route.match(/^\/c\/(.+)$/);
-      if (convoMatch) {
-        if (!getDealerId()) {
-          // Need to log in first, then come back
-          showScreen('login-screen');
-          return;
-        }
-        await loadConversation(convoMatch[1]);
-        return;
-      }
-
-      // Messages
-      if (route === '/messages') {
-        if (!getDealerId()) { showScreen('login-screen'); return; }
-        await showMessages();
-        return;
-      }
-
-      // Default: check auth
-      await init();
-    }
-
-    window.addEventListener('hashchange', handleRoute);
-
-    // ── Init ──────────────────────────────────────────────────
-    async function init() {
-      const dealerId = getDealerId();
-      if (!dealerId) {
-        showScreen('login-screen');
-        return;
-      }
-
-      try {
-        const res = await fetch(API + '/api/auth/me', {
-          headers: authHeaders(),
-        });
-        if (res.ok) {
-          currentDealer = await res.json();
-          if (!currentDealer.name) {
-            showScreen('onboard-screen');
-          } else {
-            await loadFeed();
-            showScreen('feed-screen');
-            document.getElementById('bottom-nav').classList.remove('hidden');
-          }
-          return;
-        } else {
-          // Invalid dealer ID
-          clearAuth();
-        }
-      } catch (e) {}
-
-      showScreen('login-screen');
-    }
-
-    function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(el => {
-        el.classList.remove('active', 'active-block');
-      });
-      const screen = document.getElementById(id);
-      if (id === 'feed-screen' || id === 'messages-screen' || id === 'post-screen') {
-        screen.classList.add('active-block');
-        document.getElementById('bottom-nav').classList.remove('hidden');
-      } else {
-        screen.classList.add('active');
-        if (id !== 'convo-screen') {
-          document.getElementById('bottom-nav').classList.add('hidden');
-        }
-      }
-
-      // Update nav tabs
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      if (id === 'feed-screen') document.getElementById('nav-feed').classList.add('active');
-      if (id === 'messages-screen') document.getElementById('nav-messages').classList.add('active');
-      if (id === 'post-screen') document.getElementById('nav-post').classList.add('active');
-    }
-
-    // ── Magic Link Verify ─────────────────────────────────────
-    async function verifyMagicLink(token) {
-      try {
-        const res = await fetch(API + '/api/auth/verify/' + token);
-        const data = await res.json();
-        if (res.ok && data.dealer_id) {
-          setDealerId(data.dealer_id);
-          location.hash = '/';
-          return;
-        } else {
-          showScreen('login-screen');
-          const errorEl = document.getElementById('login-error');
-          errorEl.textContent = data.error || 'Invalid link. Try requesting a new one.';
-          errorEl.classList.remove('hidden');
-        }
-      } catch (e) {
-        showScreen('login-screen');
-        const errorEl = document.getElementById('login-error');
-        errorEl.textContent = 'Network error verifying link.';
-        errorEl.classList.remove('hidden');
-      }
-    }
-
-    // ── Login ─────────────────────────────────────────────────
-    async function requestLogin() {
-      const phone = document.getElementById('phone-input').value.trim();
-      if (!phone) return;
-
-      const btn = document.getElementById('login-btn');
-      const errorEl = document.getElementById('login-error');
-      const successEl = document.getElementById('login-success');
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
-      errorEl.classList.add('hidden');
-      successEl.classList.add('hidden');
-
-      try {
-        const res = await fetch(API + '/api/auth/request', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone }),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          btn.textContent = 'Check your texts';
-          successEl.textContent = 'Magic link sent! Tap the link in your text message.';
-          successEl.classList.remove('hidden');
-        } else {
-          errorEl.textContent = data.error || 'Something went wrong';
-          errorEl.classList.remove('hidden');
-          btn.disabled = false;
-          btn.textContent = 'Send Login Link';
-        }
-      } catch (e) {
-        errorEl.textContent = 'Network error. Try again.';
-        errorEl.classList.remove('hidden');
-        btn.disabled = false;
-        btn.textContent = 'Send Login Link';
-      }
-    }
-
-    // ── Onboarding ────────────────────────────────────────────
-    async function completeOnboarding() {
-      const name = document.getElementById('onboard-name').value.trim();
-      if (!name) { showToast('Name is required'); return; }
-
-      const updates = {
-        name,
-        business_name: document.getElementById('onboard-biz').value.trim() || null,
-        venmo: document.getElementById('onboard-venmo').value.trim() || null,
-        zelle: document.getElementById('onboard-zelle').value.trim() || null,
-      };
-
-      try {
-        const res = await fetch(API + '/api/auth/me', {
-          method: 'PATCH',
-          headers: authHeaders(),
-          body: JSON.stringify(updates),
-        });
-
-        if (res.ok) {
-          currentDealer = { ...currentDealer, ...updates };
-          await loadFeed();
-          showScreen('feed-screen');
-          document.getElementById('bottom-nav').classList.remove('hidden');
-        } else {
-          showToast('Could not save profile');
-        }
-      } catch (e) {
-        showToast('Network error');
-      }
-    }
-
-    // ── Feed ──────────────────────────────────────────────────
-    async function loadFeed() {
-      try {
-        const mRes = await fetch(API + '/api/markets', { headers: authHeaders() });
-        markets = await mRes.json();
-        if (markets.length) {
-          currentMarket = markets[0];
-        }
-      } catch (e) {}
-      await loadItems();
-    }
-
-    function showFeed() {
-      location.hash = '/';
-      showScreen('feed-screen');
-      loadItems();
-    }
-
-    async function loadItems() {
-      let url = API + '/api/items?';
-      if (currentMarket) url += `market_id=${currentMarket.id}&`;
-      if (activeFilter !== 'all') url += `category=${activeFilter}&`;
-
-      try {
-        const res = await fetch(url, { headers: authHeaders() });
-        items = await res.json();
-        renderFeed();
-      } catch (e) {
-        document.getElementById('feed').innerHTML = '<p class="empty-state">Could not load items</p>';
-      }
-    }
-
-    function updateMarketHeader() {
-      if (!currentMarket) return;
+// ── Landing ───────────────────────────────────────────────────
+async function loadLanding() {
+  try {
+    const markets = await api('/api/markets');
+    if (markets.length) {
+      currentMarket = markets[0];
+      document.getElementById('landing-event-name').textContent = currentMarket.name.toUpperCase();
       const date = new Date(currentMarket.market_date + 'T00:00:00');
-      const opts = { weekday: 'short', month: 'short', day: 'numeric' };
-      const dateStr = date.toLocaleDateString('en-US', opts);
-
-      // Drop time countdown
-      let dropInfo = '';
-      if (currentMarket.drop_time) {
-        const drop = new Date(currentMarket.drop_time);
-        const now = new Date();
-        if (now < drop) {
-          const diffMs = drop - now;
-          const days = Math.floor(diffMs / 86400000);
-          const hours = Math.floor((diffMs % 86400000) / 3600000);
-          dropInfo = ` · Drop in ${days}d ${hours}h`;
-        }
-      }
-
-      const total = items.length;
-      const newCount = items.filter(i => isNew(i)).length;
-      document.getElementById('market-info').innerHTML =
-        `${currentMarket.name} · ${dateStr}${dropInfo}` +
-        `<span class="stats"> · ${total} listings${newCount ? ` · ${newCount} new` : ''}</span>`;
+      document.getElementById('landing-event-meta').textContent =
+        date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      if (currentMarket.drop_time) startCountdown(new Date(currentMarket.drop_time));
     }
+  } catch (e) { console.error('Failed to load markets:', e); }
+}
 
-    function isNew(item) {
-      const lastVisit = localStorage.getItem('eb_last_visit');
-      if (!lastVisit) return false;
-      return new Date(item.created_at) > new Date(lastVisit);
+function startCountdown(dropTime) {
+  function update() {
+    const diff = dropTime - new Date();
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '00';
+      document.getElementById('cd-hrs').textContent = '00';
+      document.getElementById('cd-min').textContent = '00';
+      clearInterval(countdownInterval);
+      return;
     }
+    document.getElementById('cd-days').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
+    document.getElementById('cd-hrs').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+    document.getElementById('cd-min').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+  }
+  update();
+  countdownInterval = setInterval(update, 10000);
+}
 
-    function renderFeed() {
-      const feed = document.getElementById('feed');
-      if (!items.length) {
-        feed.innerHTML = '<p class="empty-state">No items yet. Be the first to post.</p>';
-        updateMarketHeader();
-        return;
-      }
+// ── Auth flow ─────────────────────────────────────────────────
+async function requestMagicLink() {
+  const phone = document.getElementById('phone-input').value.trim();
+  if (!phone) return;
+  const btn = document.getElementById('auth-btn');
+  const msg = document.getElementById('auth-msg');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  msg.textContent = '';
+  msg.className = 'auth-fine';
 
-      feed.innerHTML = items.map((item, idx) => renderItem(item, idx)).join('');
-      updateMarketHeader();
-
-      items.forEach((item, idx) => {
-        if (item.photos && item.photos.length > 1) {
-          setupCarousel(idx, item.photos.length);
-        }
-      });
-
-      localStorage.setItem('eb_last_visit', new Date().toISOString());
+  try {
+    const res = await api('/api/auth/request', { method: 'POST', body: { phone } });
+    if (res.ok) {
+      msg.textContent = 'Check your texts for a link.';
+      msg.className = 'auth-success';
+      btn.textContent = 'LINK SENT';
+    } else {
+      msg.textContent = res.error || 'Something went wrong.';
+      msg.className = 'auth-error';
+      btn.textContent = 'REGISTER FOR EARLY ACCESS';
+      btn.disabled = false;
     }
+  } catch (e) {
+    msg.textContent = 'Connection error. Try again.';
+    msg.className = 'auth-error';
+    btn.textContent = 'REGISTER FOR EARLY ACCESS';
+    btn.disabled = false;
+  }
+}
 
-    function renderItem(item, idx) {
+async function verifyToken(token) {
+  showScreen('verify');
+  const status = document.getElementById('verify-status');
+  status.textContent = 'Verifying...';
+  status.className = 'verify-status';
+
+  try {
+    const res = await api(`/api/auth/verify/${token}`);
+    if (res.ok && res.dealer_id) {
+      setDealerId(res.dealer_id);
+      status.textContent = "You're in.";
+      const me = await api('/api/auth/me');
+      currentUser = me;
+      setTimeout(() => {
+        if (!me.name) { showScreen('onboarding'); }
+        else { enterApp(); }
+      }, 800);
+    } else {
+      status.textContent = res.error || 'Invalid link.';
+      status.className = 'verify-error';
+    }
+  } catch (e) {
+    status.textContent = 'Something went wrong.';
+    status.className = 'verify-error';
+  }
+}
+
+// ── Onboarding ────────────────────────────────────────────────
+let selfieDataUrl = null;
+
+function handleSelfie(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    selfieDataUrl = e.target.result;
+    document.getElementById('selfie-preview').innerHTML = `<img src="${selfieDataUrl}" alt="selfie">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function completeOnboarding() {
+  const name = document.getElementById('onboard-name').value.trim();
+  if (!name) { alert('Please enter your name.'); return; }
+  await api('/api/auth/me', { method: 'PATCH', body: { name } });
+  currentUser = await api('/api/auth/me');
+  enterApp();
+}
+
+// ── App ───────────────────────────────────────────────────────
+async function enterApp() {
+  if (!currentMarket) {
+    try {
+      const markets = await api('/api/markets');
+      if (markets.length) currentMarket = markets[0];
+    } catch (e) {}
+  }
+  document.getElementById('bottom-nav').classList.remove('hidden');
+  showScreen('feed');
+  loadFeed();
+}
+
+async function loadFeed() {
+  if (currentMarket) {
+    document.getElementById('feed-event-name').textContent = currentMarket.name;
+  }
+  const content = document.getElementById('feed-content');
+  try {
+    const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
+    const items = await api(`/api/items${q}`);
+    if (!items.length) {
+      content.innerHTML = '<div class="empty-state"><h2>NOTHING YET</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
+      return;
+    }
+    content.innerHTML = '<div class="item-grid">' + items.map(item => {
       const price = '$' + (item.price / 100).toLocaleString();
-      const priceTag = item.firm ? 'Firm' : 'Open to offers';
-      const isSaved = savedItems.includes(item.id);
-      const sellerName = item.dealer?.name || 'Unknown';
-      const sellerBiz = item.dealer?.business_name ? ` · ${item.dealer.business_name}` : '';
-      const isOwn = currentDealer && item.dealer_id === currentDealer.id;
+      const photo = item.photos?.[0] || '';
+      const dealer = item.dealer?.name || item.dealer?.business_name || '';
+      let badge = '';
+      if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
+      if (item.status === 'sold') badge = '<span class="item-card-badge badge-sold">Sold</span>';
+      return `<div class="item-card">
+        <div class="item-card-img">${photo ? `<img src="${photo}" loading="lazy">` : ''}</div>
+        <div class="item-card-info">
+          <div class="item-card-price">${price}</div>
+          <div class="item-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
+          ${badge}
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch (e) {
+    content.innerHTML = '<div class="empty-state"><p>Failed to load items.</p></div>';
+  }
+}
 
-      let statusLabel = '';
-      if (item.status === 'sold') {
-        const buyerName = item.buyer?.name;
-        const buyerBiz = item.buyer?.business_name;
-        statusLabel = buyerName
-          ? `<div class="sold-label">Sold to ${escapeHtml(buyerName)}${buyerBiz ? ' &middot; ' + escapeHtml(buyerBiz) : ''}</div>`
-          : '<div class="sold-label">Sold</div>';
-      } else if (item.status === 'hold') {
-        statusLabel = '<div class="hold-label">On hold</div>';
-      }
+async function loadDealerHome() {
+  if (currentMarket) {
+    document.getElementById('dealer-event-name').textContent = currentMarket.name.toUpperCase();
+    const date = new Date(currentMarket.market_date + 'T00:00:00');
+    document.getElementById('dealer-event-date').textContent =
+      date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  }
+}
 
-      const photos = (item.photos || []).map(url => `<img src="${url}" alt="" loading="lazy">`).join('');
-      const dots = item.photos && item.photos.length > 1
-        ? `<div class="carousel-dots">${item.photos.map((_, i) => `<div class="dot${i === 0 ? ' active' : ''}"></div>`).join('')}</div>`
-        : '';
+// ── Router ────────────────────────────────────────────────────
+function route() {
+  const hash = window.location.hash;
 
-      const newBadge = isNew(item) ? '<div class="new-badge">New</div>' : '';
+  const verifyMatch = hash.match(/^#\/verify\/(.+)$/);
+  if (verifyMatch) { verifyToken(verifyMatch[1]); return; }
 
-      let actions = '';
-      if (item.status === 'live' && !isOwn) {
-        actions = `<div class="item-actions">
-            <button class="btn-save ${isSaved ? 'saved' : ''}" onclick="toggleSave('${item.id}', this)">
-              ${isSaved ? '&#9829; Saved' : '&#9825; Save'}
-            </button>
-            <button class="btn-message" onclick="openCompose('${item.id}')">Message Seller</button>
-          </div>`;
-      } else if (item.status === 'live' && isOwn) {
-        actions = `<div class="item-actions">
-            <button class="btn-save" style="flex:1" onclick="showToast('This is your item')">Your listing</button>
-          </div>`;
-      }
+  const convMatch = hash.match(/^#\/c\/(.+)$/);
+  if (convMatch) { /* TODO: conversation view */ return; }
 
-      const conditionBadge = item.condition ? `<span class="condition-badge">${item.condition}</span>` : '';
-      const notes = item.notes ? `<div class="notes">${escapeHtml(item.notes)}</div>` : '';
-
-      return `
-        <div class="feed-item status-${item.status}" data-item-id="${item.id}">
-          <div class="carousel" id="carousel-${idx}">
-            <div class="carousel-track" id="track-${idx}">${photos}</div>
-            ${dots}
-            ${newBadge}
-          </div>
-          <div class="item-info">
-            <div class="price-row">
-              <span class="price">${price}</span>
-              <span class="price-tag">${priceTag}</span>
-            </div>
-            ${conditionBadge}
-            ${notes}
-            <div class="seller-row">
-              <div class="seller">
-                <span class="name">${escapeHtml(sellerName)}</span>
-                <span class="biz">${escapeHtml(sellerBiz)}</span>
-              </div>
-              ${statusLabel}
-            </div>
-            ${actions}
-          </div>
-        </div>`;
-    }
-
-    function escapeHtml(text) {
-      if (!text) return '';
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // ── Carousel ──────────────────────────────────────────────
-    function setupCarousel(idx, count) {
-      const carousel = document.getElementById(`carousel-${idx}`);
-      const track = document.getElementById(`track-${idx}`);
-      if (!carousel || !track) return;
-
-      let current = 0;
-      let startX = 0;
-      let isDragging = false;
-
-      carousel.addEventListener('touchstart', e => {
-        startX = e.touches[0].clientX;
-        isDragging = true;
-      }, { passive: true });
-
-      carousel.addEventListener('touchend', e => {
-        if (!isDragging) return;
-        isDragging = false;
-        const diff = startX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 40) {
-          if (diff > 0 && current < count - 1) current++;
-          else if (diff < 0 && current > 0) current--;
-          track.style.transform = `translateX(-${current * 100}%)`;
-          updateDots(carousel, current);
-        }
-      }, { passive: true });
-    }
-
-    function updateDots(carousel, current) {
-      carousel.querySelectorAll('.dot').forEach((d, i) => {
-        d.classList.toggle('active', i === current);
-      });
-    }
-
-    // ── Save ──────────────────────────────────────────────────
-    function toggleSave(itemId, btn) {
-      const idx = savedItems.indexOf(itemId);
-      if (idx >= 0) {
-        savedItems.splice(idx, 1);
-        btn.classList.remove('saved');
-        btn.innerHTML = '&#9825; Save';
+  const dealerId = getDealerId();
+  if (dealerId) {
+    api('/api/auth/me').then(me => {
+      if (me.error) {
+        localStorage.removeItem('eb_dealer_id');
+        showScreen('landing');
+        loadLanding();
       } else {
-        savedItems.push(itemId);
-        btn.classList.add('saved');
-        btn.innerHTML = '&#9829; Saved';
+        currentUser = me;
+        if (!me.name) showScreen('onboarding');
+        else enterApp();
       }
-      localStorage.setItem('eb_saved', JSON.stringify(savedItems));
-    }
-
-    // ── Message Compose ───────────────────────────────────────
-    function openCompose(itemId) {
-      composeItemId = itemId;
-      const item = items.find(i => i.id === itemId);
-      if (!item) return;
-
-      const price = '$' + (item.price / 100).toLocaleString();
-      const sellerName = item.dealer?.name || 'the seller';
-      document.getElementById('compose-title').textContent = `Message ${sellerName}`;
-      document.getElementById('compose-sub').textContent = `About their ${price} item`;
-      document.getElementById('compose-message').value = '';
-
-      // Show deposit info if applicable
-      const depositEl = document.getElementById('compose-deposit-info');
-      if (item.deposit_required && item.deposit_amount) {
-        const depAmt = '$' + (item.deposit_amount / 100).toLocaleString();
-        let payInfo = '';
-        if (item.dealer?.venmo) payInfo += `Venmo: ${item.dealer.venmo}  `;
-        if (item.dealer?.zelle) payInfo += `Zelle: ${item.dealer.zelle}`;
-        depositEl.innerHTML = `<strong>Deposit required:</strong> ${depAmt}<br>${payInfo ? payInfo : 'Ask seller for payment details.'}`;
-        depositEl.classList.remove('hidden');
-      } else {
-        depositEl.classList.add('hidden');
-      }
-
-      document.getElementById('compose-modal').classList.add('show');
-      setTimeout(() => document.getElementById('compose-message').focus(), 100);
-    }
-
-    function closeCompose() {
-      document.getElementById('compose-modal').classList.remove('show');
-      composeItemId = null;
-    }
-
-    async function sendCompose() {
-      const message = document.getElementById('compose-message').value.trim();
-      if (!message) { showToast('Write a message first'); return; }
-
-      const btn = document.getElementById('compose-send-btn');
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
-
-      try {
-        const res = await fetch(API + '/api/conversations', {
-          method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify({ item_id: composeItemId, message }),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          closeCompose();
-          showToast('Message sent! Seller will get an SMS.');
-          // Could navigate to the conversation
-          // location.hash = '/c/' + data.conversation_token;
-        } else {
-          showToast(data.error || 'Could not send message');
-        }
-      } catch (e) {
-        showToast('Network error');
-      }
-
-      btn.disabled = false;
-      btn.textContent = 'Send';
-    }
-
-    // Close modal on overlay click
-    document.getElementById('compose-modal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) closeCompose();
-    });
-
-    // ── Messages List ─────────────────────────────────────────
-    async function showMessages() {
-      showScreen('messages-screen');
-      if (location.hash !== '#/messages') location.hash = '/messages';
-
-      const list = document.getElementById('messages-list');
-      list.innerHTML = '<p class="empty-state">Loading...</p>';
-
-      try {
-        const res = await fetch(API + '/api/conversations', {
-          headers: authHeaders(),
-        });
-        const data = await res.json();
-
-        if (!data.as_buyer?.length && !data.as_seller?.length) {
-          list.innerHTML = '<p class="empty-state">No conversations yet. Message a seller to start one.</p>';
-          return;
-        }
-
-        let html = '';
-
-        if (data.as_seller?.length) {
-          html += '<div class="convo-section-label">Messages about your items</div>';
-          html += data.as_seller.map(c => renderConvoPreview(c, 'seller')).join('');
-        }
-
-        if (data.as_buyer?.length) {
-          html += '<div class="convo-section-label">Your inquiries</div>';
-          html += data.as_buyer.map(c => renderConvoPreview(c, 'buyer')).join('');
-        }
-
-        list.innerHTML = html;
-      } catch (e) {
-        list.innerHTML = '<p class="empty-state">Could not load messages</p>';
-      }
-    }
-
-    function renderConvoPreview(convo, role) {
-      const otherName = role === 'seller'
-        ? (convo.buyer?.name || 'Unknown buyer')
-        : (convo.seller?.name || 'Unknown seller');
-      const otherBiz = role === 'seller'
-        ? (convo.buyer?.business_name || '')
-        : (convo.seller?.business_name || '');
-      const price = convo.item?.price ? '$' + (convo.item.price / 100).toLocaleString() : '';
-      const photo = convo.item?.photos?.[0] || '';
-      const roleLabel = role === 'seller' ? 'Buyer' : 'Seller';
-
-      return `
-        <div class="convo-preview" onclick="location.hash='/c/${convo.token}'">
-          ${photo ? `<img src="${photo}" alt="">` : '<div style="width:48px;height:48px;background:#f0eeeb;border-radius:6px;flex-shrink:0"></div>'}
-          <div class="preview-info">
-            <div class="preview-name">${escapeHtml(otherName)}${otherBiz ? ' · ' + escapeHtml(otherBiz) : ''}</div>
-            <div class="preview-price">${price}</div>
-            <div class="preview-role">${roleLabel}</div>
-          </div>
-        </div>`;
-    }
-
-    // ── Conversation Page ─────────────────────────────────────
-    async function loadConversation(token) {
-      currentConvoToken = token;
-      showScreen('convo-screen');
-      document.getElementById('bottom-nav').classList.add('hidden');
-      document.getElementById('convo-messages').innerHTML = '<p class="empty-state">Loading...</p>';
-
-      try {
-        const res = await fetch(API + '/api/conversations/' + token, {
-          headers: authHeaders(),
-        });
-
-        if (res.status === 401) {
-          // Not authenticated — redirect to login
-          showScreen('login-screen');
-          showToast('Log in to view this conversation');
-          return;
-        }
-
-        const data = await res.json();
-        if (!res.ok) {
-          document.getElementById('convo-messages').innerHTML = `<p class="empty-state">${data.error || 'Could not load conversation'}</p>`;
-          return;
-        }
-
-        currentConvoData = data;
-        const otherParty = data.you === 'buyer' ? data.conversation.seller : data.conversation.buyer;
-        const item = data.conversation.item;
-
-        document.getElementById('convo-other-name').textContent = otherParty.name || 'Unknown';
-        document.getElementById('convo-item-price').textContent = item?.price
-          ? '$' + (item.price / 100).toLocaleString()
-          : '';
-
-        renderMessages(data);
-      } catch (e) {
-        document.getElementById('convo-messages').innerHTML = '<p class="empty-state">Network error</p>';
-      }
-    }
-
-    function renderMessages(data) {
-      const container = document.getElementById('convo-messages');
-      const item = data.conversation.item;
-      const me = data.you;
-
-      let html = '';
-
-      // Item card at top
-      if (item) {
-        const price = '$' + (item.price / 100).toLocaleString();
-        const photo = item.photos?.[0] || '';
-        html += `
-          <div class="convo-item-card">
-            ${photo ? `<img src="${photo}" alt="">` : ''}
-            <div class="card-info">
-              <div class="card-price">${price}</div>
-              ${item.condition ? `<div style="color:var(--text-muted);font-size:0.8rem">${item.condition}</div>` : ''}
-              ${item.status !== 'live' ? `<div style="color:var(--new-badge);font-size:0.8rem;font-weight:600;text-transform:uppercase">${item.status}</div>` : ''}
-            </div>
-          </div>`;
-      }
-
-      // Messages
-      data.messages.forEach(msg => {
-        const isMine = msg.sender_id === currentDealer.id;
-        const senderName = msg.sender?.name || 'Unknown';
-        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-
-        html += `
-          <div class="msg ${isMine ? 'mine' : 'theirs'}">
-            ${!isMine ? `<div class="msg-sender">${escapeHtml(senderName)}</div>` : ''}
-            ${escapeHtml(msg.body)}
-            <div class="msg-time">${time}</div>
-          </div>`;
-      });
-
-      container.innerHTML = html;
-      container.scrollTop = container.scrollHeight;
-    }
-
-    async function sendReply() {
-      const input = document.getElementById('convo-input');
-      const message = input.value.trim();
-      if (!message || !currentConvoToken) return;
-
-      const btn = document.getElementById('convo-send-btn');
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(API + `/api/conversations/${currentConvoToken}/messages`, {
-          method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify({ message }),
-        });
-
-        if (res.ok) {
-          input.value = '';
-          // Reload conversation to show new message
-          await loadConversation(currentConvoToken);
-        } else {
-          const data = await res.json();
-          showToast(data.error || 'Could not send');
-        }
-      } catch (e) {
-        showToast('Network error');
-      }
-
-      btn.disabled = false;
-    }
-
-    function navigateBack() {
-      if (document.referrer && document.referrer.includes('early-bird')) {
-        history.back();
-      } else {
-        location.hash = '/messages';
-      }
-    }
-
-    // ── Filters ───────────────────────────────────────────────
-    function toggleFilters() {
-      document.getElementById('filter-bar').classList.toggle('hidden');
-    }
-
-    document.addEventListener('click', e => {
-      if (e.target.classList.contains('filter-chip')) {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        e.target.classList.add('active');
-        activeFilter = e.target.dataset.filter;
-        loadItems();
-      }
-    });
-
-    // ── Post ──────────────────────────────────────────────────
-    function showPost() {
-      showScreen('post-screen');
-      document.getElementById('post-screen').classList.remove('active');
-      document.getElementById('post-screen').classList.add('active-block');
-
-      const select = document.getElementById('post-market');
-      select.innerHTML = markets.map(m => {
-        const date = new Date(m.market_date + 'T00:00:00');
-        const opts = { weekday: 'short', month: 'short', day: 'numeric' };
-        return `<option value="${m.id}">${m.name} &middot; ${date.toLocaleDateString('en-US', opts)}</option>`;
-      }).join('');
-
-      postPhotos = [];
-      document.querySelectorAll('.photo-slot').forEach(slot => {
-        slot.classList.remove('has-photo');
-        slot.innerHTML = '<span class="add-icon">+</span>';
-      });
-    }
-
-    function hidePost() {
-      showScreen('feed-screen');
-    }
-
-    function addPhoto(slot) {
-      activePhotoSlot = slot;
-      document.getElementById('photo-input').click();
-    }
-
-    async function handlePhoto(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const compressed = await compressImage(file, 1200, 0.82);
-      postPhotos[activePhotoSlot] = compressed;
-
-      const slots = document.querySelectorAll('.photo-slot');
-      const slot = slots[activePhotoSlot];
-      slot.classList.add('has-photo');
-      slot.innerHTML = `<img src="${compressed}"><button class="remove" onclick="event.stopPropagation();removePhoto(${activePhotoSlot})">&times;</button>`;
-
-      e.target.value = '';
-    }
-
-    function removePhoto(slot) {
-      postPhotos[slot] = null;
-      const slots = document.querySelectorAll('.photo-slot');
-      slots[slot].classList.remove('has-photo');
-      slots[slot].innerHTML = '<span class="add-icon">+</span>';
-    }
-
-    function compressImage(file, maxSize, quality) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let { width, height } = img;
-          if (width > maxSize || height > maxSize) {
-            if (width > height) {
-              height = (height / width) * maxSize;
-              width = maxSize;
-            } else {
-              width = (width / height) * maxSize;
-              height = maxSize;
-            }
-          }
-          canvas.width = width;
-          canvas.height = height;
-          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.src = URL.createObjectURL(file);
-      });
-    }
-
-    function toggleDeposit() {
-      const toggle = document.getElementById('toggle-deposit');
-      toggle.classList.toggle('on');
-      document.getElementById('deposit-amount-field').classList.toggle('hidden', !toggle.classList.contains('on'));
-    }
-
-    async function submitPost() {
-      const photos = postPhotos.filter(Boolean);
-      if (!photos.length) { showToast('Add at least one photo'); return; }
-
-      const price = parseInt(document.getElementById('post-price').value);
-      if (!price || price <= 0) { showToast('Enter a valid price'); return; }
-
-      const btn = document.getElementById('btn-post');
-      btn.disabled = true;
-      btn.textContent = 'Posting...';
-
-      const item = {
-        photos,
-        price: price * 100,
-        market_id: document.getElementById('post-market').value,
-        category: document.getElementById('post-category').value || null,
-        condition: document.getElementById('post-condition').value,
-        notes: document.getElementById('post-notes').value.trim() || null,
-        firm: document.getElementById('toggle-firm').classList.contains('on'),
-        deposit_required: document.getElementById('toggle-deposit').classList.contains('on'),
-        deposit_amount: document.getElementById('toggle-deposit').classList.contains('on')
-          ? parseInt(document.getElementById('post-deposit-amount').value || 0) * 100
-          : null,
-      };
-
-      try {
-        const res = await fetch(API + '/api/items', {
-          method: 'POST',
-          headers: authHeaders(),
-          body: JSON.stringify(item),
-        });
-
-        if (res.ok) {
-          showToast('Posted!');
-          hidePost();
-          loadItems();
-        } else {
-          const data = await res.json();
-          showToast(data.error || 'Failed to post');
-        }
-      } catch (e) {
-        showToast('Network error');
-      }
-
-      btn.disabled = false;
-      btn.textContent = 'Post';
-    }
-
-    // ── Toast ─────────────────────────────────────────────────
-    function showToast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 2500);
-    }
-
-    // ── Phone input formatting ────────────────────────────────
-    document.getElementById('phone-input').addEventListener('input', function(e) {
-      let digits = this.value.replace(/\D/g, '');
-      if (digits.length > 10) digits = digits.slice(0, 10);
-      if (digits.length >= 7) {
-        this.value = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
-      } else if (digits.length >= 4) {
-        this.value = `(${digits.slice(0,3)}) ${digits.slice(3)}`;
-      } else if (digits.length > 0) {
-        this.value = `(${digits}`;
-      }
-    });
-
-    document.getElementById('phone-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') requestLogin();
-    });
-
-    // ── Boot ──────────────────────────────────────────────────
-    handleRoute();
-  </script>
+    }).catch(() => { showScreen('landing'); loadLanding(); });
+    return;
+  }
+
+  showScreen('landing');
+  loadLanding();
+}
+
+// ── Phone formatting ──────────────────────────────────────────
+document.getElementById('phone-input').addEventListener('input', function() {
+  let d = this.value.replace(/\D/g, '');
+  if (d.length > 10) d = d.slice(0, 10);
+  if (d.length >= 6) this.value = `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+  else if (d.length >= 3) this.value = `(${d.slice(0,3)}) ${d.slice(3)}`;
+  else this.value = d;
+});
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('hashchange', route);
+route();
+</script>
 </body>
 </html>
