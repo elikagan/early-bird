@@ -249,6 +249,46 @@ Reply: [link]
 12. No client-side blur for pre-drop items. Server-side redaction.
 13. No Geist or Bebas Neue fonts.
 
+## Build Status (as of April 6, 2026)
+
+### DONE — Core App
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Auth (magic link SMS) | ✅ Done | Telnyx SMS, auto-register buyers, invite-only dealers |
+| Onboarding (selfie, name) | ✅ Done | Selfie upload to Supabase Storage CDN, 600px/q82 |
+| Buyer landing page | ✅ Done | Multi-market, countdowns, how it works, FAQ, disclaimer |
+| Dealer landing page | ✅ Done | Separate value prop, same auth flow |
+| Feed (Shop mode) | ✅ Done | TikTok scroll mobile, 2-col grid desktop, market selector |
+| Item detail | ✅ Done | Photo carousel (swipe + dots), price posture, condition, dealer info |
+| "I want this" messaging | ✅ Done | Buy/Offer/Question boilerplate, prepopulated text |
+| Conversation view | ✅ Done | Chat bubbles, phone numbers, payment info, reply input |
+| Messages list | ✅ Done | Unified inbox, avatars, time ago |
+| Favorites/Saved | ✅ Done | Heart toggle, saved tab, API CRUD |
+| Dealer home (Sell mode) | ✅ Done | Market info, booth number, add item, my items list |
+| Add item form | ✅ Done | Photos (drag reorder), title, price, condition, posture, market, notes |
+| Seller inquiry view | ✅ Done | All buyers with faces/phones, hold/sold actions |
+| Item status (hold/sold) | ✅ Done | Status badges, buyer name on sold |
+| Settings screen | ✅ Done | Profile, payment (Venmo/Zelle), preferences, logout |
+| Admin CMS UI | ✅ Done | Dealers, Markets, SMS Blast, Activity tabs at #/admin |
+| Server-side drop redaction | ✅ Done | API strips photo URLs before drop_time |
+| Image CDN | ✅ Done | Supabase Storage, client compression 1200px/q82, thumbnails 400px |
+| SMS notifications | ✅ Done | Buyer→seller, seller→buyer, includes phone numbers + reply link |
+
+### NOT YET BUILT
+| Feature | Priority | Notes |
+|---------|----------|-------|
+| Market subscriptions (buyers) | Low | Buyers pick which markets they care about |
+| Rating/accountability | Low | Rate transactions, flag flaking |
+| Item expiry automation | Low | Cron to remove listings 1-2 days post-event |
+| Test event QA | Pre-launch | End-to-end test before April 26 |
+
+### NEXT SESSION: Design cleanup
+The current UI is functionally complete but visually rough. Next session should:
+1. Reformat and clean up all code (CSS, HTML, JS)
+2. Run a gstack design review for visual polish
+3. Fix any design system violations
+4. Test end-to-end flow with real SMS
+
 ## Decisions Log
 | Date | Decision | Rationale |
 |------|----------|-----------|
