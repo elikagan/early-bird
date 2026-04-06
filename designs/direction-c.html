@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Early Bird - Direction C: "The Stamp"</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #EDEAE4;
+    font-family: 'IBM Plex Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  /* Direction label */
+  .direction-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 8px;
+  }
+  .direction-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: #F7F5F0;
+    border-radius: 44px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.08),
+      0 20px 60px rgba(0,0,0,0.15),
+      0 4px 16px rgba(0,0,0,0.08),
+      inset 0 0 0 1px rgba(255,255,255,0.3);
+  }
+
+  /* Notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 34px;
+    background: #1A1A1A;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  /* Status bar */
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px;
+    z-index: 99;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 700; }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+  .status-icons svg { width: 16px; height: 12px; fill: #1A1A1A; }
+
+  /* Scrollable content */
+  .screen-content {
+    position: absolute;
+    top: 54px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  .content-inner {
+    padding: 16px 24px 40px;
+  }
+
+  /* --- HEADER --- */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .logo-stamp {
+    display: inline-block;
+    border: 3px solid #1A1A1A;
+    padding: 6px 12px 5px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    color: #1A1A1A;
+    line-height: 1;
+    /* Slight rotation for stamp feel */
+    transform: rotate(-1.5deg);
+  }
+
+  .dealer-link {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #7A7A72;
+    text-decoration: none;
+    padding-top: 4px;
+  }
+
+  /* --- EVENT CONTEXT --- */
+  .event-section {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .event-context-tag {
+    display: inline-block;
+    border: 2px solid #D5D2CB;
+    padding: 4px 12px 3px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #7A7A72;
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+  }
+
+  .event-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: #1A1A1A;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .event-date {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: #C62828;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  /* --- COUNTDOWN --- */
+  .countdown-section {
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .countdown-label {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7A7A72;
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .countdown-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .countdown-num {
+    width: 72px;
+    height: 64px;
+    border: 3px solid #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #1A1A1A;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .countdown-sub {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: #7A7A72;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 5px;
+  }
+
+  .countdown-colon {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: #1A1A1A;
+    align-self: flex-start;
+    padding-top: 12px;
+  }
+
+  /* --- PHONE INPUT --- */
+  .input-section {
+    margin-bottom: 12px;
+  }
+
+  .phone-input {
+    width: 100%;
+    height: 52px;
+    border: 3px solid #1A1A1A;
+    background: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: #1A1A1A;
+    padding: 0 16px;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .phone-input::placeholder {
+    color: #C5C3BC;
+    font-weight: 500;
+  }
+
+  /* --- CTA --- */
+  .cta-button {
+    width: 100%;
+    height: 52px;
+    background: #C62828;
+    color: #fff;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0;
+    margin-bottom: 12px;
+  }
+
+  .fine-print {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    color: #7A7A72;
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  /* --- FOLD INDICATOR --- */
+  .fold-indicator {
+    position: relative;
+    margin: 32px -24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .fold-line {
+    flex: 1;
+    height: 1px;
+    background: #D5D2CB;
+    background: repeating-linear-gradient(90deg, #D5D2CB 0, #D5D2CB 4px, transparent 4px, transparent 8px);
+  }
+  .fold-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    color: #B5B3AC;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  /* --- SECTION DIVIDER (thick stamp border) --- */
+  .section-divider {
+    border: none;
+    border-top: 3px solid #1A1A1A;
+    margin: 32px 0 24px;
+  }
+
+  /* --- SECTION HEADER STAMP --- */
+  .section-stamp {
+    display: inline-block;
+    border: 2px solid #1A1A1A;
+    padding: 4px 10px 3px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1A1A1A;
+    margin-bottom: 20px;
+  }
+
+  /* --- HOW IT WORKS --- */
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border: 3px solid #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1A1A1A;
+    margin-top: 1px;
+  }
+
+  .step-content {}
+
+  .step-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+
+  .step-desc {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: #7A7A72;
+    line-height: 1.5;
+  }
+
+  /* --- FAQ --- */
+  .faq-item {
+    border-bottom: 2px solid #D5D2CB;
+    padding: 16px 0;
+  }
+  .faq-item:first-of-type {
+    border-top: 2px solid #D5D2CB;
+  }
+
+  .faq-q {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1A1A1A;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .faq-a {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: #7A7A72;
+    line-height: 1.55;
+  }
+
+  /* --- DISCLAIMER --- */
+  .disclaimer {
+    margin-top: 32px;
+    padding: 16px;
+    border: 2px dashed #D5D2CB;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    color: #AAA89F;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  /* Bottom padding for safe area */
+  .safe-area {
+    height: 34px;
+  }
+</style>
+</head>
+<body>
+
+<div class="direction-label">Direction C</div>
+<div class="direction-title">"The Stamp"</div>
+
+<div class="phone-frame">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 17 12"><path d="M1 6.5h2v5H1zM5 4h2v8H5zM9 2h2v10H9zM13 0h2v12h-2z"/></svg>
+      <svg viewBox="0 0 16 12" style="width:16px"><path d="M8 2.4C5.6 2.4 3.4 3.3 1.8 4.8L0 3C2 1.1 4.9 0 8 0s6 1.1 8 3l-1.8 1.8C12.6 3.3 10.4 2.4 8 2.4zM8 7.2c-1.5 0-2.8.6-3.8 1.5L2.4 6.9c1.4-1.3 3.4-2.1 5.6-2.1s4.2.8 5.6 2.1l-1.8 1.8C10.8 7.8 9.5 7.2 8 7.2zM8 12l-2.4-2.4C6.4 8.8 7.1 8.4 8 8.4s1.6.4 2.4 1.2L8 12z"/></svg>
+      <svg viewBox="0 0 25 12" style="width:25px"><rect x="0" y="1" width="21" height="10" rx="2" ry="2" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="22" y="3.5" width="2" height="5" rx="1" fill="#1A1A1A"/><rect x="1.5" y="2.5" width="16" height="7" rx="1" fill="#1A1A1A"/></svg>
+    </div>
+  </div>
+
+  <div class="screen-content">
+    <div class="content-inner">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-stamp">EARLY BIRD</div>
+        <a href="#" class="dealer-link">I'm a dealer</a>
+      </div>
+
+      <!-- Event context -->
+      <div class="event-section">
+        <div class="event-context-tag">Early access to the best stuff at</div>
+        <div class="event-name">DOWNTOWN</div>
+        <div class="event-name">MODERNISM</div>
+        <div class="event-date">4.26</div>
+      </div>
+
+      <!-- Countdown -->
+      <div class="countdown-section">
+        <div class="countdown-label">Inventory drops in</div>
+        <div class="countdown-boxes">
+          <div class="countdown-unit">
+            <div class="countdown-num">16</div>
+            <div class="countdown-sub">Days</div>
+          </div>
+          <div class="countdown-colon">:</div>
+          <div class="countdown-unit">
+            <div class="countdown-num">22</div>
+            <div class="countdown-sub">Hrs</div>
+          </div>
+          <div class="countdown-colon">:</div>
+          <div class="countdown-unit">
+            <div class="countdown-num">47</div>
+            <div class="countdown-sub">Min</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone input -->
+      <div class="input-section">
+        <input type="tel" class="phone-input" placeholder="(310) 555-1234" readonly>
+      </div>
+
+      <!-- CTA -->
+      <button class="cta-button">REGISTER FOR EARLY ACCESS</button>
+
+      <!-- Fine print -->
+      <p class="fine-print">We'll text you when inventory goes live.</p>
+
+      <!-- Fold indicator -->
+      <div class="fold-indicator">
+        <div class="fold-line"></div>
+        <span class="fold-text">Below the fold</span>
+        <div class="fold-line"></div>
+      </div>
+
+      <!-- How It Works -->
+      <hr class="section-divider">
+      <div class="section-stamp">How It Works</div>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Register</div>
+          <div class="step-desc">Register with your phone number. We'll text you a link when inventory drops before each market.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Shop early</div>
+          <div class="step-desc">See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Pick up at the market</div>
+          <div class="step-desc">Pay the dealer directly and grab your item at their booth. It's already yours.</div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <hr class="section-divider">
+      <div class="section-stamp">FAQ</div>
+
+      <div class="faq-item">
+        <div class="faq-q">What is Early Bird?</div>
+        <div class="faq-a">Early Bird lets you see what dealers are bringing to flea markets and buy items before the general public gets access. Think of it as a preview sale — you shop early, then pick up at the market.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is this free?</div>
+        <div class="faq-a">Yes. Early Bird is free for buyers. You just pay the dealer directly for any items you purchase.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">How do I pay?</div>
+        <div class="faq-a">You pay the dealer directly at the market when you pick up your item. Early Bird doesn't process payments — we just connect you with the seller.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is this affiliated with the markets?</div>
+        <div class="faq-a">No. Early Bird is an independent platform. We are not affiliated with or endorsed by any market listed here.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What markets are listed?</div>
+        <div class="faq-a">We're starting with LA-area markets — Downtown Modernism, Rose Bowl, Long Beach, and more. New markets are added regularly.</div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer">
+        Early Bird is not affiliated with or endorsed by any market listed here. All listings are posted by independent dealers.
+      </div>
+
+      <div class="safe-area"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Early Bird — Direction B: "The Broadsheet"</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #E8E4DC;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  /* Direction label */
+  .direction-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #78716C;
+    margin-bottom: 8px;
+  }
+  .direction-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1C1917;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: #FFFEF9;
+    border-radius: 44px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.06),
+      0 20px 60px rgba(0,0,0,0.15),
+      0 4px 16px rgba(0,0,0,0.08),
+      inset 0 0 0 1px rgba(255,255,255,0.3);
+  }
+
+  /* Notch */
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 34px;
+    background: #1C1917;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  /* Status bar */
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px;
+    z-index: 99;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1C1917;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 700; }
+  .status-bar .icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+  /* Screen content */
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 68px 24px 40px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* Fold indicator */
+  .fold-marker {
+    position: relative;
+    height: 0;
+    margin: 0 -24px;
+    pointer-events: none;
+  }
+  .fold-marker::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1.5px dashed rgba(0, 102, 255, 0.35);
+  }
+  .fold-marker .fold-label {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(0, 102, 255, 0.5);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ============ BROADSHEET DESIGN ============ */
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    font-style: italic;
+    color: #1C1917;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .dealer-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #78716C;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  /* Thin rules — newspaper style */
+  .rule {
+    border: none;
+    border-top: 1px solid #D6D3D1;
+    margin: 0;
+  }
+  .rule-thick {
+    border: none;
+    border-top: 2px solid #1C1917;
+    margin: 0;
+  }
+
+  /* Context line */
+  .context-line {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #78716C;
+    text-align: center;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Event name — broadsheet headline */
+  .event-block {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .event-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1C1917;
+    line-height: 1.1;
+    margin: 12px 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .event-date {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #78716C;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+
+  /* Countdown — three columns with vertical hairlines */
+  .countdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0 28px;
+    gap: 0;
+  }
+  .countdown-unit {
+    flex: 1;
+    text-align: center;
+    padding: 0 16px;
+  }
+  .countdown-unit:not(:last-child) {
+    border-right: 1px solid #D6D3D1;
+  }
+  .countdown-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1C1917;
+    line-height: 1;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .countdown-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #78716C;
+    display: block;
+  }
+  .countdown-context {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #78716C;
+    text-align: center;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  /* Phone input */
+  .input-group {
+    margin: 0 0 12px;
+  }
+  .phone-input {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 14px 16px;
+    border: 1px solid #D6D3D1;
+    border-radius: 3px;
+    background: #FFFEF9;
+    color: #1C1917;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .phone-input::placeholder {
+    color: #A8A29E;
+  }
+
+  /* CTA button */
+  .cta-button {
+    width: 100%;
+    padding: 15px 24px;
+    background: #B45309;
+    color: #FFFEF9;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .cta-button:hover {
+    background: #92400E;
+  }
+
+  /* Fine print */
+  .fine-print {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: #A8A29E;
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+
+  /* ============ BELOW FOLD ============ */
+
+  /* Section header — newspaper section label */
+  .section-header {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #78716C;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #D6D3D1;
+    margin-bottom: 20px;
+    margin-top: 40px;
+  }
+
+  /* How it works steps */
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #B45309;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+    margin-top: 1px;
+  }
+  .step-content {
+    flex: 1;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1C1917;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .step-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #78716C;
+    line-height: 1.55;
+  }
+
+  /* FAQ */
+  .faq-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #D6D3D1;
+  }
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+  .faq-q {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1C1917;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .faq-a {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #78716C;
+    line-height: 1.55;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: #A8A29E;
+    text-align: center;
+    line-height: 1.6;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid #D6D3D1;
+    margin-bottom: 20px;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="direction-label">Direction B</div>
+<div class="direction-title">The Broadsheet</div>
+
+<div class="phone-frame">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <span class="icons">
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0" y="4" width="3" height="7" rx="0.5" fill="#1C1917"/><rect x="4.5" y="3" width="3" height="8" rx="0.5" fill="#1C1917"/><rect x="9" y="1" width="3" height="10" rx="0.5" fill="#1C1917"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="#1C1917" opacity="0.3"/></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><path d="M7.5 2.5C9.4 2.5 11.1 3.3 12.3 4.5L13.7 3.1C12.1 1.5 9.9 0.5 7.5 0.5C5.1 0.5 2.9 1.5 1.3 3.1L2.7 4.5C3.9 3.3 5.6 2.5 7.5 2.5ZM7.5 6.5C8.5 6.5 9.4 6.9 10 7.5L11.4 6.1C10.4 5.1 9 4.5 7.5 4.5C6 4.5 4.6 5.1 3.6 6.1L5 7.5C5.6 6.9 6.5 6.5 7.5 6.5ZM7.5 8.5C8 8.5 8.4 8.7 8.7 9L7.5 10.5L6.3 9C6.6 8.7 7 8.5 7.5 8.5Z" fill="#1C1917"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0" y="1" width="21" height="10" rx="2" stroke="#1C1917" stroke-width="1"/><rect x="2" y="3" width="14" height="6" rx="1" fill="#1C1917"/><rect x="22" y="4" width="2.5" height="4" rx="0.5" fill="#1C1917" opacity="0.4"/></svg>
+    </span>
+  </div>
+
+  <div class="screen">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">Early Bird</div>
+      <a href="#" class="dealer-link">I'm a dealer</a>
+    </div>
+
+    <!-- Top rule -->
+    <hr class="rule-thick">
+
+    <!-- Context + Event headline -->
+    <div class="context-line">Early access to the best stuff at</div>
+
+    <div class="event-block">
+      <hr class="rule">
+      <div class="event-name">Downtown<br>Modernism</div>
+      <div class="event-date">APRIL 26, 2025</div>
+      <hr class="rule">
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-context">Inventory drops in</div>
+    <div class="countdown">
+      <div class="countdown-unit">
+        <span class="countdown-number">16</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-unit">
+        <span class="countdown-number">22</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-unit">
+        <span class="countdown-number">47</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+    </div>
+
+    <!-- Phone input + CTA -->
+    <div class="input-group">
+      <input type="tel" class="phone-input" placeholder="(310) 555-1234" readonly>
+    </div>
+    <button class="cta-button">Register for Early Access</button>
+    <div class="fine-print">We'll text you when inventory goes live.</div>
+
+    <!-- ===== FOLD ===== -->
+    <div class="fold-marker">
+      <span class="fold-label">Fold</span>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section-header">How It Works</div>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <div class="step-title">Register</div>
+        <div class="step-desc">Enter your phone number. We'll text you a link when inventory drops before each market.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <div class="step-title">Shop before the gates open</div>
+        <div class="step-desc">See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <div class="step-title">Pick up at the market</div>
+        <div class="step-desc">Pay the dealer directly and grab your item at their booth. It's already yours.</div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section-header">Questions</div>
+
+    <div class="faq-item">
+      <div class="faq-q">What is Early Bird?</div>
+      <div class="faq-a">Early Bird lets you see what dealers are bringing to flea markets and buy items before the market opens to the public.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this free?</div>
+      <div class="faq-a">Yes. Browsing and buying on Early Bird is completely free for buyers.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">How do I pay?</div>
+      <div class="faq-a">You pay the dealer directly at the market when you pick up your item. Early Bird doesn't process payments.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this affiliated with the markets?</div>
+      <div class="faq-a">No. Early Bird is an independent platform. We are not affiliated with or endorsed by any market listed here.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What markets are listed?</div>
+      <div class="faq-a">We're starting with LA-area markets like Downtown Modernism, Rose Bowl, and Long Beach. More coming soon.</div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      Early Bird is not affiliated with or endorsed by any market listed here. All listings are posted by independent dealers.
+    </div>
+
+  </div><!-- end .screen -->
+</div><!-- end .phone-frame -->
+
+</body>
+</html>

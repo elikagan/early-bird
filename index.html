@@ -6,25 +6,34 @@
   <title>Early Bird</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /*
+     * DESIGN SYSTEM: "The Text Message"
+     * Font: JetBrains Mono (one font, all weights)
+     * Colors: #1A1A1A text, #888 muted, #CCC dim, #0066FF accent
+     * Background: #FAFAF8
+     * Spacing: 32px between groups, 48px between zones
+     * No borders, no dividers — spacing is the only structure
+     * Border-radius: 6px (inputs/buttons)
+     */
+
     :root {
-      --bg: #FFFFFF;
-      --text: #111111;
-      --text-2: #444444;
-      --text-3: #999999;
-      --border: #E0E0E0;
-      --accent: #2E7EBF;
-      --accent-hover: #1D6BA8;
-      --error: #CC4444;
-      --success: #2D8A4E;
-      --hold: #B8960C;
+      --bg: #FAFAF8;
+      --text: #1A1A1A;
+      --muted: #888888;
+      --dim: #CCCCCC;
+      --accent: #0066FF;
+      --accent-hover: #0052CC;
+      --error: #D32F2F;
+      --success: #2E7D32;
+      --input-bg: #F0EFEC;
     }
 
     body {
-      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-family: 'JetBrains Mono', monospace;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
@@ -35,20 +44,11 @@
     .screen { display: none; }
     .screen.active { display: block; }
 
-    /*
-     * DESIGN SYSTEM TOKENS
-     * Spacing: 20px (within groups) / 40px (between groups) / 80px (between zones)
-     * Line-height: 1 (display) / 1.5 (body)
-     * Letter-spacing: 0.02em (display) / 0.06em (buttons) / 0.1em (labels)
-     * Border-radius: 4px
-     * Internal padding: 14px (inputs/buttons)
-     */
-
     /* ── Landing Page ────────────────────── */
     #landing {
       min-height: 100vh;
       min-height: 100dvh;
-      max-width: 540px;
+      max-width: 480px;
       margin: 0 auto;
       padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
@@ -56,210 +56,252 @@
     }
 
     /* ── Header ── */
-    .landing-header {
+    .header {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: center;
       padding-top: 8px;
+      margin-bottom: 48px;
     }
-    .landing-header .dealer-link { margin-top: -4px; }
-
-    .logo-stack { line-height: 0.85; }
-    .logo-early {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 40px; letter-spacing: 0.02em;
-      color: var(--text); display: block; line-height: 0.85;
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1;
     }
-    .logo-bird {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 40px; letter-spacing: 0.02em;
-      color: var(--accent); display: block; line-height: 0.85;
+    .cursor {
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
     }
     .dealer-link {
-      font-size: 12px; color: var(--text-2); text-decoration: none;
-      display: inline-block; border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 4px; font-weight: 500;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
     }
-    .dealer-link:hover { border-color: var(--text-3); color: var(--text); }
+    .dealer-link:hover { color: var(--text); }
 
-    /* ── Rule ── */
-    .rule {
-      border: none; border-top: 2px solid var(--text);
-      margin: 20px 0;
+    /* ── Markets list ── */
+    .markets-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
     }
 
-    /* ── Event Group ── */
-    .event-context {
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--text-3); font-weight: 600;
+    .market-item {
+      margin-bottom: 32px;
     }
-    .event-name {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 36px; letter-spacing: 0.02em;
-      color: var(--text); line-height: 1;
+    .market-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .market-date {
+      color: var(--dim);
+    }
+    .market-countdown {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted);
       margin-top: 6px;
-    }
-    .event-date { color: var(--text-3); }
-
-    /* ── Countdown ── */
-    .countdown { margin-top: 40px; }
-    .cd-label {
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--text-3); font-weight: 600;
-    }
-    .cd-type {
-      display: flex; align-items: baseline; gap: 5px;
-      margin-top: 6px;
-    }
-    .cd-num {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 36px; line-height: 1; color: var(--text);
-      letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
-    }
-    .cd-word {
-      font-size: 11px; color: var(--text-3); font-weight: 500;
-      text-transform: lowercase; padding-bottom: 4px;
-    }
-    .cd-sep {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 22px; color: var(--border); padding-bottom: 2px;
     }
 
     /* ── Auth ── */
-    .auth-section { margin-top: 40px; }
-    .auth-input {
-      width: 100%; padding: 14px;
-      border: 1px solid var(--border); border-radius: 4px;
-      font-family: 'DM Sans', sans-serif; font-size: 16px;
-      font-variant-numeric: tabular-nums;
-      color: var(--text); background: var(--bg); outline: none;
+    .auth-section {
+      margin-top: 16px;
     }
-    .auth-input::placeholder { color: #C0C0C0; }
-    .auth-input:focus { border-color: var(--accent); }
+    .auth-input {
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text);
+      background: var(--input-bg);
+      border: none;
+      padding: 14px 16px;
+      border-radius: 6px;
+      outline: none;
+      letter-spacing: 0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .auth-input::placeholder { color: var(--dim); }
+    .auth-input:focus { box-shadow: 0 0 0 2px var(--accent); }
     .auth-btn {
-      width: 100%; margin-top: 10px; padding: 16px 14px 12px;
-      background: var(--accent); color: white; border: none; border-radius: 4px;
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 18px; letter-spacing: 0.06em; cursor: pointer;
-      line-height: 1; display: flex; align-items: center; justify-content: center;
+      width: 100%;
+      margin-top: 10px;
+      background: var(--accent);
+      color: #FFFFFF;
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
     .auth-btn:hover { background: var(--accent-hover); }
     .auth-btn:disabled { opacity: 0.5; cursor: default; }
     .auth-fine {
-      margin-top: 10px; font-size: 11px; color: var(--text-3);
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
     }
     .auth-error {
-      margin-top: 10px; font-size: 13px; color: var(--error);
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--error);
     }
     .auth-success {
-      margin-top: 10px; font-size: 13px; color: var(--success);
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--success);
     }
 
-    /* ── Hero image (below fold) ── */
-    .hero-image {
-      margin-top: 40px; width: 100%; aspect-ratio: 4/3;
-      border-radius: 4px; overflow: hidden; display: none;
+    /* ── Info sections (below fold) ── */
+    .info-zone {
+      margin-top: 64px;
     }
-    .hero-image img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* ── Info Sections ── */
-    .info-columns { margin-top: 80px; }
-    .info-columns .info-section:first-child { margin-top: 0; }
-    .info-section {
-      margin-top: 40px;
-      border-top: 1px solid var(--border);
-      padding-top: 16px;
-    }
-    .info-section-title {
-      font-size: 11px; color: var(--text-3); letter-spacing: 0.1em;
-      text-transform: uppercase; font-weight: 600;
-      margin-bottom: 16px;
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
     }
 
-    .steps { list-style: none; }
     .step {
-      margin-bottom: 20px;
-      font-size: 14px; color: var(--text-2); line-height: 1.5;
+      margin-bottom: 24px;
     }
     .step:last-child { margin-bottom: 0; }
-    .step strong { color: var(--text); font-weight: 600; }
+    .step-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+      letter-spacing: 0.05em;
+    }
+    .step-text {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.5;
+    }
 
-    .faq-item { margin-bottom: 20px; }
+    .faq-section {
+      margin-top: 48px;
+    }
+    .faq-item {
+      margin-bottom: 20px;
+    }
     .faq-item:last-child { margin-bottom: 0; }
     .faq-q {
-      font-size: 14px; font-weight: 600; color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
       margin-bottom: 4px;
     }
-    .faq-a { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+    .faq-a {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
     .disclaimer {
-      margin-top: 80px; padding-top: 20px;
-      border-top: 1px solid var(--border);
-      font-size: 10px; color: var(--text-3); line-height: 1.5;
+      margin-top: 48px;
+      font-size: 10px;
+      color: var(--dim);
+      line-height: 1.5;
     }
 
     /* ── Desktop ── */
     @media (min-width: 768px) {
-      body { background: #F5F3F0; }
+      body { background: #F0F0EC; }
       #landing, #dealer-landing {
-        max-width: 800px; padding: 48px 56px 64px;
-        background: var(--bg); margin-top: 40px; margin-bottom: 40px;
-        border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        max-width: 720px;
+        padding: 48px 56px 64px;
+        background: var(--bg);
+        margin-top: 40px;
+        margin-bottom: 40px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         min-height: auto;
       }
-      .landing-hero {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 56px; align-items: start;
+      .landing-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
+        align-items: start;
       }
-      .landing-hero .countdown { margin-top: 40px; }
-      .landing-hero .auth-section { margin-top: 0; }
-      .info-columns {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+      .landing-columns .auth-section { margin-top: 0; }
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 56px;
       }
-      .info-columns .info-section {
-        margin-top: 0; padding-top: 16px; border-top: 1px solid var(--border);
-      }
-      .logo-early, .logo-bird { font-size: 48px; }
-      .event-name { font-size: 42px; }
-      .cd-num { font-size: 40px; }
-      .dealer-hero-area {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 56px; align-items: start;
-      }
-      .dealer-hero-area .auth-section { margin-top: 0; }
-    }
-    @media (min-width: 1024px) {
-      #landing, #dealer-landing { max-width: 900px; padding: 56px 72px 80px; }
+      .info-grid .faq-section { margin-top: 0; }
     }
 
-    /* Dealer landing page */
+    /* ── Dealer Landing Page ─────────────── */
     #dealer-landing {
-      min-height: 100vh; min-height: 100dvh;
-      max-width: 540px; margin: 0 auto; padding: 0 24px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
       padding-bottom: max(40px, env(safe-area-inset-bottom));
     }
     .back-link {
-      font-size: 12px; color: var(--accent);
-      text-decoration: none; font-weight: 500;
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
     }
-    .dealer-hero-text {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px; color: var(--text); line-height: 1;
-      margin: 20px 0 8px;
+    .dealer-headline {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin: 32px 0 8px;
     }
-    .dealer-hero-text .accent { color: var(--accent); }
+    .dealer-headline .accent { color: var(--accent); }
     .dealer-sub {
-      font-size: 14px; color: var(--text-2); line-height: 1.5;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
       margin-bottom: 20px;
     }
     .dealer-free-badge {
       display: inline-block;
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 14px; letter-spacing: 0.1em;
-      color: var(--success); background: #EDF7F0;
-      padding: 8px 14px; border-radius: 4px;
-      margin-bottom: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--success);
+      background: #EDF7F0;
+      padding: 8px 14px;
+      border-radius: 6px;
+      margin-bottom: 24px;
     }
 
     /* ── Verify Screen ───────────────────── */
@@ -273,70 +315,80 @@
       padding: 2rem;
       text-align: center;
     }
-    #verify .logo-stack { margin-bottom: 24px; }
-    .verify-status { font-size: 15px; color: var(--text-2); margin-top: 12px; }
-    .verify-error { font-size: 14px; color: var(--error); margin-top: 12px; }
+    #verify .logo { margin-bottom: 24px; }
+    .verify-status {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+    .verify-error {
+      font-size: 14px;
+      color: var(--error);
+      margin-top: 12px;
+    }
 
     /* ── Onboarding Screen ───────────────── */
     #onboarding {
       min-height: 100vh;
       min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
       padding: 0 24px;
       padding-top: max(60px, env(safe-area-inset-top));
     }
     .onboard-title {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 32px;
+      font-size: 24px;
+      font-weight: 700;
       color: var(--text);
-      line-height: 1;
+      letter-spacing: -0.03em;
       margin-bottom: 4px;
     }
     .onboard-sub {
       font-size: 13px;
-      color: var(--text-3);
-      margin-bottom: 24px;
+      color: var(--muted);
+      margin-bottom: 32px;
     }
 
     .field { margin-bottom: 16px; }
     .field label {
       display: block;
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-3);
       font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
       margin-bottom: 6px;
     }
     .field input[type="text"] {
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-family: 'DM Sans', sans-serif;
+      padding: 14px 16px;
+      background: var(--input-bg);
+      border: none;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
       color: var(--text);
       outline: none;
     }
-    .field input[type="text"]:focus { border-color: var(--accent); }
+    .field input[type="text"]:focus { box-shadow: 0 0 0 2px var(--accent); }
 
-    .selfie-area { margin-bottom: 20px; }
+    .selfie-area { margin-bottom: 24px; }
     .selfie-preview {
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      background: #F0EDE8;
+      background: var(--input-bg);
       margin: 0 auto 10px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid var(--border);
       cursor: pointer;
     }
     .selfie-preview img { width: 100%; height: 100%; object-fit: cover; }
     .selfie-preview .placeholder {
       font-size: 11px;
-      color: var(--text-3);
+      color: var(--muted);
       text-align: center;
       line-height: 1.5;
     }
@@ -358,12 +410,12 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(255,255,255,0.95);
+      background: rgba(250,250,248,0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: 0 24px;
       padding-top: max(12px, env(safe-area-inset-top));
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--input-bg);
     }
     .feed-header-top {
       display: flex;
@@ -372,67 +424,78 @@
       padding-bottom: 12px;
     }
     .feed-logo {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 22px;
-      letter-spacing: 0.02em;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
     }
-    .feed-logo .early { color: var(--text); }
-    .feed-logo .bird { color: var(--accent); }
-    .feed-event { font-size: 12px; color: var(--text-3); }
+    .feed-event {
+      font-size: 12px;
+      color: var(--muted);
+    }
 
     /* Item grid */
     .item-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1px;
-      background: var(--border);
+      background: var(--input-bg);
     }
     .item-card { background: var(--bg); cursor: pointer; }
     .item-card-img {
       width: 100%;
       aspect-ratio: 1;
-      background: #F0EDE8;
+      background: var(--input-bg);
       overflow: hidden;
     }
     .item-card-img img { width: 100%; height: 100%; object-fit: cover; }
     .item-card-info { padding: 10px 12px; }
     .item-card-price {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
     }
-    .item-card-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .item-card-meta {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
     .item-card-badge {
       display: inline-block;
       padding: 2px 6px;
-      border-radius: 3px;
+      border-radius: 4px;
       font-size: 9px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       margin-top: 4px;
     }
-    .badge-hold { background: #FDF6E3; color: var(--hold); }
-    .badge-sold { background: #EEE; color: var(--text-3); }
+    .badge-hold { background: #FDF6E3; color: #B8960C; }
+    .badge-sold { background: #EEE; color: var(--muted); }
 
     .empty-state { text-align: center; padding: 60px 24px; }
     .empty-state h2 {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--text);
+      letter-spacing: -0.02em;
       margin-bottom: 8px;
     }
-    .empty-state p { font-size: 14px; color: var(--text-3); line-height: 1.5; }
+    .empty-state p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
 
     /* ── Bottom Nav ───────────────────────── */
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(255,255,255,0.95);
+      background: rgba(250,250,248,0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--input-bg);
       display: flex;
       padding-bottom: max(8px, env(safe-area-inset-bottom));
     }
@@ -443,13 +506,14 @@
       align-items: center;
       padding: 8px 0;
       font-size: 10px;
-      color: var(--text-3);
+      color: var(--muted);
       text-decoration: none;
       font-weight: 500;
       gap: 2px;
       cursor: pointer;
       border: none;
       background: none;
+      font-family: 'JetBrains Mono', monospace;
     }
     .nav-tab.active { color: var(--accent); }
     .nav-tab svg { width: 22px; height: 22px; }
@@ -458,26 +522,36 @@
     #dealer-home {
       min-height: 100vh;
       min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
       padding: 0 24px;
       padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
     }
     .dealer-event-name {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 24px;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--text);
-      line-height: 1;
+      letter-spacing: -0.02em;
     }
-    .dealer-event-date { font-size: 12px; color: var(--text-3); margin-top: 4px; }
-    .dealer-countdown { font-size: 13px; color: var(--text-2); margin-top: 8px; }
+    .dealer-event-date {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .dealer-countdown {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
     .dealer-countdown strong { font-variant-numeric: tabular-nums; }
 
     .free-notice {
-      background: #F0F8F0;
-      border-radius: 4px;
+      background: #EDF7F0;
+      border-radius: 6px;
       padding: 14px 16px;
-      margin: 20px 0;
-      font-size: 13px;
+      margin: 24px 0;
+      font-size: 12px;
       color: var(--success);
       font-weight: 500;
     }
@@ -487,12 +561,14 @@
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 4px;
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 20px;
-      letter-spacing: 0.06em;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
       cursor: pointer;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     .add-item-btn:hover { background: var(--accent-hover); }
 
@@ -501,33 +577,44 @@
       display: flex;
       gap: 12px;
       padding: 14px 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--input-bg);
       align-items: center;
     }
     .my-item-thumb {
       width: 60px; height: 60px;
-      border-radius: 4px;
-      background: #F0EDE8;
+      border-radius: 6px;
+      background: var(--input-bg);
       flex-shrink: 0;
       overflow: hidden;
     }
     .my-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .my-item-info { flex: 1; }
-    .my-item-price { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .my-item-status { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .my-item-price {
+      font-size: 14px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .my-item-status {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
     /* ── Messages ────────────────────────── */
     #messages {
       min-height: 100vh;
       min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
       padding: 0 24px;
       padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
     }
     .messages-title {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
+      font-size: 20px;
+      font-weight: 700;
       color: var(--text);
+      letter-spacing: -0.02em;
       margin-bottom: 16px;
     }
 
@@ -548,34 +635,27 @@
 
 <!-- LANDING PAGE -->
 <div id="landing" class="screen active">
-  <div class="landing-header">
-    <div class="logo-stack">
-      <span class="logo-early">EARLY</span>
-      <span class="logo-bird">BIRD</span>
-    </div>
+  <div class="header">
+    <div class="logo">EARLY BIRD<span class="cursor">_</span></div>
     <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">I'm a dealer</a>
   </div>
 
-  <hr class="rule">
-
-  <div class="landing-hero">
+  <div class="landing-columns">
     <div>
-      <div class="event-block" id="event-block">
-        <div class="event-context">Early access to the best stuff at</div>
-        <div class="event-name" id="landing-event-name">— <span class="event-date" id="landing-event-date"></span></div>
-      </div>
-
-      <div class="countdown" id="landing-countdown">
-        <div class="cd-label">Inventory drops in</div>
-        <div class="cd-type">
-          <span class="cd-num" id="cd-days">--</span>
-          <span class="cd-word">days</span>
-          <span class="cd-sep">:</span>
-          <span class="cd-num" id="cd-hrs">--</span>
-          <span class="cd-word">hrs</span>
-          <span class="cd-sep">:</span>
-          <span class="cd-num" id="cd-min">--</span>
-          <span class="cd-word">min</span>
+      <div class="markets-label">Upcoming markets</div>
+      <div id="markets-list">
+        <!-- Populated by JS, fallback below -->
+        <div class="market-item">
+          <div class="market-name">DTWN MODERNISM <span class="market-date">4.26</span></div>
+          <div class="market-countdown">drops in --d --h --m</div>
+        </div>
+        <div class="market-item">
+          <div class="market-name">PCC FLEA <span class="market-date">5.4</span></div>
+          <div class="market-countdown">drops in --d --h --m</div>
+        </div>
+        <div class="market-item">
+          <div class="market-name">ROSE BOWL <span class="market-date">5.11</span></div>
+          <div class="market-countdown">drops in --d --h --m</div>
         </div>
       </div>
     </div>
@@ -584,56 +664,58 @@
       <input type="tel" class="auth-input" id="phone-input" placeholder="(310) 555-1234"
              inputmode="tel" autocomplete="tel">
       <button class="auth-btn" id="auth-btn" onclick="requestMagicLink()">
-        REGISTER FOR EARLY ACCESS
+        Register for early access
       </button>
       <div class="auth-fine" id="auth-msg">We'll text you when inventory goes live.</div>
     </div>
   </div>
 
-  <div class="hero-image" id="hero-image"></div>
-
-  <!-- How it works + FAQ -->
-  <div class="info-columns">
-    <div class="info-section">
-      <div class="info-section-title">HOW IT WORKS</div>
-      <ol class="steps">
-        <li class="step"><strong>Register with your phone number.</strong> We'll text you a link when inventory drops before each market.</li>
-        <li class="step"><strong>Shop before the gates open.</strong> See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</li>
-        <li class="step"><strong>Pick up at the market.</strong> Pay the dealer directly and grab your item at their booth. It's already yours.</li>
-      </ol>
-    </div>
-
-    <div class="info-section">
-      <div class="info-section-title">FAQ</div>
-
-      <div class="faq-item">
-        <div class="faq-q">What is Early Bird?</div>
-        <div class="faq-a">Dealers post what they're bringing to the market. You buy the best stuff before the general public gets in. No more showing up at dawn and hoping.</div>
+  <!-- Below fold -->
+  <div class="info-zone">
+    <div class="info-grid">
+      <div>
+        <div class="section-title">How it works</div>
+        <div class="step">
+          <div class="step-number">01</div>
+          <div class="step-text">Register with your phone number. We'll text you a link when inventory drops before each market.</div>
+        </div>
+        <div class="step">
+          <div class="step-number">02</div>
+          <div class="step-text">Shop before the gates open. See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</div>
+        </div>
+        <div class="step">
+          <div class="step-number">03</div>
+          <div class="step-text">Pick up at the market. Pay the dealer directly and grab your item at their booth. It's already yours.</div>
+        </div>
       </div>
 
-      <div class="faq-item">
-        <div class="faq-q">Is this free?</div>
-        <div class="faq-a">Yes. Free to register, free to use.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">How do I pay?</div>
-        <div class="faq-a">Directly with the dealer — Venmo, Zelle, or cash at the booth. Early Bird doesn't handle payments.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">Is this affiliated with the markets?</div>
-        <div class="faq-a">No. Early Bird is independent. Dealers choose to list here on their own.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">What markets are listed?</div>
-        <div class="faq-a">Starting with markets in the LA area — more coming soon.</div>
+      <div class="faq-section">
+        <div class="section-title">FAQ</div>
+        <div class="faq-item">
+          <div class="faq-q">What is Early Bird?</div>
+          <div class="faq-a">Dealers post what they're bringing to the market. You buy the best stuff before the general public gets in. No more showing up at dawn and hoping.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What does it cost?</div>
+          <div class="faq-a">Free during early access. Eventually it'll be like buying an early entry ticket to the market — a small fee to get first crack at everything.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How do I pay?</div>
+          <div class="faq-a">Directly with the dealer — Venmo, Zelle, or cash at the booth. Early Bird doesn't handle payments.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is this affiliated with the markets?</div>
+          <div class="faq-a">No. Early Bird is independent. Dealers choose to list here on their own.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What markets are listed?</div>
+          <div class="faq-a">Starting with markets in the LA area — more coming soon.</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="disclaimer" style="margin-top: 40px; margin-bottom: 20px;">
+  <div class="disclaimer">
     Early Bird is not affiliated with or endorsed by any market listed here. All listings are posted by independent dealers.
   </div>
 </div>
@@ -642,85 +724,82 @@
 <div id="dealer-landing" class="screen">
   <a href="#" class="back-link" onclick="showScreen('landing'); return false;">← Back</a>
 
-  <div class="dealer-hero-area">
-    <div>
-      <div class="dealer-hero-text">
-        SELL TO SERIOUS BUYERS<br>
-        <span class="accent">BEFORE THE GATES OPEN</span>
-      </div>
-      <div class="dealer-sub">
-        Post what you're bringing to the market. Buyers buy it before the crowd shows up. You show up with sales already made.
-      </div>
-      <div class="dealer-free-badge">100% FREE FOR DEALERS</div>
-    </div>
+  <div class="dealer-headline">
+    Sell to serious buyers<br>
+    <span class="accent">before the gates open</span>
+  </div>
+  <div class="dealer-sub">
+    Post what you're bringing to the market. Buyers buy it before the crowd shows up. You show up with sales already made.
+  </div>
+  <div class="dealer-free-badge">100% free for dealers</div>
 
-    <div class="auth-section" style="margin-top: 24px;">
-      <input type="tel" class="auth-input" id="dealer-phone-input" placeholder="(310) 555-1234"
-             inputmode="tel" autocomplete="tel">
-      <button class="auth-btn" id="dealer-auth-btn" onclick="requestDealerMagicLink()">
-        GET STARTED
-      </button>
-      <div class="auth-fine" id="dealer-auth-msg">We'll text you a link to set up your booth.</div>
+  <div class="auth-section">
+    <input type="tel" class="auth-input" id="dealer-phone-input" placeholder="(310) 555-1234"
+           inputmode="tel" autocomplete="tel">
+    <button class="auth-btn" id="dealer-auth-btn" onclick="requestDealerMagicLink()">
+      Get started
+    </button>
+    <div class="auth-fine" id="dealer-auth-msg">We'll text you a link to set up your booth.</div>
+  </div>
+
+  <div class="info-zone">
+    <div class="info-grid">
+      <div>
+        <div class="section-title">How it works</div>
+        <div class="step">
+          <div class="step-number">01</div>
+          <div class="step-text">Register with your phone number. We'll text you a link to get started. Takes 30 seconds.</div>
+        </div>
+        <div class="step">
+          <div class="step-number">02</div>
+          <div class="step-text">Post what you're bringing. Photos, price, details. That's it.</div>
+        </div>
+        <div class="step">
+          <div class="step-number">03</div>
+          <div class="step-text">Buyers buy directly from you. They message you, you arrange payment. Show up to the market with sales already done.</div>
+        </div>
+      </div>
+
+      <div class="faq-section">
+        <div class="section-title">FAQ for dealers</div>
+        <div class="faq-item">
+          <div class="faq-q">Is this really free?</div>
+          <div class="faq-a">Yes. No fees, no commission. You handle all payments directly with buyers.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What do I need to post?</div>
+          <div class="faq-a">One photo and a price, minimum. You can add a title, condition notes, and whether the price is firm.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">When do buyers see my stuff?</div>
+          <div class="faq-a">Inventory drops a few days before the market. You can post anytime. Buyers get texted when items go live.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What happens after the market?</div>
+          <div class="faq-a">Listings expire shortly after the event. Each market is a fresh slate.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Am I obligated to sell to anyone?</div>
+          <div class="faq-a">No. You choose who gets the item. Nothing is final until you say so.</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="info-columns">
-    <div class="info-section" style="margin-top: 24px; padding-top: 16px;">
-      <div class="info-section-title">HOW IT WORKS</div>
-      <ol class="steps">
-        <li class="step"><strong>Register with your phone number.</strong> We'll text you a link to get started. Takes 30 seconds.</li>
-        <li class="step"><strong>Post what you're bringing.</strong> Photos, price, details. That's it.</li>
-        <li class="step"><strong>Buyers buy directly from you.</strong> They message you, you arrange payment. Show up to the market with sales already done.</li>
-      </ol>
-    </div>
-
-    <div class="info-section">
-      <div class="info-section-title">FAQ FOR DEALERS</div>
-
-      <div class="faq-item">
-        <div class="faq-q">Is this really free?</div>
-        <div class="faq-a">Yes. No fees, no commission. You handle all payments directly with buyers.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">What do I need to post?</div>
-        <div class="faq-a">One photo and a price, minimum. You can add a title, condition notes, and whether the price is firm.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">When do buyers see my stuff?</div>
-        <div class="faq-a">Inventory drops a few days before the market. You can post anytime. Buyers get texted when items go live.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">What happens after the market?</div>
-        <div class="faq-a">Listings expire shortly after the event. Each market is a fresh slate.</div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q">Am I obligated to sell to anyone?</div>
-        <div class="faq-a">No. You choose who gets the item. Nothing is final until you say so.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="disclaimer" style="margin-top: 40px; margin-bottom: 20px;">
+  <div class="disclaimer">
     Early Bird is not affiliated with or endorsed by any market listed here.
   </div>
 </div>
 
 <!-- VERIFY -->
 <div id="verify" class="screen">
-  <div class="logo-stack">
-    <span class="logo-early">EARLY</span>
-    <span class="logo-bird">BIRD</span>
-  </div>
+  <div class="logo">EARLY BIRD<span class="cursor">_</span></div>
   <div class="verify-status" id="verify-status">Verifying...</div>
 </div>
 
 <!-- ONBOARDING -->
 <div id="onboarding" class="screen">
-  <div class="onboard-title">ALMOST THERE</div>
+  <div class="onboard-title">Almost there</div>
   <div class="onboard-sub">Quick setup, then you're in.</div>
 
   <div class="selfie-area">
@@ -737,14 +816,14 @@
     <input type="text" id="onboard-name" placeholder="How dealers/buyers will know you">
   </div>
 
-  <button class="auth-btn" onclick="completeOnboarding()" style="margin-top: 8px;">LET'S GO</button>
+  <button class="auth-btn" onclick="completeOnboarding()" style="margin-top: 8px;">Let's go</button>
 </div>
 
 <!-- FEED -->
 <div id="feed" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo"><span class="early">EARLY </span><span class="bird">BIRD</span></div>
+      <div class="feed-logo">EARLY BIRD_</div>
       <div class="feed-event" id="feed-event-name"></div>
     </div>
   </div>
@@ -759,17 +838,17 @@
     <div class="dealer-countdown" id="dealer-countdown"></div>
   </div>
   <div class="free-notice">Selling on Early Bird is 100% free. Handle all payments directly with your buyers.</div>
-  <button class="add-item-btn">+ ADD ITEM</button>
+  <button class="add-item-btn">+ Add item</button>
   <ul class="my-items-list" id="my-items-list"></ul>
   <div class="empty-state" id="dealer-empty">
-    <h2>YOUR BOOTH IS EMPTY</h2>
+    <h2>Your booth is empty</h2>
     <p>Post the items you're bringing. Buyers will see them when inventory goes live.</p>
   </div>
 </div>
 
 <!-- MESSAGES -->
 <div id="messages" class="screen">
-  <div class="messages-title">MESSAGES</div>
+  <div class="messages-title">Messages</div>
   <div class="empty-state">
     <p>No messages yet. When buyers inquire about your items, they'll show up here.</p>
   </div>
@@ -803,7 +882,8 @@ const API = 'https://early-bird.objectlesson.workers.dev';
 
 let currentUser = null;
 let currentMarket = null;
-let countdownInterval = null;
+let allMarkets = [];
+let countdownIntervals = [];
 
 // ── Auth ──────────────────────────────────────────────────────
 function getDealerId() { return localStorage.getItem('eb_dealer_id'); }
@@ -837,37 +917,65 @@ function switchTab(tab) {
 }
 
 // ── Landing ───────────────────────────────────────────────────
+function formatCountdown(dropTime) {
+  const diff = dropTime - new Date();
+  if (diff <= 0) return 'live now';
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  return `drops in ${d}d ${h}h ${m}m`;
+}
+
+const NAME_MAP = {
+  'DOWNTOWN MODERNISM': 'DTWN MODERNISM',
+};
+
+function displayName(name) {
+  const upper = name.toUpperCase();
+  return NAME_MAP[upper] || upper;
+}
+
+function renderMarkets(markets) {
+  const list = document.getElementById('markets-list');
+  if (!markets.length) return;
+
+  // Filter out test markets, sort by date
+  const real = markets
+    .filter(m => !m.name.toLowerCase().includes('test'))
+    .sort((a, b) => a.market_date.localeCompare(b.market_date));
+
+  if (!real.length) return;
+  currentMarket = real[0];
+  allMarkets = real;
+
+  list.innerHTML = real.map((m, i) => {
+    const date = new Date(m.market_date + 'T00:00:00');
+    const shortDate = (date.getMonth() + 1) + '.' + date.getDate();
+    const countdown = m.drop_time ? formatCountdown(new Date(m.drop_time)) : '';
+    return `<div class="market-item">
+      <div class="market-name">${displayName(m.name)} <span class="market-date">${shortDate}</span></div>
+      ${countdown ? `<div class="market-countdown" data-drop="${m.drop_time}">${countdown}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Live countdown updates
+  countdownIntervals.forEach(clearInterval);
+  countdownIntervals = [];
+  const cdEls = list.querySelectorAll('.market-countdown[data-drop]');
+  cdEls.forEach(el => {
+    const dropTime = new Date(el.dataset.drop);
+    const iv = setInterval(() => {
+      el.textContent = formatCountdown(dropTime);
+    }, 30000);
+    countdownIntervals.push(iv);
+  });
+}
+
 async function loadLanding() {
   try {
     const markets = await api('/api/markets');
-    if (markets.length) {
-      // Skip test events, prefer the real one
-      currentMarket = markets.find(m => !m.name.toLowerCase().includes('test')) || markets[0];
-      const date = new Date(currentMarket.market_date + 'T00:00:00');
-      const shortDate = (date.getMonth() + 1) + '.' + date.getDate();
-      document.getElementById('landing-event-name').childNodes[0].textContent = currentMarket.name.toUpperCase() + ' ';
-      document.getElementById('landing-event-date').textContent = shortDate;
-      if (currentMarket.drop_time) startCountdown(new Date(currentMarket.drop_time));
-    }
+    if (markets.length) renderMarkets(markets);
   } catch (e) { console.error('Failed to load markets:', e); }
-}
-
-function startCountdown(dropTime) {
-  function update() {
-    const diff = dropTime - new Date();
-    if (diff <= 0) {
-      document.getElementById('cd-days').textContent = '00';
-      document.getElementById('cd-hrs').textContent = '00';
-      document.getElementById('cd-min').textContent = '00';
-      clearInterval(countdownInterval);
-      return;
-    }
-    document.getElementById('cd-days').textContent = String(Math.floor(diff / 86400000)).padStart(2, '0');
-    document.getElementById('cd-hrs').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-    document.getElementById('cd-min').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-  }
-  update();
-  countdownInterval = setInterval(update, 10000);
 }
 
 // ── Auth flow ─────────────────────────────────────────────────
@@ -890,13 +998,13 @@ async function requestMagicLink() {
     } else {
       msg.textContent = res.error || 'Something went wrong.';
       msg.className = 'auth-error';
-      btn.textContent = 'REGISTER FOR EARLY ACCESS';
+      btn.textContent = 'Register for early access';
       btn.disabled = false;
     }
   } catch (e) {
     msg.textContent = 'Connection error. Try again.';
     msg.className = 'auth-error';
-    btn.textContent = 'REGISTER FOR EARLY ACCESS';
+    btn.textContent = 'Register for early access';
     btn.disabled = false;
   }
 }
@@ -972,7 +1080,7 @@ async function loadFeed() {
     const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
     const items = await api(`/api/items${q}`);
     if (!items.length) {
-      content.innerHTML = '<div class="empty-state"><h2>NOTHING YET</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
+      content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
       return;
     }
     content.innerHTML = '<div class="item-grid">' + items.map(item => {
@@ -1055,13 +1163,13 @@ async function requestDealerMagicLink() {
     } else {
       msg.textContent = res.error || 'Something went wrong.';
       msg.className = 'auth-error';
-      btn.textContent = 'GET STARTED';
+      btn.textContent = 'Get started';
       btn.disabled = false;
     }
   } catch (e) {
     msg.textContent = 'Connection error. Try again.';
     msg.className = 'auth-error';
-    btn.textContent = 'GET STARTED';
+    btn.textContent = 'Get started';
     btn.disabled = false;
   }
 }
@@ -1078,7 +1186,6 @@ function formatPhoneInput(el) {
 }
 formatPhoneInput(document.getElementById('phone-input'));
 formatPhoneInput(document.getElementById('dealer-phone-input'));
-
 
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('hashchange', route);

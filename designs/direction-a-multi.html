@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Early Bird - Direction A: Multi-Market</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #E8E8E4;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .direction-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+  .direction-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A1A;
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 375px;
+    height: 812px;
+    background: #FAFAF8;
+    border-radius: 44px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,0.08),
+      0 20px 60px rgba(0,0,0,0.15),
+      0 4px 16px rgba(0,0,0,0.08),
+      inset 0 0 0 1px rgba(255,255,255,0.3);
+  }
+
+  .notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 34px;
+    background: #1A1A1A;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 8px;
+    z-index: 99;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 700; }
+  .status-bar .icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 70px 24px 40px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* Fold indicator */
+  .fold-marker {
+    position: relative;
+    height: 0;
+    margin: 0 -24px;
+    pointer-events: none;
+  }
+  .fold-marker::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1.5px dashed rgba(0, 102, 255, 0.35);
+  }
+  .fold-marker .fold-label {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(0, 102, 255, 0.5);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+  }
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1A1A1A;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .cursor {
+    animation: blink 1s step-end infinite;
+    color: #1A1A1A;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .dealer-link {
+    font-size: 11px;
+    font-weight: 500;
+    color: #888888;
+    text-decoration: none;
+  }
+  .dealer-link:hover { color: #1A1A1A; }
+
+  /* Market list */
+  .markets-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888888;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .market-item {
+    margin-bottom: 32px;
+    cursor: pointer;
+  }
+  .market-item:last-child { margin-bottom: 0; }
+
+  .market-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1A1A1A;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .market-date {
+    font-size: 24px;
+    font-weight: 700;
+    color: #CCCCCC;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .market-countdown {
+    font-size: 12px;
+    font-weight: 400;
+    color: #888888;
+    margin-top: 6px;
+    line-height: 1.3;
+  }
+  .market-countdown .live {
+    color: #0066FF;
+    font-weight: 600;
+  }
+
+  /* Auth section */
+  .auth-section {
+    margin-top: 40px;
+  }
+
+  .phone-input {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 400;
+    color: #1A1A1A;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid #DDDDDD;
+    padding: 12px 0;
+    outline: none;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+  .phone-input::placeholder { color: #CCCCCC; }
+  .phone-input:focus { border-bottom-color: #0066FF; }
+
+  .cta-button {
+    width: 100%;
+    background: #0066FF;
+    color: #FFFFFF;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 16px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .cta-button:hover { background: #0052CC; }
+
+  .fine-print {
+    font-size: 11px;
+    font-weight: 400;
+    color: #AAAAAA;
+    margin-top: 12px;
+    line-height: 1.4;
+  }
+
+  /* Below fold */
+  .section-break { height: 56px; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888888;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .step {
+    margin-bottom: 24px;
+  }
+  .step-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0066FF;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .step-text {
+    font-size: 13px;
+    font-weight: 400;
+    color: #1A1A1A;
+    line-height: 1.5;
+  }
+
+  .faq-item { margin-bottom: 20px; }
+  .faq-q {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1A1A;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .faq-a {
+    font-size: 12px;
+    font-weight: 400;
+    color: #888888;
+    line-height: 1.5;
+  }
+
+  .disclaimer {
+    font-size: 10px;
+    font-weight: 400;
+    color: #AAAAAA;
+    line-height: 1.5;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #EEEEEE;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    background: #1A1A1A;
+    border-radius: 100px;
+    opacity: 0.2;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+
+<div class="direction-label">Direction A — Multi-Market</div>
+<div class="direction-title">"The Text Message"</div>
+
+<div class="phone-frame">
+  <div class="notch"></div>
+
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <span class="icons">
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><rect x="0" y="5" width="3" height="6" rx="0.5" fill="#1A1A1A"/><rect x="4.5" y="3.5" width="3" height="7.5" rx="0.5" fill="#1A1A1A"/><rect x="9" y="1.5" width="3" height="9.5" rx="0.5" fill="#1A1A1A"/><rect x="13.5" y="0" width="3" height="11" rx="0.5" fill="#1A1A1A" opacity="0.3"/></svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><path d="M7.5 2.5C9.4 2.5 11.1 3.3 12.3 4.5L13.7 3.1C12.1 1.5 9.9 0.5 7.5 0.5C5.1 0.5 2.9 1.5 1.3 3.1L2.7 4.5C3.9 3.3 5.6 2.5 7.5 2.5Z" fill="#1A1A1A"/><path d="M7.5 5.5C8.6 5.5 9.6 5.9 10.4 6.6L11.8 5.2C10.6 4.1 9.1 3.5 7.5 3.5C5.9 3.5 4.4 4.1 3.2 5.2L4.6 6.6C5.4 5.9 6.4 5.5 7.5 5.5Z" fill="#1A1A1A"/><circle cx="7.5" cy="9" r="1.5" fill="#1A1A1A"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0" y="1" width="21" height="10" rx="2" stroke="#1A1A1A" stroke-width="1"/><rect x="2" y="3" width="15" height="6" rx="1" fill="#1A1A1A"/><rect x="22" y="4" width="2.5" height="4" rx="1" fill="#1A1A1A" opacity="0.4"/></svg>
+    </span>
+  </div>
+
+  <div class="screen">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">EARLY BIRD<span class="cursor">_</span></div>
+      <a href="#" class="dealer-link">I'm a dealer</a>
+    </div>
+
+    <!-- Market list -->
+    <div class="markets-label">Upcoming markets</div>
+
+    <div class="market-item">
+      <div class="market-name">ROSE BOWL <span class="market-date">5.11</span></div>
+      <div class="market-countdown">drops in 4d 14h 22m</div>
+    </div>
+
+    <div class="market-item">
+      <div class="market-name">LONG BEACH <span class="market-date">5.18</span></div>
+      <div class="market-countdown">drops in 11d 14h 22m</div>
+    </div>
+
+    <div class="market-item">
+      <div class="market-name">PCC FLEA <span class="market-date">5.25</span></div>
+      <div class="market-countdown">drops in 18d 14h 22m</div>
+    </div>
+
+    <!-- Auth -->
+    <div class="auth-section">
+      <input type="tel" class="phone-input" placeholder="(310) 555-1234" readonly>
+      <button class="cta-button">Register for early access</button>
+      <div class="fine-print">We'll text you when inventory goes live.</div>
+    </div>
+
+    <!-- Fold indicator -->
+    <div class="fold-marker"><span class="fold-label">fold</span></div>
+
+    <!-- Below fold -->
+    <div class="section-break"></div>
+
+    <div class="section-title">How it works</div>
+
+    <div class="step">
+      <div class="step-number">01</div>
+      <div class="step-text">Register with your phone number. We'll text you a link when inventory drops before each market.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">02</div>
+      <div class="step-text">Shop before the gates open. See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">03</div>
+      <div class="step-text">Pick up at the market. Pay the dealer directly and grab your item at their booth. It's already yours.</div>
+    </div>
+
+    <div class="section-break"></div>
+
+    <div class="section-title">FAQ</div>
+
+    <div class="faq-item">
+      <div class="faq-q">What is Early Bird?</div>
+      <div class="faq-a">Dealers post what they're bringing to the market. You buy the best stuff before the general public gets in. No more showing up at dawn and hoping.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this free?</div>
+      <div class="faq-a">Yes. Free to register, free to use.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">How do I pay?</div>
+      <div class="faq-a">Directly with the dealer — Venmo, Zelle, or cash at the booth. Early Bird doesn't handle payments.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this affiliated with the markets?</div>
+      <div class="faq-a">No. Early Bird is independent. Dealers choose to list here on their own.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What markets are listed?</div>
+      <div class="faq-a">Starting with markets in the LA area — more coming soon.</div>
+    </div>
+
+    <div class="disclaimer">
+      Early Bird is not affiliated with or endorsed by any market listed here. All listings are posted by independent dealers.
+    </div>
+
+    <div style="height: 40px;"></div>
+  </div>
+
+  <div class="home-indicator"></div>
+</div>
+
+</body>
+</html>
