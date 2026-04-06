@@ -39,7 +39,7 @@
     #landing {
       min-height: 100vh;
       min-height: 100dvh;
-      max-width: 430px;
+      max-width: 600px;
       margin: 0 auto;
       padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
@@ -51,6 +51,72 @@
       align-items: flex-start;
       justify-content: space-between;
       padding-top: 8px;
+    }
+
+    /* ── Desktop responsive ────────────────── */
+    @media (min-width: 768px) {
+      body { background: #F5F3F0; }
+
+      #landing, #dealer-landing {
+        max-width: 800px;
+        padding: 40px 48px 60px;
+        background: var(--bg);
+        margin-top: 40px;
+        margin-bottom: 40px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        min-height: auto;
+      }
+
+      /* Two-column layout for above-fold content */
+      .landing-hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: start;
+        margin-top: 24px;
+      }
+
+      .landing-hero .event-block { margin-top: 0; }
+      .landing-hero .countdown { margin-top: 20px; }
+      .landing-hero .auth-section { margin-top: 0; padding-top: 0; border-top: none; }
+
+      /* Below-fold info sections side by side */
+      .info-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+      }
+      .info-columns .info-section {
+        margin-top: 0;
+        padding-top: 28px;
+        border-top: 2px solid var(--text);
+      }
+
+      /* Logo scales up slightly on desktop */
+      .logo-early, .logo-bird { font-size: 52px; }
+
+      /* Event name scales up */
+      .event-name { font-size: 32px; }
+
+      /* Countdown scales up */
+      .cd-num { font-size: 60px; }
+
+      /* Dealer landing two-column */
+      .dealer-hero-area {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: start;
+      }
+      .dealer-hero-area .auth-section { margin-top: 0; padding-top: 0; border-top: none; }
+    }
+
+    @media (min-width: 1024px) {
+      #landing, #dealer-landing {
+        max-width: 900px;
+        padding: 48px 64px 72px;
+      }
     }
 
     .logo-stack { line-height: 0.85; }
@@ -246,15 +312,18 @@
       font-family: 'Bebas Neue', Impact, sans-serif;
       font-size: 28px;
       color: var(--accent);
-      line-height: 1;
+      line-height: 1.5;
       flex-shrink: 0;
       width: 28px;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 1px;
     }
     .step-text {
       font-size: 14px;
       color: var(--text-2);
       line-height: 1.5;
-      padding-top: 4px;
+      padding-top: 5px;
     }
     .step-text strong {
       color: var(--text);
@@ -281,7 +350,7 @@
     #dealer-landing {
       min-height: 100vh;
       min-height: 100dvh;
-      max-width: 430px;
+      max-width: 600px;
       margin: 0 auto;
       padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
@@ -615,82 +684,87 @@
 
   <hr class="rule">
 
-  <div class="event-block" id="event-block">
-    <div class="event-context">Early access to the best stuff at</div>
-    <div class="event-name" id="landing-event-name">—</div>
-    <div class="event-meta" id="landing-event-meta"></div>
-  </div>
+  <div class="landing-hero">
+    <div>
+      <div class="event-block" id="event-block">
+        <div class="event-context">Early access to the best stuff at</div>
+        <div class="event-name" id="landing-event-name">—</div>
+        <div class="event-meta" id="landing-event-meta"></div>
+      </div>
 
-  <div class="countdown" id="landing-countdown">
-    <div class="cd-type">
-      <span class="cd-num" id="cd-days">--</span>
-      <span class="cd-word">days</span>
-      <span class="cd-sep">:</span>
-      <span class="cd-num" id="cd-hrs">--</span>
-      <span class="cd-word">hrs</span>
-      <span class="cd-sep">:</span>
-      <span class="cd-num" id="cd-min">--</span>
-      <span class="cd-word">min</span>
+      <div class="countdown" id="landing-countdown">
+        <div class="cd-type">
+          <span class="cd-num" id="cd-days">--</span>
+          <span class="cd-word">days</span>
+          <span class="cd-sep">:</span>
+          <span class="cd-num" id="cd-hrs">--</span>
+          <span class="cd-word">hrs</span>
+          <span class="cd-sep">:</span>
+          <span class="cd-num" id="cd-min">--</span>
+          <span class="cd-word">min</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="auth-section">
-    <input type="tel" class="auth-input" id="phone-input" placeholder="(310) 555-1234"
-           inputmode="tel" autocomplete="tel">
-    <button class="auth-btn" id="auth-btn" onclick="requestMagicLink()">
-      REGISTER FOR EARLY ACCESS
-    </button>
-    <div class="auth-fine" id="auth-msg">We'll text you when inventory goes live.</div>
+    <div class="auth-section">
+      <input type="tel" class="auth-input" id="phone-input" placeholder="(310) 555-1234"
+             inputmode="tel" autocomplete="tel">
+      <button class="auth-btn" id="auth-btn" onclick="requestMagicLink()">
+        REGISTER FOR EARLY ACCESS
+      </button>
+      <div class="auth-fine" id="auth-msg">We'll text you when inventory goes live.</div>
+    </div>
   </div>
 
   <div class="hero-image" id="hero-image"></div>
 
-  <!-- How it works -->
-  <div class="info-section">
-    <div class="info-section-title">HOW IT WORKS</div>
-    <ol class="steps">
-      <li class="step">
-        <span class="step-num">1</span>
-        <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link when inventory goes live before each market.</div>
-      </li>
-      <li class="step">
-        <span class="step-num">2</span>
-        <div class="step-text"><strong>Browse what dealers are bringing.</strong> See photos, prices, and booth locations before the gates open.</div>
-      </li>
-      <li class="step">
-        <span class="step-num">3</span>
-        <div class="step-text"><strong>Claim what you want.</strong> Message the dealer directly and arrange to pick it up at their booth.</div>
-      </li>
-    </ol>
-  </div>
-
-  <!-- FAQ -->
-  <div class="info-section">
-    <div class="info-section-title">FAQ</div>
-
-    <div class="faq-item">
-      <div class="faq-q">What is Early Bird?</div>
-      <div class="faq-a">Dealers at flea markets post photos and prices of what they're bringing. You browse and claim items before the market opens. Pick up at their booth on market day.</div>
+  <!-- How it works + FAQ -->
+  <div class="info-columns">
+    <div class="info-section">
+      <div class="info-section-title">HOW IT WORKS</div>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link when inventory drops before each market.</div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-text"><strong>Shop before the gates open.</strong> See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-text"><strong>Pick up at the market.</strong> Pay the dealer directly and grab your item at their booth. It's already yours.</div>
+        </li>
+      </ol>
     </div>
 
-    <div class="faq-item">
-      <div class="faq-q">Is this free?</div>
-      <div class="faq-a">Yes. Register for free and start browsing.</div>
-    </div>
+    <div class="info-section">
+      <div class="info-section-title">FAQ</div>
 
-    <div class="faq-item">
-      <div class="faq-q">How do I pay for items?</div>
-      <div class="faq-a">You pay the dealer directly. Venmo, Zelle, or cash at the booth. Early Bird doesn't handle payments.</div>
-    </div>
+      <div class="faq-item">
+        <div class="faq-q">What is Early Bird?</div>
+        <div class="faq-a">Dealers post what they're bringing to the market. You buy the best stuff before the general public gets in. No more showing up at dawn and hoping.</div>
+      </div>
 
-    <div class="faq-item">
-      <div class="faq-q">Is this affiliated with the markets?</div>
-      <div class="faq-a">No. Early Bird is an independent platform. Dealers choose to post here on their own.</div>
-    </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this free?</div>
+        <div class="faq-a">Yes. Free to register, free to use.</div>
+      </div>
 
-    <div class="faq-item">
-      <div class="faq-q">What markets are on here?</div>
-      <div class="faq-a">We're starting with markets in the LA area. More coming soon.</div>
+      <div class="faq-item">
+        <div class="faq-q">How do I pay?</div>
+        <div class="faq-a">Directly with the dealer — Venmo, Zelle, or cash at the booth. Early Bird doesn't handle payments.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Is this affiliated with the markets?</div>
+        <div class="faq-a">No. Early Bird is independent. Dealers choose to list here on their own.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What markets are listed?</div>
+        <div class="faq-a">Starting with markets in the LA area — more coming soon.</div>
+      </div>
     </div>
   </div>
 
@@ -703,69 +777,74 @@
 <div id="dealer-landing" class="screen">
   <a href="#" class="back-link" onclick="showScreen('landing'); return false;">← Back</a>
 
-  <div class="dealer-hero-text">
-    SELL TO SERIOUS BUYERS<br>
-    <span class="accent">BEFORE THE GATES OPEN</span>
-  </div>
-  <div class="dealer-sub">
-    Post photos and prices of what you're bringing to the market. Buyers browse your inventory and reach out to claim items before market day.
-  </div>
-
-  <div class="dealer-free-badge">100% FREE FOR DEALERS</div>
-
-  <div class="info-section" style="margin-top: 24px; padding-top: 20px;">
-    <div class="info-section-title">HOW IT WORKS</div>
-    <ol class="steps">
-      <li class="step">
-        <span class="step-num">1</span>
-        <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link to get started. Takes 30 seconds.</div>
-      </li>
-      <li class="step">
-        <span class="step-num">2</span>
-        <div class="step-text"><strong>Post what you're bringing.</strong> Photos, price, and your booth number. That's it.</div>
-      </li>
-      <li class="step">
-        <span class="step-num">3</span>
-        <div class="step-text"><strong>Buyers message you directly.</strong> You choose who gets the item. Arrange payment however you want.</div>
-      </li>
-    </ol>
-  </div>
-
-  <div class="auth-section" style="margin-top: 24px;">
-    <input type="tel" class="auth-input" id="dealer-phone-input" placeholder="(310) 555-1234"
-           inputmode="tel" autocomplete="tel">
-    <button class="auth-btn" id="dealer-auth-btn" onclick="requestDealerMagicLink()">
-      GET STARTED
-    </button>
-    <div class="auth-fine" id="dealer-auth-msg">We'll text you a link to set up your booth.</div>
-  </div>
-
-  <div class="info-section">
-    <div class="info-section-title">FAQ FOR DEALERS</div>
-
-    <div class="faq-item">
-      <div class="faq-q">Is this really free?</div>
-      <div class="faq-a">Yes. No fees, no commission. You handle all payments directly with buyers. Venmo, Zelle, cash at the booth — your choice.</div>
+  <div class="dealer-hero-area">
+    <div>
+      <div class="dealer-hero-text">
+        SELL TO SERIOUS BUYERS<br>
+        <span class="accent">BEFORE THE GATES OPEN</span>
+      </div>
+      <div class="dealer-sub">
+        Post what you're bringing to the market. Buyers buy it before the crowd shows up. You show up with sales already made.
+      </div>
+      <div class="dealer-free-badge">100% FREE FOR DEALERS</div>
     </div>
 
-    <div class="faq-item">
-      <div class="faq-q">What do I need to post?</div>
-      <div class="faq-a">At minimum: one photo and a price. You can add a title, condition notes, and whether the price is firm or negotiable.</div>
+    <div class="auth-section" style="margin-top: 24px;">
+      <input type="tel" class="auth-input" id="dealer-phone-input" placeholder="(310) 555-1234"
+             inputmode="tel" autocomplete="tel">
+      <button class="auth-btn" id="dealer-auth-btn" onclick="requestDealerMagicLink()">
+        GET STARTED
+      </button>
+      <div class="auth-fine" id="dealer-auth-msg">We'll text you a link to set up your booth.</div>
+    </div>
+  </div>
+
+  <div class="info-columns">
+    <div class="info-section" style="margin-top: 24px; padding-top: 20px;">
+      <div class="info-section-title">HOW IT WORKS</div>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link to get started. Takes 30 seconds.</div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div class="step-text"><strong>Post what you're bringing.</strong> Photos, price, details. That's it.</div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div class="step-text"><strong>Buyers buy directly from you.</strong> They message you, you arrange payment. Show up to the market with sales already done.</div>
+        </li>
+      </ol>
     </div>
 
-    <div class="faq-item">
-      <div class="faq-q">When do buyers see my stuff?</div>
-      <div class="faq-a">Inventory goes live a few days before the market. You can post anytime before that. Buyers get notified when the listing window opens.</div>
-    </div>
+    <div class="info-section">
+      <div class="info-section-title">FAQ FOR DEALERS</div>
 
-    <div class="faq-item">
-      <div class="faq-q">What happens after the market?</div>
-      <div class="faq-a">Listings expire within a day or two of the event ending. Each market is a fresh slate.</div>
-    </div>
+      <div class="faq-item">
+        <div class="faq-q">Is this really free?</div>
+        <div class="faq-a">Yes. No fees, no commission. You handle all payments directly with buyers.</div>
+      </div>
 
-    <div class="faq-item">
-      <div class="faq-q">Am I obligated to sell to anyone?</div>
-      <div class="faq-a">No. You can hold items as a courtesy, but you choose who buys. Nothing is final until you say so.</div>
+      <div class="faq-item">
+        <div class="faq-q">What do I need to post?</div>
+        <div class="faq-a">One photo and a price, minimum. You can add a title, condition notes, and whether the price is firm.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">When do buyers see my stuff?</div>
+        <div class="faq-a">Inventory drops a few days before the market. You can post anytime. Buyers get texted when items go live.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">What happens after the market?</div>
+        <div class="faq-a">Listings expire shortly after the event. Each market is a fresh slate.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q">Am I obligated to sell to anyone?</div>
+        <div class="faq-a">No. You choose who gets the item. Nothing is final until you say so.</div>
+      </div>
     </div>
   </div>
 
