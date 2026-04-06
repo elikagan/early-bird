@@ -39,6 +39,8 @@
     #landing {
       min-height: 100vh;
       min-height: 100dvh;
+      max-width: 430px;
+      margin: 0 auto;
       padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
       padding-bottom: max(32px, env(safe-area-inset-bottom));
@@ -681,7 +683,8 @@ async function loadLanding() {
   try {
     const markets = await api('/api/markets');
     if (markets.length) {
-      currentMarket = markets[0];
+      // Skip test events, prefer the real one
+      currentMarket = markets.find(m => !m.name.toLowerCase().includes('test')) || markets[0];
       document.getElementById('landing-event-name').textContent = currentMarket.name.toUpperCase();
       const date = new Date(currentMarket.market_date + 'T00:00:00');
       document.getElementById('landing-event-meta').textContent =
