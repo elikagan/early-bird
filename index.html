@@ -95,7 +95,7 @@
     }
     .event-name {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px; letter-spacing: 0.02em;
+      font-size: 36px; letter-spacing: 0.02em;
       color: var(--text); line-height: 1;
       margin-top: 6px;
     }
@@ -115,16 +115,16 @@
     }
     .cd-num {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 48px; line-height: 1; color: var(--text);
+      font-size: 36px; line-height: 1; color: var(--text);
       letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
     }
     .cd-word {
       font-size: 11px; color: var(--text-3); font-weight: 500;
-      text-transform: lowercase; padding-bottom: 6px;
+      text-transform: lowercase; padding-bottom: 4px;
     }
     .cd-sep {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 30px; color: var(--border); padding-bottom: 3px;
+      font-size: 22px; color: var(--border); padding-bottom: 2px;
     }
 
     /* ── Auth ── */
@@ -165,33 +165,26 @@
     .hero-image img { width: 100%; height: 100%; object-fit: cover; }
 
     /* ── Info Sections ── */
+    .info-columns { margin-top: 80px; }
+    .info-columns .info-section:first-child { margin-top: 0; }
     .info-section {
-      margin-top: 80px;
-      border-top: 2px solid var(--text);
-      padding-top: 20px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
     }
     .info-section-title {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 20px; color: var(--text); letter-spacing: 0.02em;
-      margin-bottom: 20px;
+      font-size: 11px; color: var(--text-3); letter-spacing: 0.1em;
+      text-transform: uppercase; font-weight: 600;
+      margin-bottom: 16px;
     }
 
     .steps { list-style: none; }
     .step {
-      display: flex; gap: 12px; align-items: flex-start;
       margin-bottom: 20px;
+      font-size: 14px; color: var(--text-2); line-height: 1.5;
     }
     .step:last-child { margin-bottom: 0; }
-    .step-num {
-      font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 24px; color: var(--accent); line-height: 1;
-      flex-shrink: 0; width: 20px; opacity: 0.5;
-    }
-    .step-text {
-      font-size: 14px; color: var(--text-2); line-height: 1.5;
-      padding-top: 2px;
-    }
-    .step-text strong { color: var(--text); font-weight: 600; }
+    .step strong { color: var(--text); font-weight: 600; }
 
     .faq-item { margin-bottom: 20px; }
     .faq-item:last-child { margin-bottom: 0; }
@@ -226,11 +219,11 @@
         display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
       }
       .info-columns .info-section {
-        margin-top: 0; padding-top: 20px; border-top: 2px solid var(--text);
+        margin-top: 0; padding-top: 16px; border-top: 1px solid var(--border);
       }
       .logo-early, .logo-bird { font-size: 48px; }
-      .event-name { font-size: 32px; }
-      .cd-num { font-size: 56px; }
+      .event-name { font-size: 42px; }
+      .cd-num { font-size: 40px; }
       .dealer-hero-area {
         display: grid; grid-template-columns: 1fr 1fr;
         gap: 56px; align-items: start;
@@ -607,18 +600,9 @@
     <div class="info-section">
       <div class="info-section-title">HOW IT WORKS</div>
       <ol class="steps">
-        <li class="step">
-          <span class="step-num">1</span>
-          <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link when inventory drops before each market.</div>
-        </li>
-        <li class="step">
-          <span class="step-num">2</span>
-          <div class="step-text"><strong>Shop before the gates open.</strong> See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</div>
-        </li>
-        <li class="step">
-          <span class="step-num">3</span>
-          <div class="step-text"><strong>Pick up at the market.</strong> Pay the dealer directly and grab your item at their booth. It's already yours.</div>
-        </li>
+        <li class="step"><strong>Register with your phone number.</strong> We'll text you a link when inventory drops before each market.</li>
+        <li class="step"><strong>Shop before the gates open.</strong> See what dealers are bringing — photos, prices, details — and buy the pieces you want before anyone else can.</li>
+        <li class="step"><strong>Pick up at the market.</strong> Pay the dealer directly and grab your item at their booth. It's already yours.</li>
       </ol>
     </div>
 
@@ -684,21 +668,12 @@
   </div>
 
   <div class="info-columns">
-    <div class="info-section" style="margin-top: 24px; padding-top: 20px;">
+    <div class="info-section" style="margin-top: 24px; padding-top: 16px;">
       <div class="info-section-title">HOW IT WORKS</div>
       <ol class="steps">
-        <li class="step">
-          <span class="step-num">1</span>
-          <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link to get started. Takes 30 seconds.</div>
-        </li>
-        <li class="step">
-          <span class="step-num">2</span>
-          <div class="step-text"><strong>Post what you're bringing.</strong> Photos, price, details. That's it.</div>
-        </li>
-        <li class="step">
-          <span class="step-num">3</span>
-          <div class="step-text"><strong>Buyers buy directly from you.</strong> They message you, you arrange payment. Show up to the market with sales already done.</div>
-        </li>
+        <li class="step"><strong>Register with your phone number.</strong> We'll text you a link to get started. Takes 30 seconds.</li>
+        <li class="step"><strong>Post what you're bringing.</strong> Photos, price, details. That's it.</li>
+        <li class="step"><strong>Buyers buy directly from you.</strong> They message you, you arrange payment. Show up to the market with sales already done.</li>
       </ol>
     </div>
 
