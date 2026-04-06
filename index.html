@@ -816,6 +816,47 @@
     }
 
     /* ── Bottom Nav ───────────────────────── */
+    /* ── Mode Toggle (Browse / My Booth) ── */
+    .mode-toggle {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      background: var(--text);
+      padding: 0;
+      padding-top: max(0px, env(safe-area-inset-top));
+    }
+    .mode-btn {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 14px 0;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.15s, background 0.15s;
+    }
+    .mode-btn.mode-active {
+      color: #fff;
+      background: var(--accent);
+    }
+    .mode-toggle.hidden { display: none; }
+
+    /* Push content down when mode toggle is visible */
+    .has-mode-toggle .feed-header {
+      top: calc(46px + max(0px, env(safe-area-inset-top)));
+    }
+    .has-mode-toggle #feed,
+    .has-mode-toggle #favorites,
+    .has-mode-toggle #messages,
+    .has-mode-toggle #dealer-home {
+      padding-top: calc(46px + max(0px, env(safe-area-inset-top)));
+    }
+
     .bottom-nav {
       position: fixed;
       bottom: 0; left: 0; right: 0;
@@ -1252,7 +1293,13 @@
   <div class="auth-fine" id="post-item-msg"></div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- MODE TOGGLE (dealers only) -->
+<div class="mode-toggle hidden" id="mode-toggle">
+  <button class="mode-btn mode-active" id="mode-browse" onclick="switchMode('browse')">Browse</button>
+  <button class="mode-btn" id="mode-booth" onclick="switchMode('booth')">My Booth</button>
+</div>
+
+<!-- BOTTOM NAV — Browse mode (buyers + dealers in browse) -->
 <nav class="bottom-nav hidden" id="bottom-nav">
   <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1261,7 +1308,7 @@
     </svg>
     Browse
   </button>
-  <button class="nav-tab" data-tab="favorites" id="tab-favorites" onclick="switchTab('favorites')" style="display:none">
+  <button class="nav-tab" data-tab="favorites" onclick="switchTab('favorites')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
     </svg>
@@ -1273,11 +1320,21 @@
     </svg>
     Messages
   </button>
-  <button class="nav-tab" data-tab="dealer-home" id="tab-dealer-home" onclick="switchTab('dealer-home')">
+</nav>
+
+<!-- BOTTOM NAV — Booth mode (dealers only) -->
+<nav class="bottom-nav hidden" id="booth-nav">
+  <button class="nav-tab active" data-tab="dealer-home" onclick="switchBoothTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
-    My Booth
+    My Items
+  </button>
+  <button class="nav-tab" data-tab="booth-messages" onclick="switchBoothTab('booth-messages')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+    Inquiries
   </button>
 </nav>
 
@@ -1481,25 +1538,62 @@ async function enterApp() {
     userFavorites = new Set((favs || []).map(f => f.item_id));
   } catch (e) {}
 
-  // Configure nav based on role
+  // Configure UI based on role
   const isDealer = currentUser?.role === 'dealer';
-  const nav = document.getElementById('bottom-nav');
-  const dealerTab = document.getElementById('tab-dealer-home');
-  const favTab = document.getElementById('tab-favorites');
-  const modeToggle = document.getElementById('mode-toggle');
 
-  // Everyone gets favorites
-  favTab.style.display = 'flex';
-  // Only dealers get My Booth
   if (isDealer) {
-    dealerTab.style.display = 'flex';
+    document.getElementById('mode-toggle').classList.remove('hidden');
+    document.body.classList.add('has-mode-toggle');
   } else {
-    dealerTab.style.display = 'none';
+    document.getElementById('mode-toggle').classList.add('hidden');
+    document.body.classList.remove('has-mode-toggle');
   }
 
-  nav.classList.remove('hidden');
-  showScreen('feed');
-  loadFeed();
+  switchMode('browse');
+}
+
+let currentMode = 'browse'; // 'browse' or 'booth'
+
+function switchMode(mode) {
+  currentMode = mode;
+  const browseBtn = document.getElementById('mode-browse');
+  const boothBtn = document.getElementById('mode-booth');
+  const browseNav = document.getElementById('bottom-nav');
+  const boothNav = document.getElementById('booth-nav');
+
+  if (mode === 'browse') {
+    browseBtn.classList.add('mode-active');
+    boothBtn.classList.remove('mode-active');
+    browseNav.classList.remove('hidden');
+    boothNav.classList.add('hidden');
+    // Reset to browse feed
+    document.querySelectorAll('#bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('#bottom-nav [data-tab="feed"]').classList.add('active');
+    showScreen('feed');
+    loadFeed();
+  } else {
+    browseBtn.classList.remove('mode-active');
+    boothBtn.classList.add('mode-active');
+    browseNav.classList.add('hidden');
+    boothNav.classList.remove('hidden');
+    // Reset to dealer home
+    document.querySelectorAll('#booth-nav .nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('#booth-nav [data-tab="dealer-home"]').classList.add('active');
+    showScreen('dealer-home');
+    loadDealerHome();
+  }
+}
+
+function switchBoothTab(tab) {
+  document.querySelectorAll('#booth-nav .nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`#booth-nav [data-tab="${tab}"]`).classList.add('active');
+  if (tab === 'dealer-home') {
+    showScreen('dealer-home');
+    loadDealerHome();
+  } else if (tab === 'booth-messages') {
+    showScreen('messages');
+    // TODO: load seller-specific messages
+  }
 }
 
 async function loadFeed() {
