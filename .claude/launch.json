@@ -4,7 +4,7 @@
     {
       "name": "early-bird",
       "runtimeExecutable": "ruby",
-      "runtimeArgs": ["-run", "-ehttpd", "."],
+      "runtimeArgs": ["-run", "-ehttpd", "/Users/elikagan/Desktop/Claude stuff/dealer-exchange"],
       "port": 8094
     }
   ]
