@@ -742,6 +742,111 @@
       color: #B8960C;
     }
 
+    /* ── Seller Inquiry List ─────────────── */
+    .inquiry-list {
+      padding: 0;
+    }
+    .inquiry-list-header {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .inquiry-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--input-bg);
+      cursor: pointer;
+    }
+    .inquiry-row:first-of-type {
+      border-top: none;
+    }
+    .inquiry-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+    .inquiry-avatar-placeholder {
+      background: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .inquiry-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .inquiry-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .inquiry-msg {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .inquiry-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .inquiry-phone {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      font-variant-numeric: tabular-nums;
+    }
+    .inquiry-time {
+      font-size: 11px;
+      color: var(--dim);
+      font-variant-numeric: tabular-nums;
+    }
+    .inquiry-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .inquiry-action-btn {
+      background: var(--input-bg);
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .inquiry-hold-btn:hover {
+      background: #FDF6E3;
+      color: #B8960C;
+    }
+    .inquiry-sold-btn:hover {
+      background: #E8F5E9;
+      color: var(--success);
+    }
+
     /* ── Add Item Form ───────────────────── */
     #add-item {
       min-height: 100vh;
@@ -1467,6 +1572,15 @@ async function api(path, opts = {}) {
   return res.json();
 }
 
+async function uploadImage(file) {
+  const res = await fetch(`${API}/api/upload`, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'Content-Type': file.type || 'image/jpeg' },
+    body: file,
+  });
+  return res.json();
+}
+
 // ── Screens ───────────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1605,10 +1719,12 @@ async function verifyToken(token) {
 
 // ── Onboarding ────────────────────────────────────────────────
 let selfieDataUrl = null;
+let selfieFile = null;
 
 function handleSelfie(input) {
   const file = input.files[0];
   if (!file) return;
+  selfieFile = file;
   const reader = new FileReader();
   reader.onload = (e) => {
     selfieDataUrl = e.target.result;
@@ -1620,7 +1736,18 @@ function handleSelfie(input) {
 async function completeOnboarding() {
   const name = document.getElementById('onboard-name').value.trim();
   if (!name) { alert('Please enter your name.'); return; }
-  await api('/api/auth/me', { method: 'PATCH', body: { name } });
+
+  const updates = { name };
+
+  // Upload selfie to CDN if provided
+  if (selfieFile) {
+    const uploadRes = await uploadImage(selfieFile);
+    if (uploadRes.url) {
+      updates.photo_url = uploadRes.url;
+    }
+  }
+
+  await api('/api/auth/me', { method: 'PATCH', body: updates });
   currentUser = await api('/api/auth/me');
   enterApp();
 }
@@ -1779,8 +1906,8 @@ async function loadMessages() {
 
     // Merge and sort by created_at desc
     const all = [
-      ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller' })),
-      ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer' })),
+      ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller', _otherPhoto: c.seller?.photo_url })),
+      ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer', _otherPhoto: c.buyer?.photo_url })),
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     if (!all.length) {
@@ -1793,10 +1920,13 @@ async function loadMessages() {
       const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
       const roleLabel = conv._role === 'buyer' ? 'You inquired' : 'Inquiry from';
       const timeAgo = getTimeAgo(conv.created_at);
+      const avatar = conv._otherPhoto
+        ? `<img src="${conv._otherPhoto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+        : '';
       return `<a href="#/c/${conv.token}" class="conv-item" style="text-decoration:none;color:inherit;">
         <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
         <div class="conv-info">
-          <div class="conv-name">${conv._other}</div>
+          <div class="conv-name" style="display:flex;align-items:center;gap:8px;">${avatar}${conv._other}</div>
           <div class="conv-meta">${roleLabel} · ${price} · ${timeAgo}</div>
         </div>
       </a>`;
@@ -2009,7 +2139,9 @@ async function loadItemDetail(itemId) {
       const buyerName = item.buyer?.name || 'a buyer';
       actionsEl.innerHTML = `<div class="detail-status-badge detail-badge-hold">Held for ${buyerName}</div>`;
     } else if (item.dealer_id === getDealerId()) {
-      actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">This is your listing.</div>`;
+      // Seller viewing own item — load all inquiries
+      actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">Loading inquiries...</div>`;
+      loadSellerInquiries(item.id, actionsEl);
     } else {
       actionsEl.innerHTML = `<button class="text-seller-btn" id="text-seller-btn" onclick="textSeller('${item.id}')">I want this</button>`;
     }
@@ -2018,6 +2150,78 @@ async function loadItemDetail(itemId) {
   }
 }
 
+async function loadSellerInquiries(itemId, actionsEl) {
+  try {
+    const inquiries = await api(`/api/items/${itemId}/inquiries`);
+    if (!Array.isArray(inquiries) || inquiries.length === 0) {
+      actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">No inquiries yet.</div>`;
+      return;
+    }
+
+    let html = `<div class="inquiry-list">`;
+    html += `<div class="inquiry-list-header">Inquiries (${inquiries.length})</div>`;
+
+    for (const inq of inquiries) {
+      const buyer = inq.buyer || {};
+      const name = buyer.name || buyer.business_name || 'Unknown';
+      const initial = name.charAt(0).toUpperCase();
+      const phone = buyer.phone || '';
+      const phoneDisplay = phone.replace('+1', '').replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+      const msg = inq.latest_message || '';
+      const msgDir = inq.latest_message_direction === 'seller_to_buyer' ? 'You: ' : '';
+      const timeAgo = formatTimeAgo(inq.latest_message_at);
+      const avatarHtml = buyer.photo_url
+        ? `<img src="${buyer.photo_url}" alt="${name}" class="inquiry-avatar">`
+        : `<div class="inquiry-avatar inquiry-avatar-placeholder">${initial}</div>`;
+
+      html += `
+        <div class="inquiry-row" onclick="window.location.hash='#/c/${inq.token}'">
+          ${avatarHtml}
+          <div class="inquiry-info">
+            <div class="inquiry-name">${name}</div>
+            <div class="inquiry-msg">${msgDir}${msg}</div>
+            <div class="inquiry-meta">
+              ${phone ? `<a href="tel:${phone}" class="inquiry-phone" onclick="event.stopPropagation()">${phoneDisplay}</a>` : ''}
+              <span class="inquiry-time">${timeAgo}</span>
+            </div>
+          </div>
+          <div class="inquiry-actions">
+            <button class="inquiry-action-btn inquiry-hold-btn" onclick="event.stopPropagation(); sellerAction('${itemId}', '${buyer.id}', 'hold', '${name.replace(/'/g, "\\'")}')">Hold</button>
+            <button class="inquiry-action-btn inquiry-sold-btn" onclick="event.stopPropagation(); sellerAction('${itemId}', '${buyer.id}', 'sold', '${name.replace(/'/g, "\\'")}')">Sold</button>
+          </div>
+        </div>`;
+    }
+    html += `</div>`;
+    actionsEl.innerHTML = html;
+  } catch (e) {
+    actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">This is your listing.</div>`;
+  }
+}
+
+function formatTimeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'now';
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d`;
+}
+
+async function sellerAction(itemId, buyerId, status, buyerName) {
+  if (!confirm(`${status === 'hold' ? 'Hold' : 'Mark sold'} for ${buyerName}?`)) return;
+  try {
+    await api(`/api/items/${itemId}`, {
+      method: 'PATCH',
+      body: { status, buyer_id: buyerId },
+    });
+    loadItemDetail(itemId);
+  } catch (e) {
+    alert('Failed to update item status.');
+  }
+}
 async function textSeller(itemId) {
   const btn = document.getElementById('text-seller-btn');
   if (!btn) return;
@@ -2119,6 +2323,7 @@ async function loadConversation(token) {
     const otherName = role === 'buyer'
       ? (conv.seller?.name || conv.seller?.business_name || 'Seller')
       : (conv.buyer?.name || 'Buyer');
+    const otherPhotoUrl = role === 'buyer' ? conv.seller?.photo_url : conv.buyer?.photo_url;
 
     const otherPhone = role === 'buyer' ? conv.seller?.phone : conv.buyer?.phone;
     const otherPayment = role === 'buyer'
@@ -2130,11 +2335,13 @@ async function loadConversation(token) {
       html += `<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;">`;
       html += `<div style="width:60px;height:60px;border-radius:6px;overflow:hidden;flex-shrink:0;background:var(--input-bg);"><img src="${photo}" style="width:100%;height:100%;object-fit:cover;"></div>`;
       html += `<div><div style="font-weight:700;font-variant-numeric:tabular-nums;">${price}</div>`;
-      html += `<div style="font-size:12px;color:var(--muted);">${otherName}</div>`;
+      const avatarSmall = otherPhotoUrl ? `<img src="${otherPhotoUrl}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">` : '';
+      html += `<div style="font-size:12px;color:var(--muted);">${avatarSmall}${otherName}</div>`;
       if (otherPhone) html += `<a href="tel:${otherPhone}" style="font-size:11px;color:var(--accent);text-decoration:none;">${otherPhone}</a>`;
       html += `</div></div>`;
     } else {
-      html += `<div style="font-weight:600;margin-bottom:4px;">${otherName}</div>`;
+      const avatarLarge = otherPhotoUrl ? `<img src="${otherPhotoUrl}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;">` : '';
+      html += `<div style="font-weight:600;margin-bottom:4px;">${avatarLarge}${otherName}</div>`;
       if (otherPhone) html += `<div style="margin-bottom:16px;"><a href="tel:${otherPhone}" style="font-size:11px;color:var(--accent);text-decoration:none;">${otherPhone}</a></div>`;
     }
     if (otherPayment) html += `<div style="font-size:11px;color:var(--muted);margin-bottom:16px;">${otherPayment}</div>`;
@@ -2150,8 +2357,12 @@ async function loadConversation(token) {
         const align = isMe ? 'flex-end' : 'flex-start';
         const bg = isMe ? 'var(--accent)' : 'var(--input-bg)';
         const color = isMe ? '#fff' : 'var(--text)';
-        html += `<div style="display:flex;justify-content:${align};margin-bottom:8px;">`;
-        html += `<div style="max-width:80%;padding:10px 14px;border-radius:12px;background:${bg};color:${color};font-size:13px;line-height:1.4;">${msg.body}</div>`;
+        const msgAvatar = (!isMe && otherPhotoUrl)
+          ? `<img src="${otherPhotoUrl}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;align-self:flex-end;">`
+          : '';
+        html += `<div style="display:flex;justify-content:${align};align-items:flex-end;gap:6px;margin-bottom:8px;">`;
+        if (!isMe && msgAvatar) html += msgAvatar;
+        html += `<div style="max-width:75%;padding:10px 14px;border-radius:12px;background:${bg};color:${color};font-size:13px;line-height:1.4;">${msg.body}</div>`;
         html += `</div>`;
       });
     }
@@ -2276,9 +2487,14 @@ async function postItem() {
   msg.className = 'auth-fine';
 
   try {
-    // Upload photos — for now, use data URLs (will swap to CDN later)
-    // TODO: Replace with real CDN upload
-    const photoUrls = itemPhotos.map(p => p.dataUrl);
+    // Upload photos to R2 CDN
+    msg.textContent = 'Uploading photos...';
+    const photoUrls = [];
+    for (const p of itemPhotos) {
+      const uploadRes = await uploadImage(p.file);
+      if (uploadRes.error) { throw new Error(uploadRes.error); }
+      photoUrls.push(uploadRes.url);
+    }
 
     const res = await api('/api/items', {
       method: 'POST',

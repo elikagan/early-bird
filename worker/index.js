@@ -26,11 +26,17 @@
  *   POST /api/conversations/:token/messages — Send a message in conversation
  *   GET  /api/conversations       — List my conversations
  *
+ *   POST /api/upload              — Upload image to R2 (requires auth)
+ *   GET  /images/*                — Serve image from R2 (public, cached)
+ *
  *   POST /api/admin/dealers       — Create/invite a dealer (admin)
  *   GET  /api/admin/dealers       — List all dealers (admin)
  *   GET  /api/admin/activity      — Activity dashboard (admin)
  *   POST /api/admin/proxy-post    — Post item on behalf of dealer (admin)
  *   GET  /api/admin/conversations — View all conversations (admin)
+ *   POST /api/admin/sms-blast     — Send SMS to buyers/sellers/all (admin)
+ *
+ *   GET  /api/items/:id/inquiries — All buyer inquiries for seller's item (auth)
  */
 
 export default {
@@ -117,6 +123,15 @@ export default {
         const itemId = path.split('/api/favorites/')[1];
         res = await handleRemoveFavorite(env, dealer, itemId);
 
+      // Images (R2)
+      } else if (path === '/api/upload' && method === 'POST') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        res = await handleUpload(request, env);
+      } else if (path.startsWith('/images/') && method === 'GET') {
+        const key = path.replace('/images/', '');
+        res = await handleServeImage(env, key);
+
       // Admin
       } else if (path === '/api/admin/dealers' && method === 'POST') {
         res = await requireAdmin(request, env) || await handleCreateDealer(request, env);
@@ -128,6 +143,15 @@ export default {
         res = await requireAdmin(request, env) || await handleProxyPost(request, env);
       } else if (path === '/api/admin/conversations' && method === 'GET') {
         res = await requireAdmin(request, env) || await handleAdminConversations(url, env);
+      } else if (path === '/api/admin/sms-blast' && method === 'POST') {
+        res = await requireAdmin(request, env) || await handleSMSBlast(request, env);
+
+      // Item inquiries (seller view)
+      } else if (path.match(/^\/api\/items\/[^/]+\/inquiries$/) && method === 'GET') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        const itemId = path.split('/api/items/')[1].split('/inquiries')[0];
+        res = await handleGetItemInquiries(env, dealer, itemId);
 
       } else {
         res = json({ error: 'Not found' }, 404);
@@ -302,6 +326,7 @@ async function handleUpdateDealer(request, env, dealer) {
   if (body.venmo !== undefined) updates.venmo = body.venmo;
   if (body.zelle !== undefined) updates.zelle = body.zelle;
   if (body.show_name_on_sold !== undefined) updates.show_name_on_sold = body.show_name_on_sold;
+  if (body.photo_url !== undefined) updates.photo_url = body.photo_url;
 
   const res = await supabase(env, `dealers?id=eq.${dealer.id}`, {
     method: 'PATCH',
@@ -493,8 +518,8 @@ async function handleStartConversation(request, env, dealer) {
 async function handleGetConversation(env, dealer, token) {
   const convRes = await supabase(env,
     `conversations?token=eq.${token}&select=*,` +
-    `buyer:dealers!conversations_buyer_id_fkey(id,name,business_name,phone,venmo,zelle),` +
-    `seller:dealers!conversations_seller_id_fkey(id,name,business_name,phone,venmo,zelle),` +
+    `buyer:dealers!conversations_buyer_id_fkey(id,name,business_name,phone,venmo,zelle,photo_url),` +
+    `seller:dealers!conversations_seller_id_fkey(id,name,business_name,phone,venmo,zelle,photo_url),` +
     `item:items(id,price,condition,firm,deposit_required,deposit_amount,notes,photos,status,category)`
   );
   const convs = await convRes.json();
@@ -569,12 +594,12 @@ async function handleListConversations(env, dealer) {
   // Get conversations where dealer is buyer or seller
   const buyerRes = await supabase(env,
     `conversations?buyer_id=eq.${dealer.id}&active=eq.true&select=*,` +
-    `seller:dealers!conversations_seller_id_fkey(name,business_name),` +
+    `seller:dealers!conversations_seller_id_fkey(name,business_name,photo_url),` +
     `item:items(price,photos,status)&order=created_at.desc`
   );
   const sellerRes = await supabase(env,
     `conversations?seller_id=eq.${dealer.id}&active=eq.true&select=*,` +
-    `buyer:dealers!conversations_buyer_id_fkey(name,business_name),` +
+    `buyer:dealers!conversations_buyer_id_fkey(name,business_name,photo_url),` +
     `item:items(price,photos,status)&order=created_at.desc`
   );
 
@@ -608,6 +633,58 @@ async function handleRemoveFavorite(env, dealer, itemId) {
     method: 'DELETE',
   });
   return json({ ok: true });
+}
+
+// ── Images (R2) ─────────────────────────────────────────────
+
+async function handleUpload(request, env) {
+  const contentType = request.headers.get('Content-Type') || '';
+  if (!contentType.startsWith('image/')) {
+    return json({ error: 'Content-Type must be an image/* type' }, 400);
+  }
+
+  const ext = contentType.split('/')[1].replace('jpeg', 'jpg') || 'jpg';
+  const id = crypto.randomUUID();
+  const key = `${id}.${ext}`;
+
+  const body = await request.arrayBuffer();
+  if (body.byteLength > 5 * 1024 * 1024) {
+    return json({ error: 'Image must be under 5MB' }, 400);
+  }
+
+  // Upload to Supabase Storage
+  const storageUrl = `${env.SUPABASE_URL}/storage/v1/object/images/${key}`;
+  const uploadRes = await fetch(storageUrl, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.SUPABASE_KEY}`,
+      'Content-Type': contentType,
+    },
+    body,
+  });
+
+  if (!uploadRes.ok) {
+    const err = await uploadRes.text();
+    console.error('Storage upload failed:', err);
+    return json({ error: 'Upload failed' }, 500);
+  }
+
+  // Return the public URL
+  const url = `${env.SUPABASE_URL}/storage/v1/object/public/images/${key}`;
+  return json({ url });
+}
+
+async function handleServeImage(env, key) {
+  // Proxy from Supabase Storage with cache headers
+  const storageUrl = `${env.SUPABASE_URL}/storage/v1/object/public/images/${key}`;
+  const res = await fetch(storageUrl);
+  if (!res.ok) return new Response('Not found', { status: 404 });
+
+  const headers = new Headers(res.headers);
+  headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  headers.set('Access-Control-Allow-Origin', '*');
+
+  return new Response(res.body, { headers });
 }
 
 // ── Admin ────────────────────────────────────────────────────
@@ -697,4 +774,82 @@ async function handleAdminConversations(url, env) {
 
   const res = await supabase(env, query);
   return json(await res.json());
+}
+
+// ── Item Inquiries (Seller View) ────────────────────────────
+
+async function handleGetItemInquiries(env, dealer, itemId) {
+  // Verify the item belongs to this dealer
+  const itemRes = await supabase(env, `items?id=eq.${itemId}&select=id,dealer_id`);
+  const items = await itemRes.json();
+  if (!items.length) return json({ error: 'Item not found' }, 404);
+  if (items[0].dealer_id !== dealer.id) return json({ error: 'Not your item' }, 403);
+
+  // Get all conversations for this item with buyer info and messages
+  const convRes = await supabase(env,
+    `conversations?item_id=eq.${itemId}&select=*,` +
+    `buyer:dealers!conversations_buyer_id_fkey(id,name,business_name,phone,photo_url),` +
+    `messages(body,direction,created_at)&order=created_at.desc`
+  );
+  const conversations = await convRes.json();
+
+  // Shape each conversation: include buyer info + latest message
+  const inquiries = (conversations || []).map(conv => {
+    const messages = conv.messages || [];
+    messages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const latest = messages[0] || null;
+    return {
+      conversation_id: conv.id,
+      token: conv.token,
+      buyer: conv.buyer,
+      latest_message: latest ? latest.body : null,
+      latest_message_direction: latest ? latest.direction : null,
+      latest_message_at: latest ? latest.created_at : conv.created_at,
+      message_count: messages.length,
+      active: conv.active,
+    };
+  });
+
+  return json(inquiries);
+}
+
+// ── SMS Blast (Admin) ───────────────────────────────────────
+
+async function handleSMSBlast(request, env) {
+  const body = await request.json();
+  if (!body.message) return json({ error: 'message required' }, 400);
+  const audience = body.audience || 'all';
+  if (!['buyers', 'sellers', 'all'].includes(audience)) {
+    return json({ error: 'audience must be buyers, sellers, or all' }, 400);
+  }
+
+  let query;
+  if (audience === 'buyers') {
+    query = 'dealers?role=eq.buyer&select=id,phone,name';
+  } else if (audience === 'sellers') {
+    query = 'dealers?role=eq.dealer&select=id,phone,name';
+  } else {
+    // "all" — each dealer row is unique, no dedup needed.
+    // Dealers with role "dealer" are sellers who can also buy — they get the message once.
+    query = 'dealers?select=id,phone,role,name';
+  }
+
+  const res = await supabase(env, query);
+  const dealers = await res.json();
+  if (!Array.isArray(dealers)) return json({ error: 'Failed to fetch dealers' }, 500);
+
+  let sent = 0;
+  const errors = [];
+
+  for (const dealer of dealers) {
+    if (!dealer.phone) continue;
+    try {
+      await sendSMS(env, dealer.phone, body.message);
+      sent++;
+    } catch (e) {
+      errors.push({ dealer_id: dealer.id, error: e.message });
+    }
+  }
+
+  return json({ sent, total: dealers.length, errors: errors.length ? errors : undefined });
 }
