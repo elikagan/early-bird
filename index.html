@@ -1188,8 +1188,8 @@
       <div class="feed-event" id="feed-event-name"></div>
     </div>
     <div class="mode-toggle hidden" id="mode-toggle">
-      <button class="mode-btn mode-active" id="mode-browse" onclick="switchMode('browse')">Browse</button>
-      <button class="mode-btn" id="mode-booth" onclick="switchMode('booth')">My Booth</button>
+      <button class="mode-btn mode-active" id="mode-shop" onclick="switchMode('shop')">Shop</button>
+      <button class="mode-btn" id="mode-sell" onclick="switchMode('sell')">Sell</button>
     </div>
   </div>
   <div id="feed-content"></div>
@@ -1202,9 +1202,9 @@
       <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
       <div class="feed-event" id="booth-event-name"></div>
     </div>
-    <div class="mode-toggle" id="mode-toggle-booth">
-      <button class="mode-btn" id="mode-browse-2" onclick="switchMode('browse')">Browse</button>
-      <button class="mode-btn mode-active" id="mode-booth-2" onclick="switchMode('booth')">My Booth</button>
+    <div class="mode-toggle" id="mode-toggle-sell">
+      <button class="mode-btn" id="mode-shop-2" onclick="switchMode('shop')">Shop</button>
+      <button class="mode-btn mode-active" id="mode-sell-2" onclick="switchMode('sell')">Sell</button>
     </div>
   </div>
   <div class="dealer-event-header">
@@ -1223,9 +1223,15 @@
 
 <!-- MESSAGES -->
 <div id="messages" class="screen">
-  <div class="messages-title">Messages</div>
-  <div class="empty-state">
-    <p>No messages yet. When buyers inquire about your items, they'll show up here.</p>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">Messages</div>
+    </div>
+  </div>
+  <div id="messages-content">
+    <div class="empty-state">
+      <p>No messages yet. Conversations about items will show up here.</p>
+    </div>
   </div>
 </div>
 
@@ -1299,42 +1305,35 @@
   <div class="auth-fine" id="post-item-msg"></div>
 </div>
 
-<!-- BOTTOM NAV — Browse mode (buyers + dealers in browse) -->
+<!-- BOTTOM NAV — single nav, reconfigured by mode -->
 <nav class="bottom-nav hidden" id="bottom-nav">
-  <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
+  <!-- Shop mode tabs -->
+  <button class="nav-tab active nav-shop" data-tab="feed" onclick="switchTab('feed')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
       <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
     </svg>
-    Browse
+    Shop
   </button>
-  <button class="nav-tab" data-tab="favorites" onclick="switchTab('favorites')">
+  <button class="nav-tab nav-shop" data-tab="favorites" onclick="switchTab('favorites')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
     </svg>
-    Favorites
+    Saved
   </button>
-  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-    </svg>
-    Messages
-  </button>
-</nav>
-
-<!-- BOTTOM NAV — Booth mode (dealers only) -->
-<nav class="bottom-nav hidden" id="booth-nav">
-  <button class="nav-tab active" data-tab="dealer-home" onclick="switchBoothTab('dealer-home')">
+  <!-- Sell mode tabs -->
+  <button class="nav-tab nav-sell" data-tab="dealer-home" onclick="switchTab('dealer-home')" style="display:none">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
     My Items
   </button>
-  <button class="nav-tab" data-tab="booth-messages" onclick="switchBoothTab('booth-messages')">
+  <!-- Always visible -->
+  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
-    Inquiries
+    Messages
   </button>
 </nav>
 
@@ -1547,48 +1546,42 @@ async function enterApp() {
     document.getElementById('mode-toggle').classList.add('hidden');
   }
 
-  switchMode('browse');
+  document.getElementById('bottom-nav').classList.remove('hidden');
+  switchMode('shop');
 }
 
-let currentMode = 'browse'; // 'browse' or 'booth'
+let currentMode = 'shop'; // 'shop' or 'sell'
 
 function switchMode(mode) {
   currentMode = mode;
-  const browseNav = document.getElementById('bottom-nav');
-  const boothNav = document.getElementById('booth-nav');
 
   // Sync both toggle instances
   document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('mode-active'));
-  if (mode === 'browse') {
-    document.getElementById('mode-browse').classList.add('mode-active');
-    document.getElementById('mode-browse-2')?.classList.add('mode-active');
-    browseNav.classList.remove('hidden');
-    boothNav.classList.add('hidden');
+
+  // Show/hide the right nav tabs
+  const shopTabs = document.querySelectorAll('.nav-shop');
+  const sellTabs = document.querySelectorAll('.nav-sell');
+
+  if (mode === 'shop') {
+    document.getElementById('mode-shop')?.classList.add('mode-active');
+    document.getElementById('mode-shop-2')?.classList.add('mode-active');
+    shopTabs.forEach(t => t.style.display = 'flex');
+    sellTabs.forEach(t => t.style.display = 'none');
+    // Reset active tab
     document.querySelectorAll('#bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelector('#bottom-nav [data-tab="feed"]').classList.add('active');
     showScreen('feed');
     loadFeed();
   } else {
-    document.getElementById('mode-booth').classList.add('mode-active');
-    document.getElementById('mode-booth-2')?.classList.add('mode-active');
-    browseNav.classList.add('hidden');
-    boothNav.classList.remove('hidden');
-    document.querySelectorAll('#booth-nav .nav-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('#booth-nav [data-tab="dealer-home"]').classList.add('active');
+    document.getElementById('mode-sell')?.classList.add('mode-active');
+    document.getElementById('mode-sell-2')?.classList.add('mode-active');
+    shopTabs.forEach(t => t.style.display = 'none');
+    sellTabs.forEach(t => t.style.display = 'flex');
+    // Reset active tab
+    document.querySelectorAll('#bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('#bottom-nav [data-tab="dealer-home"]').classList.add('active');
     showScreen('dealer-home');
     loadDealerHome();
-  }
-}
-
-function switchBoothTab(tab) {
-  document.querySelectorAll('#booth-nav .nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`#booth-nav [data-tab="${tab}"]`).classList.add('active');
-  if (tab === 'dealer-home') {
-    showScreen('dealer-home');
-    loadDealerHome();
-  } else if (tab === 'booth-messages') {
-    showScreen('messages');
-    // TODO: load seller-specific messages
   }
 }
 
