@@ -422,7 +422,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
+    }
+    .feed-header .mode-toggle {
+      margin-bottom: 10px;
     }
     .feed-logo {
       font-size: 16px;
@@ -816,45 +819,34 @@
     }
 
     /* ── Bottom Nav ───────────────────────── */
-    /* ── Mode Toggle (Browse / My Booth) ── */
+    /* ── Mode Toggle — segmented control ── */
     .mode-toggle {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 200;
       display: flex;
-      background: var(--text);
-      padding: 0;
-      padding-top: max(0px, env(safe-area-inset-top));
+      background: var(--input-bg);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px;
     }
+    .mode-toggle.hidden { display: none; }
     .mode-btn {
       flex: 1;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 14px 0;
+      padding: 7px 12px;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
       background: transparent;
-      color: rgba(255,255,255,0.4);
-      transition: color 0.15s, background 0.15s;
+      color: var(--muted);
+      transition: all 0.15s;
     }
     .mode-btn.mode-active {
-      color: #fff;
-      background: var(--accent);
-    }
-    .mode-toggle.hidden { display: none; }
-
-    /* Push content down when mode toggle is visible */
-    .has-mode-toggle .feed-header {
-      top: calc(46px + max(0px, env(safe-area-inset-top)));
-    }
-    .has-mode-toggle #feed,
-    .has-mode-toggle #favorites,
-    .has-mode-toggle #messages,
-    .has-mode-toggle #dealer-home {
-      padding-top: calc(46px + max(0px, env(safe-area-inset-top)));
+      color: var(--text);
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
 
     .bottom-nav {
@@ -1192,8 +1184,12 @@
 <div id="feed" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo">EARLY BIRD_</div>
+      <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
       <div class="feed-event" id="feed-event-name"></div>
+    </div>
+    <div class="mode-toggle hidden" id="mode-toggle">
+      <button class="mode-btn mode-active" id="mode-browse" onclick="switchMode('browse')">Browse</button>
+      <button class="mode-btn" id="mode-booth" onclick="switchMode('booth')">My Booth</button>
     </div>
   </div>
   <div id="feed-content"></div>
@@ -1201,6 +1197,16 @@
 
 <!-- DEALER HOME -->
 <div id="dealer-home" class="screen">
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
+      <div class="feed-event" id="booth-event-name"></div>
+    </div>
+    <div class="mode-toggle" id="mode-toggle-booth">
+      <button class="mode-btn" id="mode-browse-2" onclick="switchMode('browse')">Browse</button>
+      <button class="mode-btn mode-active" id="mode-booth-2" onclick="switchMode('booth')">My Booth</button>
+    </div>
+  </div>
   <div class="dealer-event-header">
     <div class="dealer-event-name" id="dealer-event-name"></div>
     <div class="dealer-event-date" id="dealer-event-date"></div>
@@ -1291,12 +1297,6 @@
 
   <button class="auth-btn" id="post-item-btn" onclick="postItem()">Post item</button>
   <div class="auth-fine" id="post-item-msg"></div>
-</div>
-
-<!-- MODE TOGGLE (dealers only) -->
-<div class="mode-toggle hidden" id="mode-toggle">
-  <button class="mode-btn mode-active" id="mode-browse" onclick="switchMode('browse')">Browse</button>
-  <button class="mode-btn" id="mode-booth" onclick="switchMode('booth')">My Booth</button>
 </div>
 
 <!-- BOTTOM NAV — Browse mode (buyers + dealers in browse) -->
@@ -1543,10 +1543,8 @@ async function enterApp() {
 
   if (isDealer) {
     document.getElementById('mode-toggle').classList.remove('hidden');
-    document.body.classList.add('has-mode-toggle');
   } else {
     document.getElementById('mode-toggle').classList.add('hidden');
-    document.body.classList.remove('has-mode-toggle');
   }
 
   switchMode('browse');
@@ -1556,27 +1554,25 @@ let currentMode = 'browse'; // 'browse' or 'booth'
 
 function switchMode(mode) {
   currentMode = mode;
-  const browseBtn = document.getElementById('mode-browse');
-  const boothBtn = document.getElementById('mode-booth');
   const browseNav = document.getElementById('bottom-nav');
   const boothNav = document.getElementById('booth-nav');
 
+  // Sync both toggle instances
+  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('mode-active'));
   if (mode === 'browse') {
-    browseBtn.classList.add('mode-active');
-    boothBtn.classList.remove('mode-active');
+    document.getElementById('mode-browse').classList.add('mode-active');
+    document.getElementById('mode-browse-2')?.classList.add('mode-active');
     browseNav.classList.remove('hidden');
     boothNav.classList.add('hidden');
-    // Reset to browse feed
     document.querySelectorAll('#bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelector('#bottom-nav [data-tab="feed"]').classList.add('active');
     showScreen('feed');
     loadFeed();
   } else {
-    browseBtn.classList.remove('mode-active');
-    boothBtn.classList.add('mode-active');
+    document.getElementById('mode-booth').classList.add('mode-active');
+    document.getElementById('mode-booth-2')?.classList.add('mode-active');
     browseNav.classList.add('hidden');
     boothNav.classList.remove('hidden');
-    // Reset to dealer home
     document.querySelectorAll('#booth-nav .nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelector('#booth-nav [data-tab="dealer-home"]').classList.add('active');
     showScreen('dealer-home');
@@ -1678,6 +1674,7 @@ async function loadFavorites() {
 async function loadDealerHome() {
   if (currentMarket) {
     document.getElementById('dealer-event-name').textContent = currentMarket.name.toUpperCase();
+    document.getElementById('booth-event-name').textContent = currentMarket.name;
     const date = new Date(currentMarket.market_date + 'T00:00:00');
     document.getElementById('dealer-event-date').textContent =
       date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
