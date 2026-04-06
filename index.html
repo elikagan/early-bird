@@ -35,398 +35,243 @@
     .screen { display: none; }
     .screen.active { display: block; }
 
+    /*
+     * DESIGN SYSTEM TOKENS
+     * Spacing: 20px (within groups) / 40px (between groups) / 80px (between zones)
+     * Line-height: 1 (display) / 1.5 (body)
+     * Letter-spacing: 0.02em (display) / 0.06em (buttons) / 0.1em (labels)
+     * Border-radius: 4px
+     * Internal padding: 14px (inputs/buttons)
+     */
+
     /* ── Landing Page ────────────────────── */
     #landing {
       min-height: 100vh;
       min-height: 100dvh;
-      max-width: 600px;
+      max-width: 540px;
       margin: 0 auto;
       padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
-      padding-bottom: max(32px, env(safe-area-inset-bottom));
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
     }
 
+    /* ── Header ── */
     .landing-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       padding-top: 8px;
     }
-    .landing-header .dealer-link {
-      margin-top: -4px;
-    }
-
-    /* ── Desktop responsive ────────────────── */
-    @media (min-width: 768px) {
-      body { background: #F5F3F0; }
-
-      #landing, #dealer-landing {
-        max-width: 800px;
-        padding: 40px 48px 60px;
-        background: var(--bg);
-        margin-top: 40px;
-        margin-bottom: 40px;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        min-height: auto;
-      }
-
-      /* Two-column layout for above-fold content */
-      .landing-hero {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 48px;
-        align-items: start;
-        margin-top: 24px;
-      }
-
-      .landing-hero .event-block { margin-top: 0; }
-      .landing-hero .countdown { margin-top: 8px; }
-      .landing-hero .auth-section { margin-top: 0; }
-
-      /* Below-fold info sections side by side */
-      .info-columns {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 48px;
-      }
-      .info-columns .info-section {
-        margin-top: 0;
-        padding-top: 24px;
-        border-top: 2px solid var(--text);
-      }
-
-      /* Logo scales up slightly on desktop */
-      .logo-early, .logo-bird { font-size: 52px; }
-
-      /* Event name scales up */
-      .event-name { font-size: 32px; }
-
-      /* Countdown scales up */
-      .cd-num { font-size: 60px; }
-
-      /* Dealer landing two-column */
-      .dealer-hero-area {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 48px;
-        align-items: start;
-      }
-      .dealer-hero-area .auth-section { margin-top: 0; }
-    }
-
-    @media (min-width: 1024px) {
-      #landing, #dealer-landing {
-        max-width: 900px;
-        padding: 48px 64px 72px;
-      }
-    }
+    .landing-header .dealer-link { margin-top: -4px; }
 
     .logo-stack { line-height: 1; }
     .logo-early {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 44px;
-      letter-spacing: 0.02em;
-      color: var(--text);
-      display: block;
-      line-height: 1;
+      font-size: 40px; letter-spacing: 0.02em;
+      color: var(--text); display: block; line-height: 1;
     }
     .logo-bird {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 44px;
-      letter-spacing: 0.02em;
-      color: var(--accent);
-      display: block;
-      line-height: 1;
+      font-size: 40px; letter-spacing: 0.02em;
+      color: var(--accent); display: block; line-height: 1;
     }
-
     .dealer-link {
-      font-size: 12px;
-      color: var(--text-2);
-      text-decoration: none;
-      display: inline-block;
-      border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 4px;
-      font-weight: 500;
-      margin-top: 2px;
+      font-size: 12px; color: var(--text-2); text-decoration: none;
+      display: inline-block; border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 4px; font-weight: 500;
     }
-    .dealer-link:hover {
-      border-color: var(--text-3);
-      color: var(--text);
-    }
+    .dealer-link:hover { border-color: var(--text-3); color: var(--text); }
 
-    /* Spacing system: 8px tight / 24px block / 48px section */
-
+    /* ── Rule ── */
     .rule {
-      border: none;
-      border-top: 2px solid var(--text);
-      margin: 8px 0 0;            /* tight — rule is the header's underline */
+      border: none; border-top: 2px solid var(--text);
+      margin: 20px 0;
     }
 
-    /* Event block */
-    .event-block { margin-top: 8px; }  /* tight — flows from rule into content */
+    /* ── Event Group ── */
     .event-context {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-3);
-      font-weight: 600;
-      margin-bottom: 8px;          /* tight — label for the name below */
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-3); font-weight: 600;
     }
     .event-name {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
-      letter-spacing: 0.02em;
-      color: var(--text);
-      line-height: 1;
+      font-size: 28px; letter-spacing: 0.02em;
+      color: var(--text); line-height: 1;
+      margin-top: 6px;
     }
     .event-meta {
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 8px;             /* tight — date is part of event name group */
+      font-size: 13px; color: var(--text-3); margin-top: 4px;
     }
 
-    /* Countdown */
-    .countdown {
-      margin-top: 8px;             /* tight — countdown is part of the event info */
-    }
+    /* ── Countdown ── */
+    .countdown { margin-top: 40px; }
     .cd-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-3);
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-3); font-weight: 600;
     }
     .cd-type {
-      display: flex;
-      align-items: baseline;
-      gap: 5px;
+      display: flex; align-items: baseline; gap: 5px;
+      margin-top: 6px;
     }
     .cd-num {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 52px;
-      line-height: 1;
-      color: var(--text);
-      letter-spacing: 0.02em;
-      font-variant-numeric: tabular-nums;
+      font-size: 48px; line-height: 1; color: var(--text);
+      letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
     }
     .cd-word {
-      font-size: 11px;
-      color: var(--text-3);
-      font-weight: 500;
-      text-transform: lowercase;
-      padding-bottom: 7px;
+      font-size: 11px; color: var(--text-3); font-weight: 500;
+      text-transform: lowercase; padding-bottom: 6px;
     }
     .cd-sep {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 34px;
-      color: var(--border);
-      padding-bottom: 4px;
+      font-size: 30px; color: var(--border); padding-bottom: 3px;
     }
 
-    /* Auth section — elevated card */
-    .auth-section {
-      margin-top: 8px;             /* tight — part of the same pitch */
-      padding: 24px;
-      background: #F8F7F5;
-      border-radius: 4px;
-    }
-
+    /* ── Auth ── */
+    .auth-section { margin-top: 40px; }
     .auth-input {
-      width: 100%;
-      padding: 14px;              /* uniform internal padding */
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
+      width: 100%; padding: 14px;
+      border: 1px solid var(--border); border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 16px;
       font-variant-numeric: tabular-nums;
-      color: var(--text);
-      background: var(--bg);
-      outline: none;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      color: var(--text); background: var(--bg); outline: none;
     }
     .auth-input::placeholder { color: #C0C0C0; }
-    .auth-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(46,126,191,0.1);
-    }
-
+    .auth-input:focus { border-color: var(--accent); }
     .auth-btn {
-      width: 100%;
-      margin-top: 8px;            /* tight — input and button are one action */
-      padding: 14px;              /* same as input */
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 4px;
+      width: 100%; margin-top: 10px; padding: 14px;
+      background: var(--accent); color: white; border: none; border-radius: 4px;
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 18px;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(46,126,191,0.25);
-      transition: background 0.15s, box-shadow 0.15s;
+      font-size: 18px; letter-spacing: 0.06em; cursor: pointer;
+      line-height: 1; display: flex; align-items: center; justify-content: center;
     }
-    .auth-btn:hover {
-      background: var(--accent-hover);
-      box-shadow: 0 4px 12px rgba(46,126,191,0.3);
-    }
-    .auth-btn:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
-
+    .auth-btn:hover { background: var(--accent-hover); }
+    .auth-btn:disabled { opacity: 0.5; cursor: default; }
     .auth-fine {
-      text-align: center;
-      margin-top: 8px;            /* tight — fine print belongs to the button */
-      font-size: 11px;
-      color: var(--text-3);
+      text-align: center; margin-top: 10px;
+      font-size: 11px; color: var(--text-3);
     }
     .auth-error {
-      text-align: center;
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--error);
+      text-align: center; margin-top: 10px;
+      font-size: 13px; color: var(--error);
     }
     .auth-success {
-      text-align: center;
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--success);
+      text-align: center; margin-top: 10px;
+      font-size: 13px; color: var(--success);
     }
 
-    /* Hero image (below fold) */
+    /* ── Hero image (below fold) ── */
     .hero-image {
-      margin-top: 32px;
-      width: 100%;
-      aspect-ratio: 4/3;
-      border-radius: 3px;
-      overflow: hidden;
-      display: none;
+      margin-top: 40px; width: 100%; aspect-ratio: 4/3;
+      border-radius: 4px; overflow: hidden; display: none;
     }
-    .hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; }
 
-    .disclaimer {
-      margin-top: 48px;            /* section — major break */
-      padding-top: 24px;           /* block — breathing room after rule */
-      border-top: 1px solid #F0EFED;
-      font-size: 10px;
-      color: var(--text-3);
-      line-height: 1.5;
-    }
-
-    /* ── Info Sections (buyer + dealer pages) ── */
+    /* ── Info Sections ── */
     .info-section {
-      margin-top: 48px;            /* section — major break */
-      padding-top: 24px;           /* block — breathing room after rule */
+      margin-top: 80px;
       border-top: 2px solid var(--text);
+      padding-top: 20px;
     }
     .info-section-title {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 22px;
-      color: var(--text);
-      letter-spacing: 0.02em;
-      margin-bottom: 24px;         /* block — title labels the list */
+      font-size: 20px; color: var(--text); letter-spacing: 0.02em;
+      margin-bottom: 20px;
     }
 
-    /* How it works steps */
     .steps { list-style: none; }
     .step {
-      display: flex;
-      gap: 8px;                    /* tight — number and text are one unit */
-      margin-bottom: 24px;         /* block — each step is its own thought */
-      align-items: flex-start;
+      display: flex; gap: 12px; align-items: flex-start;
+      margin-bottom: 20px;
     }
     .step:last-child { margin-bottom: 0; }
     .step-num {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
-      color: var(--accent);
-      line-height: 1;
-      flex-shrink: 0;
-      width: 24px;
-      opacity: 0.5;
+      font-size: 24px; color: var(--accent); line-height: 1;
+      flex-shrink: 0; width: 20px; opacity: 0.5;
     }
     .step-text {
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.5;
-      padding-top: 3px;
+      font-size: 14px; color: var(--text-2); line-height: 1.5;
+      padding-top: 2px;
     }
-    .step-text strong {
-      color: var(--text);
-      font-weight: 600;
+    .step-text strong { color: var(--text); font-weight: 600; }
+
+    .faq-item { margin-bottom: 20px; }
+    .faq-item:last-child { margin-bottom: 0; }
+    .faq-q {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      margin-bottom: 4px;
+    }
+    .faq-a { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+    .disclaimer {
+      margin-top: 80px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 10px; color: var(--text-3); line-height: 1.5;
     }
 
-    /* FAQ */
-    .faq-item {
-      margin-bottom: 24px;         /* block — each FAQ is its own thought */
-      padding-bottom: 24px;
-      border-bottom: 1px solid #F0EFED;
+    /* ── Desktop ── */
+    @media (min-width: 768px) {
+      body { background: #F5F3F0; }
+      #landing, #dealer-landing {
+        max-width: 800px; padding: 48px 56px 64px;
+        background: var(--bg); margin-top: 40px; margin-bottom: 40px;
+        border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        min-height: auto;
+      }
+      .landing-hero {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 56px; align-items: start;
+      }
+      .landing-hero .countdown { margin-top: 40px; }
+      .landing-hero .auth-section { margin-top: 0; }
+      .info-columns {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+      }
+      .info-columns .info-section {
+        margin-top: 0; padding-top: 20px; border-top: 2px solid var(--text);
+      }
+      .logo-early, .logo-bird { font-size: 48px; }
+      .event-name { font-size: 32px; }
+      .cd-num { font-size: 56px; }
+      .dealer-hero-area {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 56px; align-items: start;
+      }
+      .dealer-hero-area .auth-section { margin-top: 0; }
     }
-    .faq-item:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-    .faq-q {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;          /* tight within FAQ item */
-    }
-    .faq-a {
-      font-size: 13px;
-      color: var(--text-2);
-      line-height: 1.5;
+    @media (min-width: 1024px) {
+      #landing, #dealer-landing { max-width: 900px; padding: 56px 72px 80px; }
     }
 
     /* Dealer landing page */
     #dealer-landing {
-      min-height: 100vh;
-      min-height: 100dvh;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 24px;
+      min-height: 100vh; min-height: 100dvh;
+      max-width: 540px; margin: 0 auto; padding: 0 24px;
       padding-top: max(24px, env(safe-area-inset-top));
-      padding-bottom: max(48px, env(safe-area-inset-bottom));
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
     }
     .back-link {
-      font-size: 12px;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
+      font-size: 12px; color: var(--accent);
+      text-decoration: none; font-weight: 500;
     }
     .dealer-hero-text {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
-      color: var(--text);
-      line-height: 1;
-      margin: 24px 0 8px;         /* block above, tight to sub below */
+      font-size: 28px; color: var(--text); line-height: 1;
+      margin: 20px 0 8px;
     }
     .dealer-hero-text .accent { color: var(--accent); }
     .dealer-sub {
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.5;
-      margin-bottom: 24px;        /* block — sub to badge */
+      font-size: 14px; color: var(--text-2); line-height: 1.5;
+      margin-bottom: 20px;
     }
     .dealer-free-badge {
       display: inline-block;
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 14px;
-      letter-spacing: 0.1em;
-      color: var(--success);
-      background: #EDF7F0;
-      padding: 8px 14px;
-      border-radius: 4px;
-      margin-bottom: 24px;        /* block — badge to next section */
+      font-size: 14px; letter-spacing: 0.1em;
+      color: var(--success); background: #EDF7F0;
+      padding: 8px 14px; border-radius: 4px;
+      margin-bottom: 20px;
     }
 
     /* ── Verify Screen ───────────────────── */
