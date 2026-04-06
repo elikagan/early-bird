@@ -78,8 +78,8 @@
       }
 
       .landing-hero .event-block { margin-top: 0; }
-      .landing-hero .countdown { margin-top: 20px; }
-      .landing-hero .auth-section { margin-top: 0; padding-top: 0; border-top: none; }
+      .landing-hero .countdown { margin-top: 32px; }
+      .landing-hero .auth-section { margin-top: 0; }
 
       /* Below-fold info sections side by side */
       .info-columns {
@@ -109,7 +109,7 @@
         gap: 48px;
         align-items: start;
       }
-      .dealer-hero-area .auth-section { margin-top: 0; padding-top: 0; border-top: none; }
+      .dealer-hero-area .auth-section { margin-top: 0; }
     }
 
     @media (min-width: 1024px) {
@@ -156,18 +156,18 @@
     .rule {
       border: none;
       border-top: 2px solid var(--text);
-      margin: 20px 0 0;
+      margin: 32px 0 0;
     }
 
     /* Event block */
-    .event-block { margin-top: 20px; }
+    .event-block { margin-top: 32px; }
     .event-context {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       color: var(--text-3);
       font-weight: 600;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .event-name {
       font-family: 'Bebas Neue', Impact, sans-serif;
@@ -179,14 +179,12 @@
     .event-meta {
       font-size: 12px;
       color: var(--text-3);
-      margin-top: 4px;
+      margin-top: 8px;
     }
 
     /* Countdown */
     .countdown {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
+      margin-top: 32px;
     }
     .cd-type {
       display: flex;
@@ -215,36 +213,41 @@
       padding-bottom: 4px;
     }
 
-    /* Auth section */
+    /* Auth section — elevated card */
     .auth-section {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
+      margin-top: 32px;
+      padding: 24px;
+      background: #F8F7F5;
+      border-radius: 6px;
     }
 
     .auth-input {
       width: 100%;
-      padding: 13px 16px;
+      padding: 14px 16px;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       font-family: 'DM Sans', sans-serif;
       font-size: 16px;
       font-variant-numeric: tabular-nums;
       color: var(--text);
       background: var(--bg);
       outline: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
     .auth-input::placeholder { color: #C0C0C0; }
-    .auth-input:focus { border-color: var(--accent); }
+    .auth-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(46,126,191,0.1);
+    }
 
     .auth-btn {
       width: 100%;
-      margin-top: 8px;
+      margin-top: 16px;
       padding: 16px 14px 12px;
       background: var(--accent);
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       font-family: 'Bebas Neue', Impact, sans-serif;
       font-size: 18px;
       letter-spacing: 0.08em;
@@ -253,25 +256,30 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 8px rgba(46,126,191,0.25);
+      transition: background 0.15s, box-shadow 0.15s;
     }
-    .auth-btn:hover { background: var(--accent-hover); }
-    .auth-btn:disabled { opacity: 0.5; cursor: default; }
+    .auth-btn:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 4px 12px rgba(46,126,191,0.3);
+    }
+    .auth-btn:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
 
     .auth-fine {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 16px;
       font-size: 11px;
       color: var(--text-3);
     }
     .auth-error {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 16px;
       font-size: 13px;
       color: var(--error);
     }
     .auth-success {
       text-align: center;
-      margin-top: 10px;
+      margin-top: 16px;
       font-size: 13px;
       color: var(--success);
     }
@@ -292,16 +300,18 @@
     }
 
     .disclaimer {
-      margin-top: 24px;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid #F0EFED;
       font-size: 10px;
       color: var(--text-3);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     /* ── Info Sections (buyer + dealer pages) ── */
     .info-section {
-      margin-top: 40px;
-      padding-top: 28px;
+      margin-top: 48px;
+      padding-top: 32px;
       border-top: 2px solid var(--text);
     }
     .info-section-title {
@@ -309,53 +319,61 @@
       font-size: 22px;
       color: var(--text);
       letter-spacing: 0.03em;
-      margin-bottom: 16px;
+      margin-bottom: 24px;
     }
 
     /* How it works steps */
     .steps { list-style: none; }
     .step {
       display: flex;
-      gap: 14px;
-      margin-bottom: 18px;
+      gap: 16px;
+      margin-bottom: 24px;
       align-items: flex-start;
     }
+    .step:last-child { margin-bottom: 0; }
     .step-num {
       font-family: 'Bebas Neue', Impact, sans-serif;
-      font-size: 28px;
+      font-size: 32px;
       color: var(--accent);
-      line-height: 1.5;
+      line-height: 1;
       flex-shrink: 0;
-      width: 28px;
-      display: flex;
-      align-items: flex-start;
-      padding-top: 1px;
+      width: 32px;
+      opacity: 0.7;
     }
     .step-text {
       font-size: 14px;
       color: var(--text-2);
-      line-height: 1.5;
-      padding-top: 5px;
+      line-height: 1.6;
+      padding-top: 4px;
     }
     .step-text strong {
       color: var(--text);
       font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
     }
 
     /* FAQ */
     .faq-item {
-      margin-bottom: 18px;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #F0EFED;
+    }
+    .faq-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
     .faq-q {
       font-size: 14px;
       font-weight: 600;
       color: var(--text);
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
     .faq-a {
       font-size: 13px;
       color: var(--text-2);
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     /* Dealer landing page */
@@ -379,13 +397,13 @@
       font-size: 28px;
       color: var(--text);
       line-height: 1.05;
-      margin: 20px 0 6px;
+      margin: 32px 0 16px;
     }
     .dealer-hero-text .accent { color: var(--accent); }
     .dealer-sub {
       font-size: 14px;
       color: var(--text-2);
-      line-height: 1.5;
+      line-height: 1.6;
       margin-bottom: 24px;
     }
     .dealer-free-badge {
@@ -395,9 +413,9 @@
       letter-spacing: 0.1em;
       color: var(--success);
       background: #EDF7F0;
-      padding: 6px 14px;
-      border-radius: 4px;
-      margin-bottom: 20px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      margin-bottom: 32px;
     }
 
     /* ── Verify Screen ───────────────────── */
