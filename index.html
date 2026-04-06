@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Early Bird</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #faf9f7;
+      --text: #222;
+      --text-muted: #888;
+      --border: #e5e3df;
+      --card-bg: #fff;
+      --accent: #333;
+      --sold-bg: #f0eeeb;
+      --hold-bg: #fef9e7;
+      --new-badge: #d44;
+      --green: #2d8a4e;
+    }
+
+    body {
+      font-family: -apple-system, 'Helvetica Neue', Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
+    }
+
+    /* ── Login Screen ─────────────────────── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    #login-screen h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    #login-screen .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    #login-screen input {
+      width: 100%;
+      max-width: 300px;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-family: -apple-system, 'SF Mono', 'Menlo', monospace;
+      text-align: center;
+      outline: none;
+      letter-spacing: 0.05em;
+    }
+
+    #login-screen input:focus {
+      border-color: var(--accent);
+    }
+
+    #login-screen button {
+      width: 100%;
+      max-width: 300px;
+      margin-top: 0.75rem;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #login-screen button:disabled {
+      opacity: 0.5;
+    }
+
+    #login-screen .error {
+      color: var(--new-badge);
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    #login-screen .invite-note {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    /* ── Onboarding Screen ────────────────── */
+    #onboard-screen {
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    #onboard-screen h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    #onboard-screen .subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #onboard-screen .field {
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 0.75rem;
+    }
+
+    #onboard-screen .field label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    #onboard-screen .field input {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    #onboard-screen .field input:focus {
+      border-color: var(--accent);
+    }
+
+    #onboard-screen .optional {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    #onboard-screen button {
+      width: 100%;
+      max-width: 300px;
+      margin-top: 0.75rem;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ── Feed Header ──────────────────────── */
+    #feed-screen { display: none; }
+
+    .feed-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(250, 249, 247, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0.75rem 1rem;
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feed-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .feed-header h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .feed-header .market-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .feed-header .stats {
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .header-actions button {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      color: var(--text);
+    }
+
+    /* ── Filter Bar ───────────────────────── */
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      flex-shrink: 0;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      background: var(--card-bg);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .filter-chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ── Feed Items ───────────────────────── */
+    .feed {
+      padding-top: 110px;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .feed-item {
+      margin-bottom: 1px;
+      background: var(--card-bg);
+    }
+
+    .feed-item.status-sold {
+      opacity: 0.6;
+    }
+
+    .feed-item.status-hold {
+      background: var(--hold-bg);
+    }
+
+    /* Photo carousel */
+    .carousel {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: #f0eeeb;
+    }
+
+    .carousel-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease-out;
+    }
+
+    .carousel-track img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+    }
+
+    .carousel-dots .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .carousel-dots .dot.active {
+      background: #fff;
+    }
+
+    .new-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--new-badge);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Item info */
+    .item-info {
+      padding: 0.85rem 1rem 1rem;
+    }
+
+    .item-info .price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .item-info .price {
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .item-info .price-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .item-info .condition-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      margin-right: 0.35rem;
+    }
+
+    .item-info .notes {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+      line-height: 1.4;
+    }
+
+    .item-info .seller-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.65rem;
+    }
+
+    .item-info .seller {
+      font-size: 0.85rem;
+    }
+
+    .item-info .seller .name {
+      font-weight: 600;
+    }
+
+    .item-info .seller .biz {
+      color: var(--text-muted);
+    }
+
+    .sold-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hold-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #b8860b;
+    }
+
+    /* Action buttons */
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .item-actions button {
+      flex: 1;
+      padding: 0.65rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-save {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border) !important;
+    }
+
+    .btn-save.saved {
+      background: #fce4ec;
+      border-color: #e57373 !important;
+      color: #c62828;
+    }
+
+    .btn-text {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Post Screen ──────────────────────── */
+    #post-screen {
+      display: none;
+      min-height: 100vh;
+      padding: 1rem;
+      padding-top: max(1rem, env(safe-area-inset-top));
+    }
+
+    #post-screen .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    #post-screen h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .post-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .photo-slot {
+      aspect-ratio: 1;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      background: var(--card-bg);
+    }
+
+    .photo-slot.has-photo {
+      border-style: solid;
+    }
+
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-slot .add-icon {
+      font-size: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    .photo-slot .remove {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .post-field {
+      margin-bottom: 1rem;
+    }
+
+    .post-field label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .post-field input,
+    .post-field select,
+    .post-field textarea {
+      width: 100%;
+      padding: 0.7rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      background: var(--card-bg);
+    }
+
+    .post-field input:focus,
+    .post-field select:focus,
+    .post-field textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .post-field textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0;
+    }
+
+    .toggle-row label {
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+
+    .toggle {
+      width: 48px;
+      height: 28px;
+      border-radius: 14px;
+      background: var(--border);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.on {
+      background: var(--green);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .toggle.on::after {
+      transform: translateX(20px);
+    }
+
+    .btn-post {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    .btn-post:disabled {
+      opacity: 0.5;
+    }
+
+    /* ── Utility ──────────────────────────── */
+    .hidden { display: none !important; }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .toast.show { opacity: 1; }
+
+    @media (min-width: 600px) {
+      .feed { max-width: 480px; margin: 0 auto; }
+      #post-screen { max-width: 480px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div id="login-screen">
+    <h1>Early Bird</h1>
+    <p class="subtitle">Trade-only pre-market</p>
+    <input type="tel" id="phone-input" placeholder="(310) 555-1234" autocomplete="tel" inputmode="tel">
+    <button id="login-btn" onclick="requestLogin()">Send Login Link</button>
+    <div id="login-error" class="error hidden"></div>
+    <p class="invite-note">Invite-only. Ask a member to get you in.</p>
+  </div>
+
+  <!-- Onboarding Screen -->
+  <div id="onboard-screen">
+    <h2>Welcome to Early Bird</h2>
+    <p class="subtitle">Quick setup, one time only</p>
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="onboard-name" placeholder="Eli" autocomplete="given-name">
+    </div>
+    <div class="field">
+      <label>Business name <span class="optional">(optional)</span></label>
+      <input type="text" id="onboard-biz" placeholder="Object Lesson">
+    </div>
+    <div class="field">
+      <label>Venmo <span class="optional">(optional)</span></label>
+      <input type="text" id="onboard-venmo" placeholder="@eli-kagan">
+    </div>
+    <div class="field">
+      <label>Zelle <span class="optional">(optional)</span></label>
+      <input type="text" id="onboard-zelle" placeholder="eli@email.com">
+    </div>
+    <button onclick="completeOnboarding()">Let's go</button>
+  </div>
+
+  <!-- Feed Screen -->
+  <div id="feed-screen">
+    <div class="feed-header">
+      <div class="feed-header-top">
+        <div>
+          <h1>Early Bird</h1>
+          <div class="market-info" id="market-info">Loading...</div>
+        </div>
+        <div class="header-actions">
+          <button onclick="showPost()" title="Post an item">+</button>
+          <button onclick="toggleFilters()" title="Filters">☰</button>
+        </div>
+      </div>
+      <div class="filter-bar hidden" id="filter-bar">
+        <div class="filter-chip active" data-filter="all">All</div>
+        <div class="filter-chip" data-filter="art">Art</div>
+        <div class="filter-chip" data-filter="furniture">Furniture</div>
+        <div class="filter-chip" data-filter="lighting">Lighting</div>
+        <div class="filter-chip" data-filter="objects">Objects</div>
+        <div class="filter-chip" data-filter="decor">Decor</div>
+      </div>
+    </div>
+    <div class="feed" id="feed"></div>
+  </div>
+
+  <!-- Post Screen -->
+  <div id="post-screen">
+    <div class="post-header">
+      <h2>Post an item</h2>
+      <button class="post-close" onclick="hidePost()">&times;</button>
+    </div>
+
+    <div class="photo-grid" id="photo-grid">
+      <div class="photo-slot" onclick="addPhoto(0)"><span class="add-icon">+</span></div>
+      <div class="photo-slot" onclick="addPhoto(1)"><span class="add-icon">+</span></div>
+      <div class="photo-slot" onclick="addPhoto(2)"><span class="add-icon">+</span></div>
+      <div class="photo-slot" onclick="addPhoto(3)"><span class="add-icon">+</span></div>
+      <div class="photo-slot" onclick="addPhoto(4)"><span class="add-icon">+</span></div>
+    </div>
+
+    <div class="post-field">
+      <label>Price</label>
+      <input type="number" id="post-price" placeholder="350" inputmode="numeric">
+    </div>
+
+    <div class="post-field">
+      <label>Market</label>
+      <select id="post-market"></select>
+    </div>
+
+    <div class="post-field">
+      <label>Category <span class="optional" style="color:var(--text-muted)">(optional)</span></label>
+      <select id="post-category">
+        <option value="">—</option>
+        <option value="art">Art</option>
+        <option value="furniture">Furniture</option>
+        <option value="lighting">Lighting</option>
+        <option value="objects">Objects</option>
+        <option value="decor">Decor</option>
+      </select>
+    </div>
+
+    <div class="post-field">
+      <label>Condition</label>
+      <select id="post-condition">
+        <option value="good">Good</option>
+        <option value="mint">Mint</option>
+        <option value="fair">Fair</option>
+        <option value="as-is">As-Is</option>
+      </select>
+    </div>
+
+    <div class="post-field">
+      <label>Notes <span class="optional" style="color:var(--text-muted)">(optional)</span></label>
+      <textarea id="post-notes" placeholder="Small chip on base, barely visible"></textarea>
+    </div>
+
+    <div class="toggle-row">
+      <label>Firm price</label>
+      <div class="toggle" id="toggle-firm" onclick="this.classList.toggle('on')"></div>
+    </div>
+
+    <div class="toggle-row">
+      <label>Deposit required</label>
+      <div class="toggle" id="toggle-deposit" onclick="toggleDeposit()"></div>
+    </div>
+
+    <div class="post-field hidden" id="deposit-amount-field">
+      <label>Deposit amount</label>
+      <input type="number" id="post-deposit-amount" placeholder="50" inputmode="numeric">
+    </div>
+
+    <button class="btn-post" id="btn-post" onclick="submitPost()">Post</button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Hidden file input for photos -->
+  <input type="file" id="photo-input" accept="image/*" class="hidden" onchange="handlePhoto(event)">
+
+  <script>
+    // ── Config ────────────────────────────────────────────────
+    const API = ''; // Same origin when served from worker; set to worker URL for dev
+
+    // ── State ─────────────────────────────────────────────────
+    let currentDealer = null;
+    let currentMarket = null;
+    let markets = [];
+    let items = [];
+    let savedItems = JSON.parse(localStorage.getItem('eb_saved') || '[]');
+    let postPhotos = []; // DataURLs for current post
+    let activePhotoSlot = 0;
+    let activeFilter = 'all';
+
+    // ── Init ──────────────────────────────────────────────────
+    async function init() {
+      // Check if we're on the auth verify callback
+      if (location.pathname.startsWith('/auth/verify/')) {
+        // The worker handles this server-side via redirect
+        return;
+      }
+
+      // Check for onboarding redirect
+      if (location.pathname === '/onboard') {
+        showScreen('onboard-screen');
+        return;
+      }
+
+      // Check if already authenticated
+      try {
+        const res = await fetch(API + '/api/auth/me', { credentials: 'include' });
+        if (res.ok) {
+          currentDealer = await res.json();
+          if (!currentDealer.name) {
+            showScreen('onboard-screen');
+          } else {
+            await loadFeed();
+            showScreen('feed-screen');
+          }
+          return;
+        }
+      } catch (e) {}
+
+      showScreen('login-screen');
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('#login-screen, #onboard-screen, #feed-screen, #post-screen')
+        .forEach(el => el.style.display = 'none');
+      const screen = document.getElementById(id);
+      screen.style.display = 'flex';
+      if (id === 'feed-screen') screen.style.display = 'block';
+    }
+
+    // ── Login ─────────────────────────────────────────────────
+    async function requestLogin() {
+      const phone = document.getElementById('phone-input').value.trim();
+      if (!phone) return;
+
+      const btn = document.getElementById('login-btn');
+      const errorEl = document.getElementById('login-error');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      errorEl.classList.add('hidden');
+
+      try {
+        const res = await fetch(API + '/api/auth/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          btn.textContent = 'Check your texts ✓';
+          showToast('Magic link sent! Check your texts.');
+        } else {
+          errorEl.textContent = data.error || 'Something went wrong';
+          errorEl.classList.remove('hidden');
+          btn.disabled = false;
+          btn.textContent = 'Send Login Link';
+        }
+      } catch (e) {
+        errorEl.textContent = 'Network error. Try again.';
+        errorEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Send Login Link';
+      }
+    }
+
+    // ── Onboarding ────────────────────────────────────────────
+    async function completeOnboarding() {
+      const name = document.getElementById('onboard-name').value.trim();
+      if (!name) { showToast('Name is required'); return; }
+
+      const updates = {
+        name,
+        business_name: document.getElementById('onboard-biz').value.trim() || null,
+        venmo: document.getElementById('onboard-venmo').value.trim() || null,
+        zelle: document.getElementById('onboard-zelle').value.trim() || null,
+      };
+
+      // Update dealer via the items PATCH endpoint... actually we need a dealer update endpoint
+      // For now, use the auth/me concept — the worker can accept a PATCH to update the current dealer
+      // TODO: add PATCH /api/dealers/me endpoint
+      // For MVP, redirect to feed
+      currentDealer = { ...currentDealer, ...updates };
+      await loadFeed();
+      showScreen('feed-screen');
+    }
+
+    // ── Feed ──────────────────────────────────────────────────
+    async function loadFeed() {
+      // Load markets
+      try {
+        const mRes = await fetch(API + '/api/markets', { credentials: 'include' });
+        markets = await mRes.json();
+        if (markets.length) {
+          currentMarket = markets[0];
+          updateMarketHeader();
+        }
+      } catch (e) {}
+
+      // Load items
+      await loadItems();
+    }
+
+    async function loadItems() {
+      let url = API + '/api/items?';
+      if (currentMarket) url += `market_id=${currentMarket.id}&`;
+      if (activeFilter !== 'all') url += `category=${activeFilter}&`;
+
+      try {
+        const res = await fetch(url, { credentials: 'include' });
+        items = await res.json();
+        renderFeed();
+      } catch (e) {
+        document.getElementById('feed').innerHTML = '<p style="padding:2rem;text-align:center;color:var(--text-muted)">Could not load items</p>';
+      }
+    }
+
+    function updateMarketHeader() {
+      if (!currentMarket) return;
+      const date = new Date(currentMarket.market_date + 'T00:00:00');
+      const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+      const dateStr = date.toLocaleDateString('en-US', opts);
+      const total = items.length;
+      const newCount = items.filter(i => isNew(i)).length;
+      document.getElementById('market-info').innerHTML =
+        `${currentMarket.name} · ${dateStr}` +
+        `<span class="stats"> · ${total} listings${newCount ? ` · ${newCount} new` : ''}</span>`;
+    }
+
+    function isNew(item) {
+      const lastVisit = localStorage.getItem('eb_last_visit');
+      if (!lastVisit) return false;
+      return new Date(item.created_at) > new Date(lastVisit);
+    }
+
+    function renderFeed() {
+      const feed = document.getElementById('feed');
+      if (!items.length) {
+        feed.innerHTML = '<p style="padding:3rem 2rem;text-align:center;color:var(--text-muted)">No items yet. Be the first to post.</p>';
+        updateMarketHeader();
+        return;
+      }
+
+      feed.innerHTML = items.map((item, idx) => renderItem(item, idx)).join('');
+      updateMarketHeader();
+
+      // Set up carousels
+      items.forEach((item, idx) => {
+        if (item.photos.length > 1) {
+          setupCarousel(idx, item.photos.length);
+        }
+      });
+
+      // Store visit time
+      localStorage.setItem('eb_last_visit', new Date().toISOString());
+    }
+
+    function renderItem(item, idx) {
+      const price = '$' + (item.price / 100).toLocaleString();
+      const priceTag = item.firm ? 'Firm' : 'Open to offers';
+      const isSaved = savedItems.includes(item.id);
+      const sellerName = item.dealer?.name || 'Unknown';
+      const sellerBiz = item.dealer?.business_name ? ` · ${item.dealer.business_name}` : '';
+
+      let statusLabel = '';
+      if (item.status === 'sold') {
+        const buyerName = item.buyer?.name;
+        const buyerBiz = item.buyer?.business_name;
+        statusLabel = buyerName
+          ? `<div class="sold-label">Sold to ${buyerName}${buyerBiz ? ' · ' + buyerBiz : ''}</div>`
+          : '<div class="sold-label">Sold</div>';
+      } else if (item.status === 'hold') {
+        statusLabel = '<div class="hold-label">On hold</div>';
+      }
+
+      const photos = item.photos.map(url => `<img src="${url}" alt="" loading="lazy">`).join('');
+      const dots = item.photos.length > 1
+        ? `<div class="carousel-dots">${item.photos.map((_, i) => `<div class="dot${i === 0 ? ' active' : ''}"></div>`).join('')}</div>`
+        : '';
+
+      const newBadge = isNew(item) ? '<div class="new-badge">New</div>' : '';
+
+      const actions = item.status === 'live'
+        ? `<div class="item-actions">
+            <button class="btn-save ${isSaved ? 'saved' : ''}" onclick="toggleSave('${item.id}', this)">
+              ${isSaved ? '♥ Saved' : '♡ Save'}
+            </button>
+            <button class="btn-text" onclick="textSeller('${item.id}')">Text Seller</button>
+          </div>`
+        : '';
+
+      const conditionBadge = item.condition ? `<span class="condition-badge">${item.condition}</span>` : '';
+      const notes = item.notes ? `<div class="notes">${escapeHtml(item.notes)}</div>` : '';
+
+      return `
+        <div class="feed-item status-${item.status}" data-item-id="${item.id}">
+          <div class="carousel" id="carousel-${idx}">
+            <div class="carousel-track" id="track-${idx}">${photos}</div>
+            ${dots}
+            ${newBadge}
+          </div>
+          <div class="item-info">
+            <div class="price-row">
+              <span class="price">${price}</span>
+              <span class="price-tag">${priceTag}</span>
+            </div>
+            ${conditionBadge}
+            ${notes}
+            <div class="seller-row">
+              <div class="seller">
+                <span class="name">${escapeHtml(sellerName)}</span>
+                <span class="biz">${escapeHtml(sellerBiz)}</span>
+              </div>
+              ${statusLabel}
+            </div>
+            ${actions}
+          </div>
+        </div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ── Carousel ──────────────────────────────────────────────
+    function setupCarousel(idx, count) {
+      const carousel = document.getElementById(`carousel-${idx}`);
+      const track = document.getElementById(`track-${idx}`);
+      if (!carousel || !track) return;
+
+      let current = 0;
+      let startX = 0;
+      let isDragging = false;
+
+      carousel.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', e => {
+        if (!isDragging) return;
+        isDragging = false;
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          if (diff > 0 && current < count - 1) current++;
+          else if (diff < 0 && current > 0) current--;
+          track.style.transform = `translateX(-${current * 100}%)`;
+          updateDots(carousel, current);
+        }
+      }, { passive: true });
+    }
+
+    function updateDots(carousel, current) {
+      carousel.querySelectorAll('.dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+    }
+
+    // ── Save ──────────────────────────────────────────────────
+    function toggleSave(itemId, btn) {
+      const idx = savedItems.indexOf(itemId);
+      if (idx >= 0) {
+        savedItems.splice(idx, 1);
+        btn.classList.remove('saved');
+        btn.textContent = '♡ Save';
+      } else {
+        savedItems.push(itemId);
+        btn.classList.add('saved');
+        btn.textContent = '♥ Saved';
+      }
+      localStorage.setItem('eb_saved', JSON.stringify(savedItems));
+    }
+
+    // ── Text Seller ───────────────────────────────────────────
+    async function textSeller(itemId) {
+      try {
+        const res = await fetch(API + '/api/inquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ item_id: itemId }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          // Show relay number info and open SMS
+          const item = items.find(i => i.id === itemId);
+          const price = item ? '$' + (item.price / 100).toLocaleString() : '';
+          const msg = `Hey ${data.seller_name}, interested in your ${price} item on Early Bird`;
+
+          // If deposit required, show info first
+          if (data.deposit_required && data.deposit_amount) {
+            const depAmt = '$' + (data.deposit_amount / 100).toLocaleString();
+            let paymentInfo = '';
+            if (data.venmo) paymentInfo += `Venmo: ${data.venmo}\n`;
+            if (data.zelle) paymentInfo += `Zelle: ${data.zelle}`;
+            alert(`This seller requires a ${depAmt} deposit.\n\n${paymentInfo}\nSend the deposit, then text to confirm.`);
+          }
+
+          // Open SMS to relay number
+          window.location.href = `sms:${data.relay_number}&body=${encodeURIComponent(msg)}`;
+        } else {
+          showToast(data.error || 'Could not start conversation');
+        }
+      } catch (e) {
+        showToast('Network error');
+      }
+    }
+
+    // ── Filters ───────────────────────────────────────────────
+    function toggleFilters() {
+      document.getElementById('filter-bar').classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('filter-chip')) {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.filter;
+        loadItems();
+      }
+    });
+
+    // ── Post ──────────────────────────────────────────────────
+    function showPost() {
+      showScreen('post-screen');
+      document.getElementById('post-screen').style.display = 'block';
+
+      // Populate market dropdown
+      const select = document.getElementById('post-market');
+      select.innerHTML = markets.map(m => {
+        const date = new Date(m.market_date + 'T00:00:00');
+        const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+        return `<option value="${m.id}">${m.name} · ${date.toLocaleDateString('en-US', opts)}</option>`;
+      }).join('');
+
+      // Reset photos
+      postPhotos = [];
+      document.querySelectorAll('.photo-slot').forEach(slot => {
+        slot.classList.remove('has-photo');
+        slot.innerHTML = '<span class="add-icon">+</span>';
+      });
+    }
+
+    function hidePost() {
+      showScreen('feed-screen');
+    }
+
+    function addPhoto(slot) {
+      activePhotoSlot = slot;
+      document.getElementById('photo-input').click();
+    }
+
+    async function handlePhoto(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Client-side compress
+      const compressed = await compressImage(file, 1200, 0.82);
+      postPhotos[activePhotoSlot] = compressed;
+
+      // Update UI
+      const slots = document.querySelectorAll('.photo-slot');
+      const slot = slots[activePhotoSlot];
+      slot.classList.add('has-photo');
+      slot.innerHTML = `<img src="${compressed}"><button class="remove" onclick="event.stopPropagation();removePhoto(${activePhotoSlot})">&times;</button>`;
+
+      e.target.value = '';
+    }
+
+    function removePhoto(slot) {
+      postPhotos[slot] = null;
+      const slots = document.querySelectorAll('.photo-slot');
+      slots[slot].classList.remove('has-photo');
+      slots[slot].innerHTML = '<span class="add-icon">+</span>';
+    }
+
+    function compressImage(file, maxSize, quality) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          if (width > maxSize || height > maxSize) {
+            if (width > height) {
+              height = (height / width) * maxSize;
+              width = maxSize;
+            } else {
+              width = (width / height) * maxSize;
+              height = maxSize;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    function toggleDeposit() {
+      const toggle = document.getElementById('toggle-deposit');
+      toggle.classList.toggle('on');
+      document.getElementById('deposit-amount-field').classList.toggle('hidden', !toggle.classList.contains('on'));
+    }
+
+    async function submitPost() {
+      const photos = postPhotos.filter(Boolean);
+      if (!photos.length) { showToast('Add at least one photo'); return; }
+
+      const price = parseInt(document.getElementById('post-price').value);
+      if (!price || price <= 0) { showToast('Enter a valid price'); return; }
+
+      const btn = document.getElementById('btn-post');
+      btn.disabled = true;
+      btn.textContent = 'Posting...';
+
+      // TODO: Upload photos to CDN and get URLs
+      // For now, photos are data URLs (will be replaced with CDN upload)
+      const photoUrls = photos; // placeholder
+
+      const item = {
+        photos: photoUrls,
+        price: price * 100, // convert to cents
+        market_id: document.getElementById('post-market').value,
+        category: document.getElementById('post-category').value || null,
+        condition: document.getElementById('post-condition').value,
+        notes: document.getElementById('post-notes').value.trim() || null,
+        firm: document.getElementById('toggle-firm').classList.contains('on'),
+        deposit_required: document.getElementById('toggle-deposit').classList.contains('on'),
+        deposit_amount: document.getElementById('toggle-deposit').classList.contains('on')
+          ? parseInt(document.getElementById('post-deposit-amount').value || 0) * 100
+          : null,
+      };
+
+      try {
+        const res = await fetch(API + '/api/items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(item),
+        });
+
+        if (res.ok) {
+          showToast('Posted!');
+          hidePost();
+          loadItems();
+        } else {
+          const data = await res.json();
+          showToast(data.error || 'Failed to post');
+        }
+      } catch (e) {
+        showToast('Network error');
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Post';
+    }
+
+    // ── Toast ─────────────────────────────────────────────────
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2500);
+    }
+
+    // ── Phone input formatting ────────────────────────────────
+    document.getElementById('phone-input').addEventListener('input', function(e) {
+      let digits = this.value.replace(/\D/g, '');
+      if (digits.length > 10) digits = digits.slice(0, 10);
+      if (digits.length >= 7) {
+        this.value = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+      } else if (digits.length >= 4) {
+        this.value = `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+      } else if (digits.length > 0) {
+        this.value = `(${digits}`;
+      }
+    });
+
+    // Enter key submits login
+    document.getElementById('phone-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') requestLogin();
+    });
+
+    // ── Boot ──────────────────────────────────────────────────
+    init();
+  </script>
+</body>
+</html>

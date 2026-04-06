@@ -1,0 +1,14 @@
+name = "early-bird"
+main = "index.js"
+compatibility_date = "2024-09-23"
+
+[vars]
+SUPABASE_URL = "https://hfvfmndjknxvhwrstkrg.supabase.co"
+SITE_URL = "https://early-bird.objectlesson.workers.dev"
+
+# Secrets (set via wrangler secret put):
+# SUPABASE_KEY - Supabase service role key
+# TELNYX_API_KEY - Telnyx API v2 key
+# TELNYX_AUTH_NUMBER - Telnyx number for magic link SMS
+# TELNYX_RELAY_NUMBERS - Comma-separated relay numbers for SMS relay
+# ADMIN_TOKEN - Admin CMS access token
