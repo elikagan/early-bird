@@ -165,7 +165,7 @@
     }
 
     /* Event block */
-    .event-block { margin-top: 24px; } /* block — entering content area */
+    .event-block { margin-top: 8px; }  /* tight — flows from rule into content */
     .event-context {
       font-size: 10px;
       text-transform: uppercase;
@@ -190,6 +190,14 @@
     /* Countdown */
     .countdown {
       margin-top: 8px;             /* tight — countdown is part of the event info */
+    }
+    .cd-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      font-weight: 600;
+      margin-bottom: 8px;
     }
     .cd-type {
       display: flex;
@@ -220,7 +228,7 @@
 
     /* Auth section — elevated card */
     .auth-section {
-      margin-top: 24px;            /* block — distinct action zone */
+      margin-top: 8px;             /* tight — part of the same pitch */
       padding: 24px;
       background: #F8F7F5;
       border-radius: 4px;
@@ -726,6 +734,7 @@
       </div>
 
       <div class="countdown" id="landing-countdown">
+        <div class="cd-label">Inventory drops in</div>
         <div class="cd-type">
           <span class="cd-num" id="cd-days">--</span>
           <span class="cd-word">days</span>
