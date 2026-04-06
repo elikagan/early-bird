@@ -642,6 +642,49 @@
     .detail-photo + .detail-photo {
       margin-top: 1px;
     }
+
+    /* Photo carousel */
+    .carousel {
+      position: relative;
+      overflow: hidden;
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.3s ease;
+    }
+    .carousel-track .detail-photo {
+      flex: 0 0 100%;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 0;
+    }
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--dim);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .carousel-dot.active {
+      background: var(--text);
+    }
+    .carousel-counter {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-variant-numeric: tabular-nums;
+    }
     .detail-info {
       padding: 20px 24px;
     }
@@ -1192,6 +1235,180 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .hidden { display: none !important; }
+
+    /* ── Photo Reorder (drag) ─────────── */
+    .photo-slot.dragging { opacity: 0.4; }
+    .photo-slot.drag-over { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+    /* ── Admin CMS ────────────────────── */
+    #admin {
+      min-height: 100vh;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .admin-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .admin-section {
+      margin-bottom: 32px;
+    }
+    .admin-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .admin-card {
+      background: var(--input-bg);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .admin-card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-card .name { font-weight: 600; }
+    .admin-card .role {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .admin-card .role-dealer { background: #EDF7F0; color: var(--success); }
+    .admin-card .role-buyer { background: #E8F0FE; color: var(--accent); }
+    .admin-tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--input-bg);
+      border-radius: 6px;
+      padding: 3px;
+      margin-bottom: 20px;
+    }
+    .admin-tab {
+      flex: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+    }
+    .admin-tab.active {
+      color: var(--text);
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .admin-form { margin-bottom: 16px; }
+    .admin-form .form-field { margin-bottom: 12px; }
+    .admin-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
+    }
+    .admin-stat + .admin-stat { border-top: 1px solid var(--input-bg); }
+    .admin-stat .label { color: var(--muted); }
+    .admin-stat .value { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    /* ── Settings ─────────────────────── */
+    #settings {
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 24px;
+      padding-top: max(60px, env(safe-area-inset-top));
+      padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
+    }
+    .settings-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .settings-section {
+      margin-bottom: 32px;
+    }
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+    .settings-row + .settings-row {
+      border-top: 1px solid var(--input-bg);
+    }
+    .settings-label {
+      font-size: 13px;
+      color: var(--text);
+    }
+    .settings-value {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .settings-toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+    .settings-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .settings-toggle .slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--dim);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .settings-toggle .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .settings-toggle input:checked + .slider {
+      background: var(--accent);
+    }
+    .settings-toggle input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+    .logout-btn {
+      width: 100%;
+      padding: 14px;
+      background: none;
+      border: 1px solid var(--error);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--error);
+      cursor: pointer;
+      margin-top: 24px;
+    }
   </style>
 </head>
 <body>
@@ -1516,6 +1733,70 @@
   <div class="auth-fine" id="post-item-msg"></div>
 </div>
 
+<!-- SETTINGS -->
+<div id="settings" class="screen">
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">Settings</div>
+    </div>
+  </div>
+  <div class="settings-title">Profile</div>
+
+  <div class="settings-section">
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="settings-name" placeholder="Your name">
+    </div>
+    <div class="field">
+      <label>Business name</label>
+      <input type="text" id="settings-biz" placeholder="Optional">
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="section-title">Payment</div>
+    <div class="field">
+      <label>Venmo</label>
+      <input type="text" id="settings-venmo" placeholder="@username">
+    </div>
+    <div class="field">
+      <label>Zelle</label>
+      <input type="text" id="settings-zelle" placeholder="Phone or email">
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <div class="section-title">Preferences</div>
+    <div class="settings-row">
+      <span class="settings-label">Show name on sold items</span>
+      <label class="settings-toggle">
+        <input type="checkbox" id="settings-show-sold" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <button class="auth-btn" onclick="saveSettings()">Save changes</button>
+  <div class="auth-fine" id="settings-msg"></div>
+
+  <button class="logout-btn" onclick="logout()">Log out</button>
+</div>
+
+<!-- ADMIN CMS -->
+<div id="admin" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="admin-title">Admin</div>
+    <a href="#" style="font-size:12px;color:var(--accent);text-decoration:none;" onclick="enterApp(); return false;">← App</a>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="adminTab('dealers', this)">Dealers</button>
+    <button class="admin-tab" onclick="adminTab('markets', this)">Markets</button>
+    <button class="admin-tab" onclick="adminTab('blast', this)">SMS Blast</button>
+    <button class="admin-tab" onclick="adminTab('activity', this)">Activity</button>
+  </div>
+  <div id="admin-content"></div>
+</div>
+
 <!-- BOTTOM NAV — single nav, reconfigured by mode -->
 <nav class="bottom-nav hidden" id="bottom-nav">
   <!-- Shop mode tabs -->
@@ -1545,6 +1826,12 @@
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
     Messages
+  </button>
+  <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
+    Settings
   </button>
 </nav>
 
@@ -1599,6 +1886,7 @@ function switchTab(tab) {
   if (tab === 'dealer-home') loadDealerHome();
   if (tab === 'favorites') loadFavorites();
   if (tab === 'messages') loadMessages();
+  if (tab === 'settings') loadSettings();
 }
 
 // ── Landing ───────────────────────────────────────────────────
@@ -2125,6 +2413,12 @@ function route() {
   const convMatch = hash.match(/^#\/c\/(.+)$/);
   if (convMatch) { loadConversation(convMatch[1]); return; }
 
+  if (hash === '#/admin') {
+    showScreen('admin');
+    loadAdminDealers(document.getElementById('admin-content'));
+    return;
+  }
+
   const dealerId = getDealerId();
   if (dealerId) {
     api('/api/auth/me').then(me => {
@@ -2202,11 +2496,24 @@ async function loadItemDetail(itemId) {
     }
     currentItem = item;
 
-    // Photos
+    // Photos — carousel if multiple
     const photos = item.photos || [];
-    photosEl.innerHTML = photos.length
-      ? photos.map(url => `<div class="detail-photo"><img src="${url}" alt=""></div>`).join('')
-      : '<div class="detail-photo"></div>';
+    if (photos.length > 1) {
+      photosEl.innerHTML = `<div class="carousel" id="photo-carousel">
+        <div class="carousel-track" id="carousel-track">
+          ${photos.map(url => `<div class="detail-photo"><img src="${url}" alt=""></div>`).join('')}
+        </div>
+        <div class="carousel-counter"><span id="carousel-idx">1</span>/${photos.length}</div>
+        <div class="carousel-dots">
+          ${photos.map((_, i) => `<button class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></button>`).join('')}
+        </div>
+      </div>`;
+      initCarousel(photos.length);
+    } else {
+      photosEl.innerHTML = photos.length
+        ? `<div class="detail-photo"><img src="${photos[0]}" alt=""></div>`
+        : '<div class="detail-photo"></div>';
+    }
 
     // Info
     const price = '$' + (item.price / 100).toLocaleString();
@@ -2641,6 +2948,352 @@ function formatPhoneInput(el) {
 }
 formatPhoneInput(document.getElementById('phone-input'));
 formatPhoneInput(document.getElementById('dealer-phone-input'));
+
+// ── Photo Carousel ──────────────────────────────────────────
+let carouselIdx = 0;
+let carouselCount = 0;
+let touchStartX = 0;
+
+function initCarousel(count) {
+  carouselIdx = 0;
+  carouselCount = count;
+  const carousel = document.getElementById('photo-carousel');
+  if (!carousel) return;
+  carousel.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  carousel.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && carouselIdx < carouselCount - 1) goToSlide(carouselIdx + 1);
+      else if (diff < 0 && carouselIdx > 0) goToSlide(carouselIdx - 1);
+    }
+  }, { passive: true });
+}
+
+function goToSlide(idx) {
+  carouselIdx = idx;
+  const track = document.getElementById('carousel-track');
+  if (track) track.style.transform = `translateX(-${idx * 100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  const counter = document.getElementById('carousel-idx');
+  if (counter) counter.textContent = idx + 1;
+}
+
+// ── Photo Drag-to-Reorder ───────────────────────────────────
+let dragIdx = null;
+
+function renderPhotoSlotsWithDrag() {
+  const container = document.getElementById('photo-slots');
+  let html = itemPhotos.map((p, i) =>
+    `<div class="photo-slot" draggable="true" ondragstart="photoDragStart(event, ${i})" ondragover="photoDragOver(event)" ondrop="photoDrop(event, ${i})" ondragend="photoDragEnd(event)" ondragleave="photoDragLeave(event)">
+      <img src="${p.dataUrl}" alt="">
+      <button class="remove-photo" onclick="removeItemPhoto(${i})">×</button>
+    </div>`
+  ).join('');
+  if (itemPhotos.length < 5) {
+    html += `<div class="photo-slot" onclick="document.getElementById('photo-file').click()"><span class="add-icon">+</span></div>`;
+  }
+  container.innerHTML = html;
+}
+
+function photoDragStart(e, idx) {
+  dragIdx = idx;
+  e.target.closest('.photo-slot').classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function photoDragOver(e) {
+  e.preventDefault();
+  e.target.closest('.photo-slot')?.classList.add('drag-over');
+}
+function photoDragLeave(e) {
+  e.target.closest('.photo-slot')?.classList.remove('drag-over');
+}
+function photoDragEnd(e) {
+  document.querySelectorAll('.photo-slot').forEach(s => { s.classList.remove('dragging'); s.classList.remove('drag-over'); });
+}
+function photoDrop(e, targetIdx) {
+  e.preventDefault();
+  if (dragIdx === null || dragIdx === targetIdx) return;
+  const moved = itemPhotos.splice(dragIdx, 1)[0];
+  itemPhotos.splice(targetIdx, 0, moved);
+  dragIdx = null;
+  renderPhotoSlots();
+}
+
+// Override renderPhotoSlots to include drag
+const _origRenderPhotoSlots = renderPhotoSlots;
+renderPhotoSlots = function() {
+  renderPhotoSlotsWithDrag();
+};
+
+// ── Settings ────────────────────────────────────────────────
+function loadSettings() {
+  if (!currentUser) return;
+  document.getElementById('settings-name').value = currentUser.name || '';
+  document.getElementById('settings-biz').value = currentUser.business_name || '';
+  document.getElementById('settings-venmo').value = currentUser.venmo || '';
+  document.getElementById('settings-zelle').value = currentUser.zelle || '';
+  document.getElementById('settings-show-sold').checked = currentUser.show_name_on_sold !== false;
+}
+
+async function saveSettings() {
+  const updates = {
+    name: document.getElementById('settings-name').value.trim() || null,
+    business_name: document.getElementById('settings-biz').value.trim() || null,
+    venmo: document.getElementById('settings-venmo').value.trim() || null,
+    zelle: document.getElementById('settings-zelle').value.trim() || null,
+    show_name_on_sold: document.getElementById('settings-show-sold').checked,
+  };
+  const msg = document.getElementById('settings-msg');
+  try {
+    await api('/api/auth/me', { method: 'PATCH', body: updates });
+    currentUser = await api('/api/auth/me');
+    msg.textContent = 'Saved!';
+    msg.className = 'auth-success';
+    setTimeout(() => { msg.textContent = ''; }, 2000);
+  } catch (e) {
+    msg.textContent = 'Error saving.';
+    msg.className = 'auth-error';
+  }
+}
+
+function logout() {
+  if (!confirm('Log out?')) return;
+  localStorage.removeItem('eb_dealer_id');
+  currentUser = null;
+  document.getElementById('bottom-nav').classList.add('hidden');
+  showScreen('landing');
+  window.location.hash = '';
+}
+
+// ── Admin CMS ───────────────────────────────────────────────
+const ADMIN_TOKEN = 'early-bird-admin-2026';
+
+function adminApi(path, opts = {}) {
+  return fetch(`${API}${path}`, {
+    method: opts.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${ADMIN_TOKEN}`,
+    },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  }).then(r => r.json());
+}
+
+function adminTab(tab, btn) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const content = document.getElementById('admin-content');
+
+  if (tab === 'dealers') loadAdminDealers(content);
+  if (tab === 'markets') loadAdminMarkets(content);
+  if (tab === 'blast') loadAdminBlast(content);
+  if (tab === 'activity') loadAdminActivity(content);
+}
+
+async function loadAdminDealers(el) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const dealers = await adminApi('/api/admin/dealers');
+    let html = `<div class="admin-form">
+      <div class="admin-section-title">Invite dealer</div>
+      <div class="form-field"><input type="tel" class="form-input" id="admin-dealer-phone" placeholder="Phone number"></div>
+      <div class="form-field"><input type="text" class="form-input" id="admin-dealer-name" placeholder="Name"></div>
+      <div class="form-field"><input type="text" class="form-input" id="admin-dealer-biz" placeholder="Business name (optional)"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="auth-btn" style="flex:1;" onclick="adminCreateDealer('dealer')">Add as Dealer</button>
+        <button class="auth-btn" style="flex:1;background:var(--muted);" onclick="adminCreateDealer('buyer')">Add as Buyer</button>
+      </div>
+      <div class="auth-fine" id="admin-dealer-msg"></div>
+    </div>`;
+
+    html += `<div class="admin-section-title">All users (${dealers.length})</div>`;
+    for (const d of dealers) {
+      const roleClass = d.role === 'dealer' ? 'role-dealer' : 'role-buyer';
+      html += `<div class="admin-card">
+        <div class="admin-card-row">
+          <div>
+            <span class="name">${d.name || 'No name'}</span>
+            ${d.business_name ? ` · ${d.business_name}` : ''}
+          </div>
+          <span class="role ${roleClass}">${d.role}</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${d.phone}</div>
+      </div>`;
+    }
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load dealers.</div>';
+  }
+}
+
+async function adminCreateDealer(role) {
+  const phone = document.getElementById('admin-dealer-phone').value.trim();
+  const name = document.getElementById('admin-dealer-name').value.trim();
+  const biz = document.getElementById('admin-dealer-biz').value.trim();
+  const msg = document.getElementById('admin-dealer-msg');
+
+  if (!phone) { msg.textContent = 'Phone required.'; msg.className = 'auth-error'; return; }
+
+  try {
+    const res = await adminApi('/api/admin/dealers', {
+      method: 'POST',
+      body: { phone, name: name || null, business_name: biz || null, role }
+    });
+    if (res.error) { msg.textContent = res.error; msg.className = 'auth-error'; return; }
+    msg.textContent = `${role} created!`;
+    msg.className = 'auth-success';
+    document.getElementById('admin-dealer-phone').value = '';
+    document.getElementById('admin-dealer-name').value = '';
+    document.getElementById('admin-dealer-biz').value = '';
+    setTimeout(() => loadAdminDealers(document.getElementById('admin-content')), 500);
+  } catch (e) {
+    msg.textContent = 'Error creating dealer.';
+    msg.className = 'auth-error';
+  }
+}
+
+async function loadAdminMarkets(el) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const markets = await adminApi('/api/markets');
+    let html = `<div class="admin-form">
+      <div class="admin-section-title">Create market</div>
+      <div class="form-field"><input type="text" class="form-input" id="admin-market-name" placeholder="Market name (e.g. Rose Bowl)"></div>
+      <div class="form-field"><input type="date" class="form-input" id="admin-market-date"></div>
+      <div class="form-field">
+        <label class="form-label">Drop time (optional)</label>
+        <input type="datetime-local" class="form-input" id="admin-market-drop">
+      </div>
+      <div class="settings-row" style="padding:6px 0;">
+        <span class="settings-label" style="font-size:12px;">Test market?</span>
+        <label class="settings-toggle">
+          <input type="checkbox" id="admin-market-test">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button class="auth-btn" onclick="adminCreateMarket()">Create market</button>
+      <div class="auth-fine" id="admin-market-msg"></div>
+    </div>`;
+
+    html += `<div class="admin-section-title">Markets (${markets.length})</div>`;
+    for (const m of markets) {
+      const dropStr = m.drop_time ? new Date(m.drop_time).toLocaleString() : 'No drop time set';
+      html += `<div class="admin-card">
+        <div class="admin-card-row">
+          <span class="name">${m.name}</span>
+          <span style="font-size:11px;color:var(--muted);">${m.market_date}</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Drop: ${dropStr}${m.is_test ? ' · TEST' : ''}</div>
+      </div>`;
+    }
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load markets.</div>';
+  }
+}
+
+async function adminCreateMarket() {
+  const name = document.getElementById('admin-market-name').value.trim();
+  const date = document.getElementById('admin-market-date').value;
+  const drop = document.getElementById('admin-market-drop').value;
+  const isTest = document.getElementById('admin-market-test').checked;
+  const msg = document.getElementById('admin-market-msg');
+
+  if (!name || !date) { msg.textContent = 'Name and date required.'; msg.className = 'auth-error'; return; }
+
+  try {
+    const body = { name, market_date: date, is_test: isTest };
+    if (drop) body.drop_time = new Date(drop).toISOString();
+    const res = await adminApi('/api/markets', { method: 'POST', body });
+    if (res.error) { msg.textContent = res.error; msg.className = 'auth-error'; return; }
+    msg.textContent = 'Market created!';
+    msg.className = 'auth-success';
+    setTimeout(() => loadAdminMarkets(document.getElementById('admin-content')), 500);
+  } catch (e) {
+    msg.textContent = 'Error creating market.';
+    msg.className = 'auth-error';
+  }
+}
+
+async function loadAdminBlast(el) {
+  el.innerHTML = `<div class="admin-form">
+    <div class="admin-section-title">Send SMS blast</div>
+    <div class="form-field">
+      <label class="form-label">Audience</label>
+      <select class="form-select" id="admin-blast-audience">
+        <option value="all">All users</option>
+        <option value="buyers">Buyers only</option>
+        <option value="sellers">Dealers only</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Message</label>
+      <textarea class="form-input" id="admin-blast-msg" rows="4" style="resize:vertical;" placeholder="Type your message..."></textarea>
+    </div>
+    <button class="auth-btn" onclick="adminSendBlast()">Send blast</button>
+    <div class="auth-fine" id="admin-blast-status"></div>
+  </div>`;
+}
+
+async function adminSendBlast() {
+  const audience = document.getElementById('admin-blast-audience').value;
+  const message = document.getElementById('admin-blast-msg').value.trim();
+  const status = document.getElementById('admin-blast-status');
+
+  if (!message) { status.textContent = 'Message required.'; status.className = 'auth-error'; return; }
+  if (!confirm(`Send SMS to ${audience}?`)) return;
+
+  status.textContent = 'Sending...';
+  status.className = 'auth-fine';
+
+  try {
+    const res = await adminApi('/api/admin/sms-blast', {
+      method: 'POST',
+      body: { audience, message }
+    });
+    status.textContent = `Sent to ${res.sent}/${res.total} users.`;
+    status.className = 'auth-success';
+  } catch (e) {
+    status.textContent = 'Error sending blast.';
+    status.className = 'auth-error';
+  }
+}
+
+async function loadAdminActivity(el) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const data = await adminApi('/api/admin/activity?days=7');
+    const items = data.items || [];
+    const msgs = data.recent_messages || [];
+
+    let html = `<div class="admin-section">
+      <div class="admin-section-title">Last 7 days</div>
+      <div class="admin-stat"><span class="label">Items posted</span><span class="value">${items.length}</span></div>
+      <div class="admin-stat"><span class="label">Messages sent</span><span class="value">${msgs.length}</span></div>
+      <div class="admin-stat"><span class="label">Items sold</span><span class="value">${items.filter(i => i.status === 'sold').length}</span></div>
+      <div class="admin-stat"><span class="label">Items on hold</span><span class="value">${items.filter(i => i.status === 'hold').length}</span></div>
+    </div>`;
+
+    if (items.length) {
+      html += `<div class="admin-section-title">Recent items</div>`;
+      for (const item of items.slice(0, 10)) {
+        const price = '$' + (item.price / 100).toLocaleString();
+        const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
+        html += `<div class="admin-card">
+          <div class="admin-card-row">
+            <span class="name">${price}${item.title ? ' — ' + item.title : ''}</span>
+            <span style="font-size:11px;color:var(--muted);">${item.status}</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">by ${dealer}</div>
+        </div>`;
+      }
+    }
+
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load activity.</div>';
+  }
+}
 
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('hashchange', route);
