@@ -463,7 +463,8 @@ async function handleStartConversation(request, env, dealer) {
   const siteUrl = env.SITE_URL || 'https://elikagan.github.io/early-bird';
   const replyLink = `${siteUrl}/#/c/${conversation.token}`;
   const buyerName = dealer.name || 'A dealer';
-  const smsText = `${buyerName} messaged you about your ${price} item on Early Bird:\n\n"${body.message}"\n\nReply: ${replyLink}`;
+  const buyerPhone = dealer.phone ? `\nBuyer's number: ${dealer.phone}` : '';
+  const smsText = `${buyerName} messaged you about your ${price} item on Early Bird:\n\n"${body.message}"${buyerPhone}\n\nReply: ${replyLink}`;
 
   await sendSMS(env, seller.phone, smsText);
 
