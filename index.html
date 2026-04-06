@@ -405,6 +405,7 @@
       min-height: 100vh;
       min-height: 100dvh;
       padding-bottom: max(70px, calc(56px + env(safe-area-inset-bottom)));
+      scroll-snap-type: y mandatory;
     }
     .feed-header {
       position: sticky;
@@ -435,30 +436,38 @@
     }
 
     /* Item grid */
+    /* Mobile: TikTok-style vertical scroll — one item fills viewport */
     .item-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--input-bg);
+      display: flex;
+      flex-direction: column;
     }
-    .item-card { background: var(--bg); cursor: pointer; }
+    .item-card {
+      height: calc(100vh - 110px);
+      height: calc(100dvh - 110px);
+      scroll-snap-align: start;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
     .item-card-img {
       width: 100%;
-      aspect-ratio: 1;
+      flex: 1;
+      min-height: 0;
       background: var(--input-bg);
       overflow: hidden;
     }
     .item-card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .item-card-info { padding: 10px 12px; }
+    .item-card-info { padding: 16px 24px 20px; }
     .item-card-price {
-      font-size: 14px;
+      font-size: 20px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
     }
     .item-card-meta {
-      font-size: 10px;
+      font-size: 12px;
       color: var(--muted);
-      margin-top: 2px;
+      margin-top: 4px;
     }
     .item-card-badge {
       display: inline-block;
@@ -468,10 +477,272 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-top: 4px;
+      margin-top: 6px;
     }
     .badge-hold { background: #FDF6E3; color: #B8960C; }
     .badge-sold { background: #EEE; color: var(--muted); }
+
+    /* Desktop: 2-column grid */
+    @media (min-width: 768px) {
+      .item-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--input-bg);
+        height: auto;
+        overflow: visible;
+        scroll-snap-type: none;
+      }
+      .item-card {
+        min-height: auto;
+      }
+      .item-card-img {
+        aspect-ratio: 1;
+        flex: none;
+      }
+      .item-card-info { padding: 10px 12px; }
+      .item-card-price { font-size: 14px; }
+      .item-card-meta { font-size: 10px; margin-top: 2px; }
+    }
+
+    /* ── Item Detail ─────────────────────── */
+    #item-detail {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
+    }
+    .detail-back {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 24px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: 12px;
+      background: rgba(250,250,248,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .detail-back a {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .detail-photos {
+      padding-top: max(44px, calc(12px + env(safe-area-inset-top) + 24px));
+    }
+    .detail-photo {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--input-bg);
+      overflow: hidden;
+    }
+    .detail-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .detail-photo + .detail-photo {
+      margin-top: 1px;
+    }
+    .detail-info {
+      padding: 20px 24px;
+    }
+    .detail-price {
+      font-size: 24px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+    .detail-price-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .detail-condition {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+    .detail-notes {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+    .detail-seller {
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+    .detail-seller-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .detail-seller-biz {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .detail-actions {
+      padding: 0 24px 24px;
+    }
+    .text-seller-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #FFFFFF;
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .text-seller-btn:hover { background: var(--accent-hover); }
+    .text-seller-btn:disabled { opacity: 0.5; cursor: default; }
+    .detail-status-badge {
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .detail-badge-sold {
+      background: #EEE;
+      color: var(--muted);
+    }
+    .detail-badge-hold {
+      background: #FDF6E3;
+      color: #B8960C;
+    }
+
+    /* ── Add Item Form ───────────────────── */
+    #add-item {
+      min-height: 100vh;
+      min-height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 24px;
+      padding-top: max(60px, env(safe-area-inset-top));
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
+    }
+    .add-item-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .photo-upload-area {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .photo-slot {
+      width: 72px;
+      height: 72px;
+      border-radius: 6px;
+      background: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .photo-slot .add-icon {
+      font-size: 24px;
+      color: var(--dim);
+      font-weight: 300;
+    }
+    .photo-slot .remove-photo {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 20px;
+      height: 20px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .form-field {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--input-bg);
+      border: none;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+    }
+    .form-input:focus { box-shadow: 0 0 0 2px var(--accent); }
+    .form-select {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--input-bg);
+      border: none;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .form-select:focus { box-shadow: 0 0 0 2px var(--accent); }
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+    .form-row .form-field { flex: 1; }
+    .form-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .form-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
 
     .empty-state { text-align: center; padding: 60px 24px; }
     .empty-state h2 {
@@ -838,7 +1109,7 @@
     <div class="dealer-countdown" id="dealer-countdown"></div>
   </div>
   <div class="free-notice">Selling on Early Bird is 100% free. Handle all payments directly with your buyers.</div>
-  <button class="add-item-btn">+ Add item</button>
+  <button class="add-item-btn" onclick="showAddItem()">+ Add item</button>
   <ul class="my-items-list" id="my-items-list"></ul>
   <div class="empty-state" id="dealer-empty">
     <h2>Your booth is empty</h2>
@@ -852,6 +1123,66 @@
   <div class="empty-state">
     <p>No messages yet. When buyers inquire about your items, they'll show up here.</p>
   </div>
+</div>
+
+<!-- ITEM DETAIL -->
+<div id="item-detail" class="screen">
+  <div class="detail-back">
+    <a href="#" onclick="showScreen('feed'); document.getElementById('bottom-nav').classList.remove('hidden'); return false;">← Back</a>
+  </div>
+  <div class="detail-photos" id="detail-photos"></div>
+  <div class="detail-info" id="detail-info"></div>
+  <div class="detail-actions" id="detail-actions"></div>
+</div>
+
+<!-- ADD ITEM -->
+<div id="add-item" class="screen">
+  <a href="#" style="font-size:12px; color:var(--accent); text-decoration:none; font-weight:500;" onclick="showScreen('dealer-home'); switchTab('dealer-home'); return false;">← Back</a>
+  <div class="add-item-title">Add item</div>
+
+  <div class="photo-upload-area" id="photo-slots">
+    <div class="photo-slot" onclick="document.getElementById('photo-file').click()">
+      <span class="add-icon">+</span>
+    </div>
+  </div>
+  <input type="file" id="photo-file" accept="image/*" multiple class="hidden" onchange="handleItemPhotos(this)">
+
+  <div class="form-field">
+    <label class="form-label">Price</label>
+    <input type="text" class="form-input" id="item-price" placeholder="$" inputmode="decimal">
+  </div>
+
+  <div class="form-row">
+    <div class="form-field">
+      <label class="form-label">Condition</label>
+      <select class="form-select" id="item-condition">
+        <option value="">—</option>
+        <option value="mint">Mint</option>
+        <option value="good">Good</option>
+        <option value="fair">Fair</option>
+        <option value="as-is">As-Is</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Market</label>
+      <select class="form-select" id="item-market"></select>
+    </div>
+  </div>
+
+  <div class="form-field">
+    <label class="form-toggle">
+      <input type="checkbox" id="item-firm">
+      Price is firm
+    </label>
+  </div>
+
+  <div class="form-field">
+    <label class="form-label">Notes (optional)</label>
+    <input type="text" class="form-input" id="item-notes" placeholder="Condition details, dimensions, etc.">
+  </div>
+
+  <button class="auth-btn" id="post-item-btn" onclick="postItem()">Post item</button>
+  <div class="auth-fine" id="post-item-msg"></div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -1063,7 +1394,9 @@ async function enterApp() {
   if (!currentMarket) {
     try {
       const markets = await api('/api/markets');
-      if (markets.length) currentMarket = markets[0];
+      const real = markets.filter(m => !m.name.toLowerCase().includes('test'));
+      if (real.length) currentMarket = real[0];
+      else if (markets.length) currentMarket = markets[0];
     } catch (e) {}
   }
   document.getElementById('bottom-nav').classList.remove('hidden');
@@ -1090,7 +1423,7 @@ async function loadFeed() {
       let badge = '';
       if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
       if (item.status === 'sold') badge = '<span class="item-card-badge badge-sold">Sold</span>';
-      return `<div class="item-card">
+      return `<div class="item-card" onclick="openItem('${item.id}')">
         <div class="item-card-img">${photo ? `<img src="${photo}" loading="lazy">` : ''}</div>
         <div class="item-card-info">
           <div class="item-card-price">${price}</div>
@@ -1121,7 +1454,7 @@ function route() {
   if (verifyMatch) { verifyToken(verifyMatch[1]); return; }
 
   const convMatch = hash.match(/^#\/c\/(.+)$/);
-  if (convMatch) { /* TODO: conversation view */ return; }
+  if (convMatch) { loadConversation(convMatch[1]); return; }
 
   const dealerId = getDealerId();
   if (dealerId) {
@@ -1170,6 +1503,294 @@ async function requestDealerMagicLink() {
     msg.textContent = 'Connection error. Try again.';
     msg.className = 'auth-error';
     btn.textContent = 'Get started';
+    btn.disabled = false;
+  }
+}
+
+// ── Item Detail ──────────────────────────────────────────────
+let currentItem = null;
+
+function openItem(itemId) {
+  // Find item in feed data or fetch it
+  showScreen('item-detail');
+  document.getElementById('bottom-nav').classList.add('hidden');
+  loadItemDetail(itemId);
+}
+
+async function loadItemDetail(itemId) {
+  const photosEl = document.getElementById('detail-photos');
+  const infoEl = document.getElementById('detail-info');
+  const actionsEl = document.getElementById('detail-actions');
+
+  try {
+    // Fetch all items and find this one (no single-item endpoint yet)
+    const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
+    const items = await api(`/api/items${q}`);
+    const item = items.find(i => i.id === itemId);
+    if (!item) {
+      infoEl.innerHTML = '<p style="color:var(--muted);padding:20px 0;">Item not found.</p>';
+      return;
+    }
+    currentItem = item;
+
+    // Photos
+    const photos = item.photos || [];
+    photosEl.innerHTML = photos.length
+      ? photos.map(url => `<div class="detail-photo"><img src="${url}" alt=""></div>`).join('')
+      : '<div class="detail-photo"></div>';
+
+    // Info
+    const price = '$' + (item.price / 100).toLocaleString();
+    const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
+    const biz = item.dealer?.business_name && item.dealer?.name ? item.dealer.business_name : '';
+    let html = `<div class="detail-price">${price}</div>`;
+    if (item.firm) html += `<div class="detail-price-note">Firm</div>`;
+    else html += `<div class="detail-price-note">Open to offers</div>`;
+    if (item.condition) html += `<div class="detail-condition">${item.condition}</div>`;
+    if (item.notes) html += `<div class="detail-notes">${item.notes}</div>`;
+    html += `<div class="detail-seller">`;
+    html += `<div class="detail-seller-name">${dealer}</div>`;
+    if (biz) html += `<div class="detail-seller-biz">${biz}</div>`;
+    html += `</div>`;
+    infoEl.innerHTML = html;
+
+    // Actions
+    if (item.status === 'sold') {
+      const buyerName = item.buyer?.name || 'a buyer';
+      actionsEl.innerHTML = `<div class="detail-status-badge detail-badge-sold">Sold to ${buyerName}</div>`;
+    } else if (item.status === 'hold') {
+      const buyerName = item.buyer?.name || 'a buyer';
+      actionsEl.innerHTML = `<div class="detail-status-badge detail-badge-hold">Held for ${buyerName}</div>`;
+    } else if (item.dealer_id === getDealerId()) {
+      actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">This is your listing.</div>`;
+    } else {
+      actionsEl.innerHTML = `<button class="text-seller-btn" id="text-seller-btn" onclick="textSeller('${item.id}')">Text seller</button>`;
+    }
+  } catch (e) {
+    infoEl.innerHTML = '<p style="color:var(--error);">Failed to load item.</p>';
+  }
+}
+
+async function textSeller(itemId) {
+  const btn = document.getElementById('text-seller-btn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const res = await api('/api/conversations', {
+      method: 'POST',
+      body: { item_id: itemId }
+    });
+    if (res.error) {
+      btn.textContent = res.error;
+      btn.disabled = false;
+      setTimeout(() => { btn.textContent = 'Text seller'; }, 3000);
+      return;
+    }
+    // Conversation created, SMS sent to seller
+    const conv = Array.isArray(res) ? res[0] : res;
+    btn.textContent = 'Message sent!';
+    btn.style.background = '#2E7D32';
+    // Navigate to conversation after a beat
+    setTimeout(() => {
+      window.location.hash = `#/c/${conv.token}`;
+    }, 1000);
+  } catch (e) {
+    btn.textContent = 'Error. Try again.';
+    btn.disabled = false;
+  }
+}
+
+// ── Conversation View ────────────────────────────────────────
+async function loadConversation(token) {
+  showScreen('item-detail'); // reuse the detail screen layout
+  document.getElementById('bottom-nav').classList.remove('hidden');
+
+  const photosEl = document.getElementById('detail-photos');
+  const infoEl = document.getElementById('detail-info');
+  const actionsEl = document.getElementById('detail-actions');
+  photosEl.innerHTML = '';
+
+  try {
+    const conv = await api(`/api/conversations/${token}`);
+    if (conv.error) {
+      infoEl.innerHTML = `<p style="color:var(--error);">${conv.error}</p>`;
+      actionsEl.innerHTML = '';
+      return;
+    }
+
+    // Show item context at top
+    const item = conv.item || {};
+    const price = item.price ? '$' + (item.price / 100).toLocaleString() : '';
+    const photo = item.photos?.[0];
+    const otherName = conv.role === 'buyer'
+      ? (conv.seller?.name || conv.seller?.business_name || 'Seller')
+      : (conv.buyer?.name || 'Buyer');
+
+    let html = '';
+    if (photo) {
+      html += `<div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;">`;
+      html += `<div style="width:60px;height:60px;border-radius:6px;overflow:hidden;flex-shrink:0;background:var(--input-bg);"><img src="${photo}" style="width:100%;height:100%;object-fit:cover;"></div>`;
+      html += `<div><div style="font-weight:700;font-variant-numeric:tabular-nums;">${price}</div>`;
+      html += `<div style="font-size:12px;color:var(--muted);">with ${otherName}</div></div></div>`;
+    } else {
+      html += `<div style="font-weight:600;margin-bottom:16px;">Conversation with ${otherName}</div>`;
+    }
+
+    // Messages
+    const messages = conv.messages || [];
+    if (messages.length === 0) {
+      html += `<div style="color:var(--muted);font-size:13px;">No messages yet. The seller has been notified via SMS.</div>`;
+    } else {
+      messages.forEach(msg => {
+        const isMe = (conv.role === 'buyer' && msg.direction === 'buyer_to_seller')
+                  || (conv.role === 'seller' && msg.direction === 'seller_to_buyer');
+        const align = isMe ? 'flex-end' : 'flex-start';
+        const bg = isMe ? 'var(--accent)' : 'var(--input-bg)';
+        const color = isMe ? '#fff' : 'var(--text)';
+        html += `<div style="display:flex;justify-content:${align};margin-bottom:8px;">`;
+        html += `<div style="max-width:80%;padding:10px 14px;border-radius:12px;background:${bg};color:${color};font-size:13px;line-height:1.4;">${msg.body}</div>`;
+        html += `</div>`;
+      });
+    }
+    infoEl.innerHTML = html;
+
+    // Reply form
+    actionsEl.innerHTML = `
+      <div style="display:flex;gap:8px;">
+        <input type="text" class="form-input" id="reply-input" placeholder="Reply..." style="flex:1;">
+        <button class="auth-btn" style="width:auto;padding:14px 20px;margin-top:0;" onclick="sendReply('${token}')">Send</button>
+      </div>`;
+
+  } catch (e) {
+    infoEl.innerHTML = '<p style="color:var(--error);">Failed to load conversation.</p>';
+    actionsEl.innerHTML = '';
+  }
+}
+
+async function sendReply(token) {
+  const input = document.getElementById('reply-input');
+  const body = input.value.trim();
+  if (!body) return;
+  input.value = '';
+  try {
+    await api(`/api/conversations/${token}/messages`, {
+      method: 'POST',
+      body: { body }
+    });
+    loadConversation(token);
+  } catch (e) {}
+}
+
+// ── Add Item ─────────────────────────────────────────────────
+let itemPhotos = []; // array of { file, dataUrl }
+
+function showAddItem() {
+  itemPhotos = [];
+  renderPhotoSlots();
+  document.getElementById('item-price').value = '';
+  document.getElementById('item-condition').value = '';
+  document.getElementById('item-firm').checked = false;
+  document.getElementById('item-notes').value = '';
+  document.getElementById('post-item-msg').textContent = '';
+
+  // Populate market dropdown
+  const sel = document.getElementById('item-market');
+  const markets = allMarkets.length ? allMarkets : (currentMarket ? [currentMarket] : []);
+  sel.innerHTML = markets.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+
+  showScreen('add-item');
+}
+
+function handleItemPhotos(input) {
+  const files = Array.from(input.files);
+  files.forEach(file => {
+    if (itemPhotos.length >= 5) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      itemPhotos.push({ file, dataUrl: e.target.result });
+      renderPhotoSlots();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function removeItemPhoto(idx) {
+  itemPhotos.splice(idx, 1);
+  renderPhotoSlots();
+}
+
+function renderPhotoSlots() {
+  const container = document.getElementById('photo-slots');
+  let html = itemPhotos.map((p, i) =>
+    `<div class="photo-slot">
+      <img src="${p.dataUrl}" alt="">
+      <button class="remove-photo" onclick="removeItemPhoto(${i})">×</button>
+    </div>`
+  ).join('');
+  if (itemPhotos.length < 5) {
+    html += `<div class="photo-slot" onclick="document.getElementById('photo-file').click()"><span class="add-icon">+</span></div>`;
+  }
+  container.innerHTML = html;
+}
+
+async function postItem() {
+  const price = parseFloat(document.getElementById('item-price').value.replace(/[^0-9.]/g, ''));
+  const marketId = document.getElementById('item-market').value;
+  const condition = document.getElementById('item-condition').value || null;
+  const firm = document.getElementById('item-firm').checked;
+  const notes = document.getElementById('item-notes').value.trim() || null;
+  const btn = document.getElementById('post-item-btn');
+  const msg = document.getElementById('post-item-msg');
+
+  if (!price || price <= 0) { msg.textContent = 'Enter a price.'; msg.className = 'auth-error'; return; }
+  if (itemPhotos.length === 0) { msg.textContent = 'Add at least one photo.'; msg.className = 'auth-error'; return; }
+  if (!marketId) { msg.textContent = 'Select a market.'; msg.className = 'auth-error'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  msg.textContent = '';
+  msg.className = 'auth-fine';
+
+  try {
+    // Upload photos — for now, use data URLs (will swap to CDN later)
+    // TODO: Replace with real CDN upload
+    const photoUrls = itemPhotos.map(p => p.dataUrl);
+
+    const res = await api('/api/items', {
+      method: 'POST',
+      body: {
+        market_id: marketId,
+        price: Math.round(price * 100),
+        photos: photoUrls,
+        condition,
+        firm,
+        notes,
+      }
+    });
+
+    if (res.error) {
+      msg.textContent = res.error;
+      msg.className = 'auth-error';
+      btn.textContent = 'Post item';
+      btn.disabled = false;
+      return;
+    }
+
+    msg.textContent = 'Posted!';
+    msg.className = 'auth-success';
+    btn.textContent = 'Post item';
+    btn.disabled = false;
+    setTimeout(() => {
+      showScreen('dealer-home');
+      switchTab('dealer-home');
+    }, 800);
+  } catch (e) {
+    msg.textContent = 'Error posting. Try again.';
+    msg.className = 'auth-error';
+    btn.textContent = 'Post item';
     btn.disabled = false;
   }
 }

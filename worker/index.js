@@ -301,7 +301,7 @@ async function handleCreateMarket(request, env) {
 // ── Items ────────────────────────────────────────────────────
 
 async function handleGetItems(url, env) {
-  let query = 'items?select=*,dealer:dealers(id,name,business_name)&order=created_at.desc';
+  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name)&order=created_at.desc';
 
   const marketId = url.searchParams.get('market_id');
   if (marketId) query += `&market_id=eq.${marketId}`;
@@ -314,6 +314,8 @@ async function handleGetItems(url, env) {
 
   const res = await supabase(env, query);
   const items = await res.json();
+
+  if (!Array.isArray(items)) return json({ error: 'Failed to load items', detail: items }, 500);
 
   // Attach buyer info for sold items
   for (const item of items) {
