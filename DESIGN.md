@@ -91,14 +91,21 @@
 - **Blinking cursor:** Logo underscore blinks 1s step-end infinite. The only animation.
 - **Countdown:** Live-updating text, no transition effects.
 
+## Dealer Context Switch
+- Dealers see a top-level toggle: **Browse | My Booth**
+- **Browse mode:** Full buyer experience — feed, favorites, messages as a buyer. Identical to what a buyer-only user sees.
+- **My Booth mode:** Seller tools — my listings, messages from buyers, add item.
+- Buyers don't see this toggle. They only have the buyer experience.
+- The toggle should be prominent and unambiguous. Dealers need to always know which hat they're wearing.
+
 ## Buyer Features
 - Browse feed (vertical scroll mobile, grid desktop)
 - Favorites (save/heart items)
 - Messages (conversations with dealers)
 
 ## Dealer Features
-- Everything buyers get, plus:
-- My Items (post and manage listings)
+- Everything buyers get (via Browse mode), plus:
+- My Booth mode: manage listings, view buyer inquiries
 - Add item form (photos, price, condition, firm/offers, market selection)
 
 ## Product Details
@@ -120,4 +127,5 @@
 | 2026-04-06 | Dealers are also buyers | Dealers get full buyer capabilities + posting. Buyers are buyer-only. Not a toggle — dealer is a permission level. |
 | 2026-04-06 | TikTok scroll mobile, grid desktop | One-item-at-a-time on mobile for focused browsing. Grid on desktop for scanning. |
 | 2026-04-06 | Favorites for buyers | Key feature — save pieces you like. Separate tab/section. |
+| 2026-04-06 | Browse / My Booth toggle for dealers | Dealers need a clear context switch. Browse = buyer mode, My Booth = seller mode. Buyers don't see the toggle. |
 | 2026-04-06 | Independent platform disclaimer | Avoid cease & desist from market organizers. |
