@@ -41,7 +41,7 @@ export default {
 
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cookie',
       'Access-Control-Allow-Credentials': 'true',
     };
@@ -101,6 +101,21 @@ export default {
         if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
         const token = path.split('/api/conversations/')[1].split('/messages')[0];
         res = await handleSendMessage(request, env, dealer, token);
+
+      // Favorites
+      } else if (path === '/api/favorites' && method === 'GET') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        res = await handleGetFavorites(env, dealer);
+      } else if (path === '/api/favorites' && method === 'POST') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        res = await handleAddFavorite(request, env, dealer);
+      } else if (path.match(/^\/api\/favorites\/[^/]+$/) && method === 'DELETE') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        const itemId = path.split('/api/favorites/')[1];
+        res = await handleRemoveFavorite(env, dealer, itemId);
 
       // Admin
       } else if (path === '/api/admin/dealers' && method === 'POST') {
@@ -216,13 +231,25 @@ async function handleAuthRequest(request, env) {
   const normalized = normalizePhone(phone);
   if (!normalized) return json({ error: 'Invalid US phone number' }, 400);
 
-  const dealerRes = await supabase(env, `dealers?phone=eq.${encodeURIComponent(normalized)}&select=id,name`);
+  const dealerRes = await supabase(env, `dealers?phone=eq.${encodeURIComponent(normalized)}&select=id,name,role`);
   const dealers = await dealerRes.json();
-  if (!dealers.length) {
-    return json({ error: 'Early Bird is invite-only. Ask a member to get you in.' }, 403);
-  }
 
-  const dealer = dealers[0];
+  let dealer;
+  if (!dealers.length) {
+    // Auto-register as buyer
+    const createRes = await supabase(env, 'dealers', {
+      method: 'POST',
+      body: { phone: normalized, role: 'buyer' },
+      headers: { 'Prefer': 'return=representation' },
+    });
+    const created = await createRes.json();
+    if (!Array.isArray(created) || !created.length) {
+      return json({ error: 'Registration failed' }, 500);
+    }
+    dealer = created[0];
+  } else {
+    dealer = dealers[0];
+  }
   const token = generateToken(8);
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
@@ -332,6 +359,7 @@ async function handleGetItems(url, env) {
 }
 
 async function handleCreateItem(request, env, dealer) {
+  if (dealer.role !== 'dealer') return json({ error: 'Only dealers can post items' }, 403);
   const body = await request.json();
   if (!body.photos?.length) return json({ error: 'At least one photo required' }, 400);
   if (!body.price || body.price <= 0) return json({ error: 'Valid price required' }, 400);
@@ -536,6 +564,32 @@ async function handleListConversations(env, dealer) {
   return json({ as_buyer: asBuyer, as_seller: asSeller });
 }
 
+// ── Favorites ────────────────────────────────────────────────
+
+async function handleGetFavorites(env, dealer) {
+  const res = await supabase(env, `favorites?dealer_id=eq.${dealer.id}&select=id,item_id,created_at,item:items!inner(id,price,photos,condition,firm,status,notes,dealer:dealers!items_dealer_id_fkey(id,name,business_name))&order=created_at.desc`);
+  const favs = await res.json();
+  return json(favs);
+}
+
+async function handleAddFavorite(request, env, dealer) {
+  const { item_id } = await request.json();
+  if (!item_id) return json({ error: 'item_id required' }, 400);
+  const res = await supabase(env, 'favorites', {
+    method: 'POST',
+    body: { dealer_id: dealer.id, item_id },
+    headers: { 'Prefer': 'return=representation,resolution=ignore-duplicates' },
+  });
+  return json(await res.json(), 201);
+}
+
+async function handleRemoveFavorite(env, dealer, itemId) {
+  await supabase(env, `favorites?dealer_id=eq.${dealer.id}&item_id=eq.${itemId}`, {
+    method: 'DELETE',
+  });
+  return json({ ok: true });
+}
+
 // ── Admin ────────────────────────────────────────────────────
 
 async function handleCreateDealer(request, env) {
@@ -551,6 +605,7 @@ async function handleCreateDealer(request, env) {
     business_name: body.business_name || null,
     venmo: body.venmo || null,
     zelle: body.zelle || null,
+    role: body.role || 'dealer',
   };
 
   const res = await supabase(env, 'dealers', {

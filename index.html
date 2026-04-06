@@ -505,6 +505,63 @@
       .item-card-meta { font-size: 10px; margin-top: 2px; }
     }
 
+    /* ── Favorite button ── */
+    .fav-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.4);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      z-index: 10;
+    }
+    .fav-btn svg { width: 18px; height: 18px; }
+    .fav-btn.fav-active { color: #FF3B5C; background: rgba(255,255,255,0.9); }
+    .item-card-img { position: relative; }
+
+    /* ── Favorites screen ── */
+    #favorites {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: max(70px, calc(56px + env(safe-area-inset-bottom)));
+    }
+    .fav-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--input-bg);
+    }
+    .fav-card {
+      background: var(--bg);
+      cursor: pointer;
+    }
+    .fav-card-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--input-bg);
+      overflow: hidden;
+      position: relative;
+    }
+    .fav-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .fav-card-info { padding: 10px 12px; }
+    .fav-card-price {
+      font-size: 14px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .fav-card-meta {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
     /* ── Item Detail ─────────────────────── */
     #item-detail {
       min-height: 100vh;
@@ -1125,6 +1182,16 @@
   </div>
 </div>
 
+<!-- FAVORITES -->
+<div id="favorites" class="screen">
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">Favorites</div>
+    </div>
+  </div>
+  <div id="favorites-content"></div>
+</div>
+
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
   <div class="detail-back">
@@ -1194,17 +1261,23 @@
     </svg>
     Browse
   </button>
+  <button class="nav-tab" data-tab="favorites" id="tab-favorites" onclick="switchTab('favorites')" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+    </svg>
+    Favorites
+  </button>
   <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
     Messages
   </button>
-  <button class="nav-tab" data-tab="dealer-home" onclick="switchTab('dealer-home')">
+  <button class="nav-tab" data-tab="dealer-home" id="tab-dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
-    My Items
+    My Booth
   </button>
 </nav>
 
@@ -1215,6 +1288,7 @@ let currentUser = null;
 let currentMarket = null;
 let allMarkets = [];
 let countdownIntervals = [];
+let userFavorites = new Set(); // item IDs the user has favorited
 
 // ── Auth ──────────────────────────────────────────────────────
 function getDealerId() { return localStorage.getItem('eb_dealer_id'); }
@@ -1245,6 +1319,7 @@ function switchTab(tab) {
   showScreen(tab);
   if (tab === 'feed') loadFeed();
   if (tab === 'dealer-home') loadDealerHome();
+  if (tab === 'favorites') loadFavorites();
 }
 
 // ── Landing ───────────────────────────────────────────────────
@@ -1399,7 +1474,30 @@ async function enterApp() {
       else if (markets.length) currentMarket = markets[0];
     } catch (e) {}
   }
-  document.getElementById('bottom-nav').classList.remove('hidden');
+
+  // Load user favorites
+  try {
+    const favs = await api('/api/favorites');
+    userFavorites = new Set((favs || []).map(f => f.item_id));
+  } catch (e) {}
+
+  // Configure nav based on role
+  const isDealer = currentUser?.role === 'dealer';
+  const nav = document.getElementById('bottom-nav');
+  const dealerTab = document.getElementById('tab-dealer-home');
+  const favTab = document.getElementById('tab-favorites');
+  const modeToggle = document.getElementById('mode-toggle');
+
+  // Everyone gets favorites
+  favTab.style.display = 'flex';
+  // Only dealers get My Booth
+  if (isDealer) {
+    dealerTab.style.display = 'flex';
+  } else {
+    dealerTab.style.display = 'none';
+  }
+
+  nav.classList.remove('hidden');
   showScreen('feed');
   loadFeed();
 }
@@ -1423,8 +1521,14 @@ async function loadFeed() {
       let badge = '';
       if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
       if (item.status === 'sold') badge = '<span class="item-card-badge badge-sold">Sold</span>';
+      const isFav = userFavorites.has(item.id);
       return `<div class="item-card" onclick="openItem('${item.id}')">
-        <div class="item-card-img">${photo ? `<img src="${photo}" loading="lazy">` : ''}</div>
+        <div class="item-card-img">
+          ${photo ? `<img src="${photo}" loading="lazy">` : ''}
+          <button class="fav-btn ${isFav ? 'fav-active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${item.id}', this)" aria-label="Favorite">
+            <svg viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+        </div>
         <div class="item-card-info">
           <div class="item-card-price">${price}</div>
           <div class="item-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
@@ -1434,6 +1538,46 @@ async function loadFeed() {
     }).join('') + '</div>';
   } catch (e) {
     content.innerHTML = '<div class="empty-state"><p>Failed to load items.</p></div>';
+  }
+}
+
+async function toggleFavorite(itemId, btn) {
+  if (userFavorites.has(itemId)) {
+    userFavorites.delete(itemId);
+    btn.classList.remove('fav-active');
+    btn.querySelector('svg').setAttribute('fill', 'none');
+    await api(`/api/favorites/${itemId}`, { method: 'DELETE' });
+  } else {
+    userFavorites.add(itemId);
+    btn.classList.add('fav-active');
+    btn.querySelector('svg').setAttribute('fill', 'currentColor');
+    await api('/api/favorites', { method: 'POST', body: { item_id: itemId } });
+  }
+}
+
+async function loadFavorites() {
+  const content = document.getElementById('favorites-content');
+  try {
+    const favs = await api('/api/favorites');
+    if (!favs?.length) {
+      content.innerHTML = '<div class="empty-state"><h2>No favorites yet</h2><p>Tap the heart on items you like to save them here.</p></div>';
+      return;
+    }
+    content.innerHTML = '<div class="fav-grid">' + favs.map(fav => {
+      const item = fav.item;
+      const price = '$' + (item.price / 100).toLocaleString();
+      const photo = item.photos?.[0] || '';
+      const dealer = item.dealer?.name || item.dealer?.business_name || '';
+      return `<div class="fav-card" onclick="openItem('${item.id}')">
+        <div class="fav-card-img">${photo ? `<img src="${photo}" loading="lazy">` : ''}</div>
+        <div class="fav-card-info">
+          <div class="fav-card-price">${price}</div>
+          <div class="fav-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch (e) {
+    content.innerHTML = '<div class="empty-state"><p>Failed to load favorites.</p></div>';
   }
 }
 
