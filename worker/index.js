@@ -156,7 +156,13 @@ function getCookie(request, name) {
 }
 
 async function getDealer(request, env) {
-  const dealerId = getCookie(request, 'eb_dealer');
+  // Check Authorization header first (for cross-origin), then cookie
+  let dealerId = null;
+  const authHeader = request.headers.get('Authorization') || '';
+  if (authHeader.startsWith('Bearer ') && authHeader !== `Bearer ${env.ADMIN_TOKEN}`) {
+    dealerId = authHeader.replace('Bearer ', '');
+  }
+  if (!dealerId) dealerId = getCookie(request, 'eb_dealer');
   if (!dealerId) return null;
   const res = await supabase(env, `dealers?id=eq.${dealerId}&select=*`);
   const rows = await res.json();

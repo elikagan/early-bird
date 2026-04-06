@@ -29,9 +29,12 @@
     }
 
     /* ── Login Screen ─────────────────────── */
+    .screen { display: none; }
+    .screen.active { display: flex; }
+    .screen.active-block { display: block; }
+
     #login-screen {
       min-height: 100vh;
-      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -64,9 +67,7 @@
       letter-spacing: 0.05em;
     }
 
-    #login-screen input:focus {
-      border-color: var(--accent);
-    }
+    #login-screen input:focus { border-color: var(--accent); }
 
     #login-screen button {
       width: 100%;
@@ -82,9 +83,7 @@
       cursor: pointer;
     }
 
-    #login-screen button:disabled {
-      opacity: 0.5;
-    }
+    #login-screen button:disabled { opacity: 0.5; }
 
     #login-screen .error {
       color: var(--new-badge);
@@ -101,40 +100,28 @@
       text-align: center;
     }
 
+    #login-screen .link-sent {
+      color: var(--green);
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+      max-width: 300px;
+      text-align: center;
+    }
+
     /* ── Onboarding Screen ────────────────── */
     #onboard-screen {
       min-height: 100vh;
-      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
     }
 
-    #onboard-screen h2 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+    #onboard-screen h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+    #onboard-screen .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
 
-    #onboard-screen .subtitle {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-    }
-
-    #onboard-screen .field {
-      width: 100%;
-      max-width: 300px;
-      margin-bottom: 0.75rem;
-    }
-
-    #onboard-screen .field label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
+    #onboard-screen .field { width: 100%; max-width: 300px; margin-bottom: 0.75rem; }
+    #onboard-screen .field label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem; }
 
     #onboard-screen .field input {
       width: 100%;
@@ -145,14 +132,8 @@
       outline: none;
     }
 
-    #onboard-screen .field input:focus {
-      border-color: var(--accent);
-    }
-
-    #onboard-screen .optional {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
+    #onboard-screen .field input:focus { border-color: var(--accent); }
+    #onboard-screen .optional { color: var(--text-muted); font-size: 0.75rem; }
 
     #onboard-screen button {
       width: 100%;
@@ -169,8 +150,6 @@
     }
 
     /* ── Feed Header ──────────────────────── */
-    #feed-screen { display: none; }
-
     .feed-header {
       position: fixed;
       top: 0;
@@ -191,29 +170,11 @@
       justify-content: space-between;
     }
 
-    .feed-header h1 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
+    .feed-header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; }
+    .feed-header .market-info { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .feed-header .stats { font-family: 'SF Mono', 'Menlo', monospace; font-size: 0.75rem; color: var(--text-muted); }
 
-    .feed-header .market-info {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 0.15rem;
-    }
-
-    .feed-header .stats {
-      font-family: 'SF Mono', 'Menlo', monospace;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-    }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; }
 
     .header-actions button {
       background: none;
@@ -222,6 +183,58 @@
       cursor: pointer;
       padding: 0.25rem;
       color: var(--text);
+    }
+
+    /* ── Bottom Nav ───────────────────────── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(250, 249, 247, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem 0;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      gap: 0.15rem;
+    }
+
+    .nav-tab .nav-icon { font-size: 1.2rem; }
+    .nav-tab.active { color: var(--text); font-weight: 600; }
+    .nav-tab .badge {
+      position: absolute;
+      top: 2px;
+      right: -6px;
+      background: var(--new-badge);
+      color: #fff;
+      font-size: 0.55rem;
+      min-width: 14px;
+      height: 14px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .nav-tab .icon-wrap {
+      position: relative;
+      display: inline-block;
     }
 
     /* ── Filter Bar ───────────────────────── */
@@ -246,53 +259,21 @@
       white-space: nowrap;
     }
 
-    .filter-chip.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
+    .filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
     /* ── Feed Items ───────────────────────── */
     .feed {
       padding-top: 110px;
-      padding-bottom: env(safe-area-inset-bottom, 0);
+      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0));
     }
 
-    .feed-item {
-      margin-bottom: 1px;
-      background: var(--card-bg);
-    }
+    .feed-item { margin-bottom: 1px; background: var(--card-bg); }
+    .feed-item.status-sold { opacity: 0.6; }
+    .feed-item.status-hold { background: var(--hold-bg); }
 
-    .feed-item.status-sold {
-      opacity: 0.6;
-    }
-
-    .feed-item.status-hold {
-      background: var(--hold-bg);
-    }
-
-    /* Photo carousel */
-    .carousel {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 1;
-      overflow: hidden;
-      background: #f0eeeb;
-    }
-
-    .carousel-track {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.3s ease-out;
-    }
-
-    .carousel-track img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
+    .carousel { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #f0eeeb; }
+    .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-out; }
+    .carousel-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
 
     .carousel-dots {
       position: absolute;
@@ -302,17 +283,8 @@
       display: flex;
       gap: 6px;
     }
-
-    .carousel-dots .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.5);
-    }
-
-    .carousel-dots .dot.active {
-      background: #fff;
-    }
+    .carousel-dots .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+    .carousel-dots .dot.active { background: #fff; }
 
     .new-badge {
       position: absolute;
@@ -328,28 +300,10 @@
       letter-spacing: 0.05em;
     }
 
-    /* Item info */
-    .item-info {
-      padding: 0.85rem 1rem 1rem;
-    }
-
-    .item-info .price-row {
-      display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      margin-bottom: 0.35rem;
-    }
-
-    .item-info .price {
-      font-family: 'SF Mono', 'Menlo', monospace;
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-
-    .item-info .price-tag {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
+    .item-info { padding: 0.85rem 1rem 1rem; }
+    .item-info .price-row { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.35rem; }
+    .item-info .price { font-family: 'SF Mono', 'Menlo', monospace; font-size: 1.2rem; font-weight: 700; }
+    .item-info .price-tag { font-size: 0.8rem; color: var(--text-muted); }
 
     .item-info .condition-badge {
       display: inline-block;
@@ -361,12 +315,7 @@
       margin-right: 0.35rem;
     }
 
-    .item-info .notes {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 0.35rem;
-      line-height: 1.4;
-    }
+    .item-info .notes { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4; }
 
     .item-info .seller-row {
       display: flex;
@@ -375,38 +324,14 @@
       margin-top: 0.65rem;
     }
 
-    .item-info .seller {
-      font-size: 0.85rem;
-    }
+    .item-info .seller { font-size: 0.85rem; }
+    .item-info .seller .name { font-weight: 600; }
+    .item-info .seller .biz { color: var(--text-muted); }
 
-    .item-info .seller .name {
-      font-weight: 600;
-    }
+    .sold-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .hold-label { font-size: 0.8rem; font-weight: 600; color: #b8860b; }
 
-    .item-info .seller .biz {
-      color: var(--text-muted);
-    }
-
-    .sold-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .hold-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #b8860b;
-    }
-
-    /* Action buttons */
-    .item-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-    }
+    .item-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
 
     .item-actions button {
       flex: 1;
@@ -418,57 +343,290 @@
       border: none;
     }
 
-    .btn-save {
-      background: var(--bg);
+    .btn-save { background: var(--bg); color: var(--text); border: 1px solid var(--border) !important; }
+    .btn-save.saved { background: #fce4ec; border-color: #e57373 !important; color: #c62828; }
+    .btn-message { background: var(--accent); color: #fff; }
+
+    /* ── Message Compose Modal ────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 300;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px 16px 0 0;
+      padding: 1.25rem;
+      padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .modal .modal-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+    .modal textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .modal textarea:focus { border-color: var(--accent); }
+
+    .modal .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .modal .modal-actions button {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+
+    .modal .btn-cancel { background: var(--bg); color: var(--text); border: 1px solid var(--border) !important; }
+    .modal .btn-send { background: var(--accent); color: #fff; }
+    .modal .btn-send:disabled { opacity: 0.5; }
+
+    .modal .deposit-info {
+      background: var(--hold-bg);
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    /* ── Conversation Page ────────────────── */
+    #convo-screen {
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    .convo-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(250, 249, 247, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0.75rem 1rem;
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .convo-back {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
       color: var(--text);
-      border: 1px solid var(--border) !important;
+      padding: 0;
     }
 
-    .btn-save.saved {
-      background: #fce4ec;
-      border-color: #e57373 !important;
-      color: #c62828;
+    .convo-header-info { flex: 1; }
+    .convo-header-info .name { font-weight: 700; font-size: 1rem; }
+    .convo-header-info .item-price { font-size: 0.85rem; color: var(--text-muted); }
+
+    .convo-messages {
+      flex: 1;
+      padding: 80px 1rem 80px;
+      overflow-y: auto;
     }
 
-    .btn-text {
+    .msg {
+      max-width: 80%;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .msg.mine {
+      margin-left: auto;
       background: var(--accent);
       color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.theirs {
+      margin-right: auto;
+      background: #e8e6e3;
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg .msg-sender {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+      opacity: 0.7;
+    }
+
+    .msg .msg-time {
+      font-size: 0.65rem;
+      opacity: 0.6;
+      margin-top: 0.2rem;
+      text-align: right;
+    }
+
+    .convo-item-card {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .convo-item-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .convo-item-card .card-info { font-size: 0.85rem; }
+    .convo-item-card .card-price { font-family: 'SF Mono', 'Menlo', monospace; font-weight: 700; }
+
+    .convo-compose {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(250, 249, 247, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 0.65rem 1rem;
+      padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .convo-compose input {
+      flex: 1;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .convo-compose input:focus { border-color: var(--accent); }
+
+    .convo-compose button {
+      padding: 0.65rem 1rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .convo-compose button:disabled { opacity: 0.5; }
+
+    /* ── Messages List Screen ─────────────── */
+    .messages-list {
+      padding-top: 70px;
+      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0));
+    }
+
+    .messages-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(250, 249, 247, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0.75rem 1rem;
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .messages-header h1 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; }
+
+    .convo-preview {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+    }
+
+    .convo-preview:active { background: #f5f4f2; }
+
+    .convo-preview img {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .convo-preview .preview-info { flex: 1; min-width: 0; }
+    .convo-preview .preview-name { font-weight: 600; font-size: 0.9rem; }
+    .convo-preview .preview-price { font-family: 'SF Mono', 'Menlo', monospace; font-size: 0.8rem; color: var(--text-muted); }
+    .convo-preview .preview-role { font-size: 0.75rem; color: var(--text-muted); }
+
+    .convo-section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 1rem 0.35rem;
+    }
+
+    .empty-state {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
     }
 
     /* ── Post Screen ──────────────────────── */
-    #post-screen {
-      display: none;
-      min-height: 100vh;
-      padding: 1rem;
-      padding-top: max(1rem, env(safe-area-inset-top));
-    }
+    #post-screen { min-height: 100vh; padding: 1rem; padding-top: max(1rem, env(safe-area-inset-top)); }
+    #post-screen .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    #post-screen h2 { font-size: 1.3rem; font-weight: 700; }
 
-    #post-screen .post-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-    }
+    .post-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
 
-    #post-screen h2 {
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-
-    .post-close {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
-    }
+    .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.25rem; }
 
     .photo-slot {
       aspect-ratio: 1;
@@ -483,20 +641,9 @@
       background: var(--card-bg);
     }
 
-    .photo-slot.has-photo {
-      border-style: solid;
-    }
-
-    .photo-slot img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .photo-slot .add-icon {
-      font-size: 1.5rem;
-      color: var(--text-muted);
-    }
+    .photo-slot.has-photo { border-style: solid; }
+    .photo-slot img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-slot .add-icon { font-size: 1.5rem; color: var(--text-muted); }
 
     .photo-slot .remove {
       position: absolute;
@@ -515,16 +662,8 @@
       justify-content: center;
     }
 
-    .post-field {
-      margin-bottom: 1rem;
-    }
-
-    .post-field label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.3rem;
-    }
+    .post-field { margin-bottom: 1rem; }
+    .post-field label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
 
     .post-field input,
     .post-field select,
@@ -541,26 +680,11 @@
 
     .post-field input:focus,
     .post-field select:focus,
-    .post-field textarea:focus {
-      border-color: var(--accent);
-    }
+    .post-field textarea:focus { border-color: var(--accent); }
+    .post-field textarea { resize: vertical; min-height: 60px; }
 
-    .post-field textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.65rem 0;
-    }
-
-    .toggle-row label {
-      font-size: 0.9rem;
-      margin-bottom: 0;
-    }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0; }
+    .toggle-row label { font-size: 0.9rem; margin-bottom: 0; }
 
     .toggle {
       width: 48px;
@@ -572,9 +696,7 @@
       transition: background 0.2s;
     }
 
-    .toggle.on {
-      background: var(--green);
-    }
+    .toggle.on { background: var(--green); }
 
     .toggle::after {
       content: '';
@@ -589,9 +711,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
-    .toggle.on::after {
-      transform: translateX(20px);
-    }
+    .toggle.on::after { transform: translateX(20px); }
 
     .btn-post {
       width: 100%;
@@ -606,16 +726,14 @@
       margin-top: 1rem;
     }
 
-    .btn-post:disabled {
-      opacity: 0.5;
-    }
+    .btn-post:disabled { opacity: 0.5; }
 
     /* ── Utility ──────────────────────────── */
     .hidden { display: none !important; }
 
     .toast {
       position: fixed;
-      bottom: 2rem;
+      bottom: 5rem;
       left: 50%;
       transform: translateX(-50%);
       background: var(--accent);
@@ -623,7 +741,7 @@
       padding: 0.65rem 1.25rem;
       border-radius: 8px;
       font-size: 0.85rem;
-      z-index: 200;
+      z-index: 500;
       opacity: 0;
       transition: opacity 0.3s;
     }
@@ -631,25 +749,26 @@
     .toast.show { opacity: 1; }
 
     @media (min-width: 600px) {
-      .feed { max-width: 480px; margin: 0 auto; }
-      #post-screen { max-width: 480px; margin: 0 auto; }
+      .feed, .messages-list { max-width: 480px; margin: 0 auto; }
+      #post-screen, .modal { max-width: 480px; margin: 0 auto; }
     }
   </style>
 </head>
 <body>
 
   <!-- Login Screen -->
-  <div id="login-screen">
+  <div id="login-screen" class="screen">
     <h1>Early Bird</h1>
     <p class="subtitle">Trade-only pre-market</p>
     <input type="tel" id="phone-input" placeholder="(310) 555-1234" autocomplete="tel" inputmode="tel">
     <button id="login-btn" onclick="requestLogin()">Send Login Link</button>
     <div id="login-error" class="error hidden"></div>
+    <div id="login-success" class="link-sent hidden"></div>
     <p class="invite-note">Invite-only. Ask a member to get you in.</p>
   </div>
 
   <!-- Onboarding Screen -->
-  <div id="onboard-screen">
+  <div id="onboard-screen" class="screen">
     <h2>Welcome to Early Bird</h2>
     <p class="subtitle">Quick setup, one time only</p>
     <div class="field">
@@ -672,7 +791,7 @@
   </div>
 
   <!-- Feed Screen -->
-  <div id="feed-screen">
+  <div id="feed-screen" class="screen">
     <div class="feed-header">
       <div class="feed-header-top">
         <div>
@@ -681,7 +800,7 @@
         </div>
         <div class="header-actions">
           <button onclick="showPost()" title="Post an item">+</button>
-          <button onclick="toggleFilters()" title="Filters">☰</button>
+          <button onclick="toggleFilters()" title="Filters">&#9776;</button>
         </div>
       </div>
       <div class="filter-bar hidden" id="filter-bar">
@@ -696,8 +815,32 @@
     <div class="feed" id="feed"></div>
   </div>
 
+  <!-- Messages List Screen -->
+  <div id="messages-screen" class="screen">
+    <div class="messages-header">
+      <h1>Messages</h1>
+    </div>
+    <div class="messages-list" id="messages-list"></div>
+  </div>
+
+  <!-- Conversation Screen -->
+  <div id="convo-screen" class="screen">
+    <div class="convo-header">
+      <button class="convo-back" onclick="navigateBack()">&larr;</button>
+      <div class="convo-header-info">
+        <div class="name" id="convo-other-name"></div>
+        <div class="item-price" id="convo-item-price"></div>
+      </div>
+    </div>
+    <div class="convo-messages" id="convo-messages"></div>
+    <div class="convo-compose">
+      <input type="text" id="convo-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendReply()">
+      <button id="convo-send-btn" onclick="sendReply()">Send</button>
+    </div>
+  </div>
+
   <!-- Post Screen -->
-  <div id="post-screen">
+  <div id="post-screen" class="screen">
     <div class="post-header">
       <h2>Post an item</h2>
       <button class="post-close" onclick="hidePost()">&times;</button>
@@ -724,7 +867,7 @@
     <div class="post-field">
       <label>Category <span class="optional" style="color:var(--text-muted)">(optional)</span></label>
       <select id="post-category">
-        <option value="">—</option>
+        <option value="">--</option>
         <option value="art">Art</option>
         <option value="furniture">Furniture</option>
         <option value="lighting">Lighting</option>
@@ -766,6 +909,38 @@
     <button class="btn-post" id="btn-post" onclick="submitPost()">Post</button>
   </div>
 
+  <!-- Bottom Navigation (shared) -->
+  <div class="bottom-nav hidden" id="bottom-nav">
+    <button class="nav-tab active" id="nav-feed" onclick="showFeed()">
+      <span class="nav-icon">&#9633;</span>
+      Feed
+    </button>
+    <button class="nav-tab" id="nav-messages" onclick="showMessages()">
+      <span class="icon-wrap">
+        <span class="nav-icon">&#9993;</span>
+      </span>
+      Messages
+    </button>
+    <button class="nav-tab" id="nav-post" onclick="showPost()">
+      <span class="nav-icon">+</span>
+      Post
+    </button>
+  </div>
+
+  <!-- Message Compose Modal -->
+  <div class="modal-overlay" id="compose-modal">
+    <div class="modal">
+      <h3 id="compose-title">Message Seller</h3>
+      <div class="modal-sub" id="compose-sub"></div>
+      <div id="compose-deposit-info"></div>
+      <textarea id="compose-message" placeholder="Hey, interested in this piece..."></textarea>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeCompose()">Cancel</button>
+        <button class="btn-send" id="compose-send-btn" onclick="sendCompose()">Send</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
@@ -774,7 +949,7 @@
 
   <script>
     // ── Config ────────────────────────────────────────────────
-    const API = ''; // Same origin when served from worker; set to worker URL for dev
+    const API = 'https://early-bird.objectlesson.workers.dev';
 
     // ── State ─────────────────────────────────────────────────
     let currentDealer = null;
@@ -782,27 +957,87 @@
     let markets = [];
     let items = [];
     let savedItems = JSON.parse(localStorage.getItem('eb_saved') || '[]');
-    let postPhotos = []; // DataURLs for current post
+    let postPhotos = [];
     let activePhotoSlot = 0;
     let activeFilter = 'all';
+    let composeItemId = null;
+    let currentConvoToken = null;
+    let currentConvoData = null;
+
+    // ── Auth helpers ──────────────────────────────────────────
+    function getDealerId() {
+      return localStorage.getItem('eb_dealer_id');
+    }
+
+    function setDealerId(id) {
+      localStorage.setItem('eb_dealer_id', id);
+    }
+
+    function clearAuth() {
+      localStorage.removeItem('eb_dealer_id');
+      currentDealer = null;
+    }
+
+    function authHeaders(extra = {}) {
+      const h = { 'Content-Type': 'application/json', ...extra };
+      const id = getDealerId();
+      if (id) h['Authorization'] = `Bearer ${id}`;
+      return h;
+    }
+
+    // ── Hash Router ───────────────────────────────────────────
+    function getRoute() {
+      const hash = location.hash.slice(1) || '/';
+      return hash;
+    }
+
+    async function handleRoute() {
+      const route = getRoute();
+
+      // Magic link verify
+      const verifyMatch = route.match(/^\/verify\/(.+)$/);
+      if (verifyMatch) {
+        await verifyMagicLink(verifyMatch[1]);
+        return;
+      }
+
+      // Conversation page
+      const convoMatch = route.match(/^\/c\/(.+)$/);
+      if (convoMatch) {
+        if (!getDealerId()) {
+          // Need to log in first, then come back
+          showScreen('login-screen');
+          return;
+        }
+        await loadConversation(convoMatch[1]);
+        return;
+      }
+
+      // Messages
+      if (route === '/messages') {
+        if (!getDealerId()) { showScreen('login-screen'); return; }
+        await showMessages();
+        return;
+      }
+
+      // Default: check auth
+      await init();
+    }
+
+    window.addEventListener('hashchange', handleRoute);
 
     // ── Init ──────────────────────────────────────────────────
     async function init() {
-      // Check if we're on the auth verify callback
-      if (location.pathname.startsWith('/auth/verify/')) {
-        // The worker handles this server-side via redirect
+      const dealerId = getDealerId();
+      if (!dealerId) {
+        showScreen('login-screen');
         return;
       }
 
-      // Check for onboarding redirect
-      if (location.pathname === '/onboard') {
-        showScreen('onboard-screen');
-        return;
-      }
-
-      // Check if already authenticated
       try {
-        const res = await fetch(API + '/api/auth/me', { credentials: 'include' });
+        const res = await fetch(API + '/api/auth/me', {
+          headers: authHeaders(),
+        });
         if (res.ok) {
           currentDealer = await res.json();
           if (!currentDealer.name) {
@@ -810,8 +1045,12 @@
           } else {
             await loadFeed();
             showScreen('feed-screen');
+            document.getElementById('bottom-nav').classList.remove('hidden');
           }
           return;
+        } else {
+          // Invalid dealer ID
+          clearAuth();
         }
       } catch (e) {}
 
@@ -819,11 +1058,48 @@
     }
 
     function showScreen(id) {
-      document.querySelectorAll('#login-screen, #onboard-screen, #feed-screen, #post-screen')
-        .forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.screen').forEach(el => {
+        el.classList.remove('active', 'active-block');
+      });
       const screen = document.getElementById(id);
-      screen.style.display = 'flex';
-      if (id === 'feed-screen') screen.style.display = 'block';
+      if (id === 'feed-screen' || id === 'messages-screen' || id === 'post-screen') {
+        screen.classList.add('active-block');
+        document.getElementById('bottom-nav').classList.remove('hidden');
+      } else {
+        screen.classList.add('active');
+        if (id !== 'convo-screen') {
+          document.getElementById('bottom-nav').classList.add('hidden');
+        }
+      }
+
+      // Update nav tabs
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      if (id === 'feed-screen') document.getElementById('nav-feed').classList.add('active');
+      if (id === 'messages-screen') document.getElementById('nav-messages').classList.add('active');
+      if (id === 'post-screen') document.getElementById('nav-post').classList.add('active');
+    }
+
+    // ── Magic Link Verify ─────────────────────────────────────
+    async function verifyMagicLink(token) {
+      try {
+        const res = await fetch(API + '/api/auth/verify/' + token);
+        const data = await res.json();
+        if (res.ok && data.dealer_id) {
+          setDealerId(data.dealer_id);
+          location.hash = '/';
+          return;
+        } else {
+          showScreen('login-screen');
+          const errorEl = document.getElementById('login-error');
+          errorEl.textContent = data.error || 'Invalid link. Try requesting a new one.';
+          errorEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        showScreen('login-screen');
+        const errorEl = document.getElementById('login-error');
+        errorEl.textContent = 'Network error verifying link.';
+        errorEl.classList.remove('hidden');
+      }
     }
 
     // ── Login ─────────────────────────────────────────────────
@@ -833,9 +1109,11 @@
 
       const btn = document.getElementById('login-btn');
       const errorEl = document.getElementById('login-error');
+      const successEl = document.getElementById('login-success');
       btn.disabled = true;
       btn.textContent = 'Sending...';
       errorEl.classList.add('hidden');
+      successEl.classList.add('hidden');
 
       try {
         const res = await fetch(API + '/api/auth/request', {
@@ -846,8 +1124,9 @@
 
         const data = await res.json();
         if (res.ok) {
-          btn.textContent = 'Check your texts ✓';
-          showToast('Magic link sent! Check your texts.');
+          btn.textContent = 'Check your texts';
+          successEl.textContent = 'Magic link sent! Tap the link in your text message.';
+          successEl.classList.remove('hidden');
         } else {
           errorEl.textContent = data.error || 'Something went wrong';
           errorEl.classList.remove('hidden');
@@ -874,29 +1153,42 @@
         zelle: document.getElementById('onboard-zelle').value.trim() || null,
       };
 
-      // Update dealer via the items PATCH endpoint... actually we need a dealer update endpoint
-      // For now, use the auth/me concept — the worker can accept a PATCH to update the current dealer
-      // TODO: add PATCH /api/dealers/me endpoint
-      // For MVP, redirect to feed
-      currentDealer = { ...currentDealer, ...updates };
-      await loadFeed();
-      showScreen('feed-screen');
+      try {
+        const res = await fetch(API + '/api/auth/me', {
+          method: 'PATCH',
+          headers: authHeaders(),
+          body: JSON.stringify(updates),
+        });
+
+        if (res.ok) {
+          currentDealer = { ...currentDealer, ...updates };
+          await loadFeed();
+          showScreen('feed-screen');
+          document.getElementById('bottom-nav').classList.remove('hidden');
+        } else {
+          showToast('Could not save profile');
+        }
+      } catch (e) {
+        showToast('Network error');
+      }
     }
 
     // ── Feed ──────────────────────────────────────────────────
     async function loadFeed() {
-      // Load markets
       try {
-        const mRes = await fetch(API + '/api/markets', { credentials: 'include' });
+        const mRes = await fetch(API + '/api/markets', { headers: authHeaders() });
         markets = await mRes.json();
         if (markets.length) {
           currentMarket = markets[0];
-          updateMarketHeader();
         }
       } catch (e) {}
-
-      // Load items
       await loadItems();
+    }
+
+    function showFeed() {
+      location.hash = '/';
+      showScreen('feed-screen');
+      loadItems();
     }
 
     async function loadItems() {
@@ -905,11 +1197,11 @@
       if (activeFilter !== 'all') url += `category=${activeFilter}&`;
 
       try {
-        const res = await fetch(url, { credentials: 'include' });
+        const res = await fetch(url, { headers: authHeaders() });
         items = await res.json();
         renderFeed();
       } catch (e) {
-        document.getElementById('feed').innerHTML = '<p style="padding:2rem;text-align:center;color:var(--text-muted)">Could not load items</p>';
+        document.getElementById('feed').innerHTML = '<p class="empty-state">Could not load items</p>';
       }
     }
 
@@ -918,10 +1210,24 @@
       const date = new Date(currentMarket.market_date + 'T00:00:00');
       const opts = { weekday: 'short', month: 'short', day: 'numeric' };
       const dateStr = date.toLocaleDateString('en-US', opts);
+
+      // Drop time countdown
+      let dropInfo = '';
+      if (currentMarket.drop_time) {
+        const drop = new Date(currentMarket.drop_time);
+        const now = new Date();
+        if (now < drop) {
+          const diffMs = drop - now;
+          const days = Math.floor(diffMs / 86400000);
+          const hours = Math.floor((diffMs % 86400000) / 3600000);
+          dropInfo = ` · Drop in ${days}d ${hours}h`;
+        }
+      }
+
       const total = items.length;
       const newCount = items.filter(i => isNew(i)).length;
       document.getElementById('market-info').innerHTML =
-        `${currentMarket.name} · ${dateStr}` +
+        `${currentMarket.name} · ${dateStr}${dropInfo}` +
         `<span class="stats"> · ${total} listings${newCount ? ` · ${newCount} new` : ''}</span>`;
     }
 
@@ -934,7 +1240,7 @@
     function renderFeed() {
       const feed = document.getElementById('feed');
       if (!items.length) {
-        feed.innerHTML = '<p style="padding:3rem 2rem;text-align:center;color:var(--text-muted)">No items yet. Be the first to post.</p>';
+        feed.innerHTML = '<p class="empty-state">No items yet. Be the first to post.</p>';
         updateMarketHeader();
         return;
       }
@@ -942,14 +1248,12 @@
       feed.innerHTML = items.map((item, idx) => renderItem(item, idx)).join('');
       updateMarketHeader();
 
-      // Set up carousels
       items.forEach((item, idx) => {
-        if (item.photos.length > 1) {
+        if (item.photos && item.photos.length > 1) {
           setupCarousel(idx, item.photos.length);
         }
       });
 
-      // Store visit time
       localStorage.setItem('eb_last_visit', new Date().toISOString());
     }
 
@@ -959,33 +1263,39 @@
       const isSaved = savedItems.includes(item.id);
       const sellerName = item.dealer?.name || 'Unknown';
       const sellerBiz = item.dealer?.business_name ? ` · ${item.dealer.business_name}` : '';
+      const isOwn = currentDealer && item.dealer_id === currentDealer.id;
 
       let statusLabel = '';
       if (item.status === 'sold') {
         const buyerName = item.buyer?.name;
         const buyerBiz = item.buyer?.business_name;
         statusLabel = buyerName
-          ? `<div class="sold-label">Sold to ${buyerName}${buyerBiz ? ' · ' + buyerBiz : ''}</div>`
+          ? `<div class="sold-label">Sold to ${escapeHtml(buyerName)}${buyerBiz ? ' &middot; ' + escapeHtml(buyerBiz) : ''}</div>`
           : '<div class="sold-label">Sold</div>';
       } else if (item.status === 'hold') {
         statusLabel = '<div class="hold-label">On hold</div>';
       }
 
-      const photos = item.photos.map(url => `<img src="${url}" alt="" loading="lazy">`).join('');
-      const dots = item.photos.length > 1
+      const photos = (item.photos || []).map(url => `<img src="${url}" alt="" loading="lazy">`).join('');
+      const dots = item.photos && item.photos.length > 1
         ? `<div class="carousel-dots">${item.photos.map((_, i) => `<div class="dot${i === 0 ? ' active' : ''}"></div>`).join('')}</div>`
         : '';
 
       const newBadge = isNew(item) ? '<div class="new-badge">New</div>' : '';
 
-      const actions = item.status === 'live'
-        ? `<div class="item-actions">
+      let actions = '';
+      if (item.status === 'live' && !isOwn) {
+        actions = `<div class="item-actions">
             <button class="btn-save ${isSaved ? 'saved' : ''}" onclick="toggleSave('${item.id}', this)">
-              ${isSaved ? '♥ Saved' : '♡ Save'}
+              ${isSaved ? '&#9829; Saved' : '&#9825; Save'}
             </button>
-            <button class="btn-text" onclick="textSeller('${item.id}')">Text Seller</button>
-          </div>`
-        : '';
+            <button class="btn-message" onclick="openCompose('${item.id}')">Message Seller</button>
+          </div>`;
+      } else if (item.status === 'live' && isOwn) {
+        actions = `<div class="item-actions">
+            <button class="btn-save" style="flex:1" onclick="showToast('This is your item')">Your listing</button>
+          </div>`;
+      }
 
       const conditionBadge = item.condition ? `<span class="condition-badge">${item.condition}</span>` : '';
       const notes = item.notes ? `<div class="notes">${escapeHtml(item.notes)}</div>` : '';
@@ -1017,6 +1327,7 @@
     }
 
     function escapeHtml(text) {
+      if (!text) return '';
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
@@ -1062,48 +1373,260 @@
       if (idx >= 0) {
         savedItems.splice(idx, 1);
         btn.classList.remove('saved');
-        btn.textContent = '♡ Save';
+        btn.innerHTML = '&#9825; Save';
       } else {
         savedItems.push(itemId);
         btn.classList.add('saved');
-        btn.textContent = '♥ Saved';
+        btn.innerHTML = '&#9829; Saved';
       }
       localStorage.setItem('eb_saved', JSON.stringify(savedItems));
     }
 
-    // ── Text Seller ───────────────────────────────────────────
-    async function textSeller(itemId) {
+    // ── Message Compose ───────────────────────────────────────
+    function openCompose(itemId) {
+      composeItemId = itemId;
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      const price = '$' + (item.price / 100).toLocaleString();
+      const sellerName = item.dealer?.name || 'the seller';
+      document.getElementById('compose-title').textContent = `Message ${sellerName}`;
+      document.getElementById('compose-sub').textContent = `About their ${price} item`;
+      document.getElementById('compose-message').value = '';
+
+      // Show deposit info if applicable
+      const depositEl = document.getElementById('compose-deposit-info');
+      if (item.deposit_required && item.deposit_amount) {
+        const depAmt = '$' + (item.deposit_amount / 100).toLocaleString();
+        let payInfo = '';
+        if (item.dealer?.venmo) payInfo += `Venmo: ${item.dealer.venmo}  `;
+        if (item.dealer?.zelle) payInfo += `Zelle: ${item.dealer.zelle}`;
+        depositEl.innerHTML = `<strong>Deposit required:</strong> ${depAmt}<br>${payInfo ? payInfo : 'Ask seller for payment details.'}`;
+        depositEl.classList.remove('hidden');
+      } else {
+        depositEl.classList.add('hidden');
+      }
+
+      document.getElementById('compose-modal').classList.add('show');
+      setTimeout(() => document.getElementById('compose-message').focus(), 100);
+    }
+
+    function closeCompose() {
+      document.getElementById('compose-modal').classList.remove('show');
+      composeItemId = null;
+    }
+
+    async function sendCompose() {
+      const message = document.getElementById('compose-message').value.trim();
+      if (!message) { showToast('Write a message first'); return; }
+
+      const btn = document.getElementById('compose-send-btn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
       try {
-        const res = await fetch(API + '/api/inquiries', {
+        const res = await fetch(API + '/api/conversations', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ item_id: itemId }),
+          headers: authHeaders(),
+          body: JSON.stringify({ item_id: composeItemId, message }),
         });
 
         const data = await res.json();
         if (res.ok) {
-          // Show relay number info and open SMS
-          const item = items.find(i => i.id === itemId);
-          const price = item ? '$' + (item.price / 100).toLocaleString() : '';
-          const msg = `Hey ${data.seller_name}, interested in your ${price} item on Early Bird`;
-
-          // If deposit required, show info first
-          if (data.deposit_required && data.deposit_amount) {
-            const depAmt = '$' + (data.deposit_amount / 100).toLocaleString();
-            let paymentInfo = '';
-            if (data.venmo) paymentInfo += `Venmo: ${data.venmo}\n`;
-            if (data.zelle) paymentInfo += `Zelle: ${data.zelle}`;
-            alert(`This seller requires a ${depAmt} deposit.\n\n${paymentInfo}\nSend the deposit, then text to confirm.`);
-          }
-
-          // Open SMS to relay number
-          window.location.href = `sms:${data.relay_number}&body=${encodeURIComponent(msg)}`;
+          closeCompose();
+          showToast('Message sent! Seller will get an SMS.');
+          // Could navigate to the conversation
+          // location.hash = '/c/' + data.conversation_token;
         } else {
-          showToast(data.error || 'Could not start conversation');
+          showToast(data.error || 'Could not send message');
         }
       } catch (e) {
         showToast('Network error');
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Send';
+    }
+
+    // Close modal on overlay click
+    document.getElementById('compose-modal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeCompose();
+    });
+
+    // ── Messages List ─────────────────────────────────────────
+    async function showMessages() {
+      showScreen('messages-screen');
+      if (location.hash !== '#/messages') location.hash = '/messages';
+
+      const list = document.getElementById('messages-list');
+      list.innerHTML = '<p class="empty-state">Loading...</p>';
+
+      try {
+        const res = await fetch(API + '/api/conversations', {
+          headers: authHeaders(),
+        });
+        const data = await res.json();
+
+        if (!data.as_buyer?.length && !data.as_seller?.length) {
+          list.innerHTML = '<p class="empty-state">No conversations yet. Message a seller to start one.</p>';
+          return;
+        }
+
+        let html = '';
+
+        if (data.as_seller?.length) {
+          html += '<div class="convo-section-label">Messages about your items</div>';
+          html += data.as_seller.map(c => renderConvoPreview(c, 'seller')).join('');
+        }
+
+        if (data.as_buyer?.length) {
+          html += '<div class="convo-section-label">Your inquiries</div>';
+          html += data.as_buyer.map(c => renderConvoPreview(c, 'buyer')).join('');
+        }
+
+        list.innerHTML = html;
+      } catch (e) {
+        list.innerHTML = '<p class="empty-state">Could not load messages</p>';
+      }
+    }
+
+    function renderConvoPreview(convo, role) {
+      const otherName = role === 'seller'
+        ? (convo.buyer?.name || 'Unknown buyer')
+        : (convo.seller?.name || 'Unknown seller');
+      const otherBiz = role === 'seller'
+        ? (convo.buyer?.business_name || '')
+        : (convo.seller?.business_name || '');
+      const price = convo.item?.price ? '$' + (convo.item.price / 100).toLocaleString() : '';
+      const photo = convo.item?.photos?.[0] || '';
+      const roleLabel = role === 'seller' ? 'Buyer' : 'Seller';
+
+      return `
+        <div class="convo-preview" onclick="location.hash='/c/${convo.token}'">
+          ${photo ? `<img src="${photo}" alt="">` : '<div style="width:48px;height:48px;background:#f0eeeb;border-radius:6px;flex-shrink:0"></div>'}
+          <div class="preview-info">
+            <div class="preview-name">${escapeHtml(otherName)}${otherBiz ? ' · ' + escapeHtml(otherBiz) : ''}</div>
+            <div class="preview-price">${price}</div>
+            <div class="preview-role">${roleLabel}</div>
+          </div>
+        </div>`;
+    }
+
+    // ── Conversation Page ─────────────────────────────────────
+    async function loadConversation(token) {
+      currentConvoToken = token;
+      showScreen('convo-screen');
+      document.getElementById('bottom-nav').classList.add('hidden');
+      document.getElementById('convo-messages').innerHTML = '<p class="empty-state">Loading...</p>';
+
+      try {
+        const res = await fetch(API + '/api/conversations/' + token, {
+          headers: authHeaders(),
+        });
+
+        if (res.status === 401) {
+          // Not authenticated — redirect to login
+          showScreen('login-screen');
+          showToast('Log in to view this conversation');
+          return;
+        }
+
+        const data = await res.json();
+        if (!res.ok) {
+          document.getElementById('convo-messages').innerHTML = `<p class="empty-state">${data.error || 'Could not load conversation'}</p>`;
+          return;
+        }
+
+        currentConvoData = data;
+        const otherParty = data.you === 'buyer' ? data.conversation.seller : data.conversation.buyer;
+        const item = data.conversation.item;
+
+        document.getElementById('convo-other-name').textContent = otherParty.name || 'Unknown';
+        document.getElementById('convo-item-price').textContent = item?.price
+          ? '$' + (item.price / 100).toLocaleString()
+          : '';
+
+        renderMessages(data);
+      } catch (e) {
+        document.getElementById('convo-messages').innerHTML = '<p class="empty-state">Network error</p>';
+      }
+    }
+
+    function renderMessages(data) {
+      const container = document.getElementById('convo-messages');
+      const item = data.conversation.item;
+      const me = data.you;
+
+      let html = '';
+
+      // Item card at top
+      if (item) {
+        const price = '$' + (item.price / 100).toLocaleString();
+        const photo = item.photos?.[0] || '';
+        html += `
+          <div class="convo-item-card">
+            ${photo ? `<img src="${photo}" alt="">` : ''}
+            <div class="card-info">
+              <div class="card-price">${price}</div>
+              ${item.condition ? `<div style="color:var(--text-muted);font-size:0.8rem">${item.condition}</div>` : ''}
+              ${item.status !== 'live' ? `<div style="color:var(--new-badge);font-size:0.8rem;font-weight:600;text-transform:uppercase">${item.status}</div>` : ''}
+            </div>
+          </div>`;
+      }
+
+      // Messages
+      data.messages.forEach(msg => {
+        const isMine = msg.sender_id === currentDealer.id;
+        const senderName = msg.sender?.name || 'Unknown';
+        const time = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+        html += `
+          <div class="msg ${isMine ? 'mine' : 'theirs'}">
+            ${!isMine ? `<div class="msg-sender">${escapeHtml(senderName)}</div>` : ''}
+            ${escapeHtml(msg.body)}
+            <div class="msg-time">${time}</div>
+          </div>`;
+      });
+
+      container.innerHTML = html;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendReply() {
+      const input = document.getElementById('convo-input');
+      const message = input.value.trim();
+      if (!message || !currentConvoToken) return;
+
+      const btn = document.getElementById('convo-send-btn');
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(API + `/api/conversations/${currentConvoToken}/messages`, {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ message }),
+        });
+
+        if (res.ok) {
+          input.value = '';
+          // Reload conversation to show new message
+          await loadConversation(currentConvoToken);
+        } else {
+          const data = await res.json();
+          showToast(data.error || 'Could not send');
+        }
+      } catch (e) {
+        showToast('Network error');
+      }
+
+      btn.disabled = false;
+    }
+
+    function navigateBack() {
+      if (document.referrer && document.referrer.includes('early-bird')) {
+        history.back();
+      } else {
+        location.hash = '/messages';
       }
     }
 
@@ -1124,17 +1647,16 @@
     // ── Post ──────────────────────────────────────────────────
     function showPost() {
       showScreen('post-screen');
-      document.getElementById('post-screen').style.display = 'block';
+      document.getElementById('post-screen').classList.remove('active');
+      document.getElementById('post-screen').classList.add('active-block');
 
-      // Populate market dropdown
       const select = document.getElementById('post-market');
       select.innerHTML = markets.map(m => {
         const date = new Date(m.market_date + 'T00:00:00');
         const opts = { weekday: 'short', month: 'short', day: 'numeric' };
-        return `<option value="${m.id}">${m.name} · ${date.toLocaleDateString('en-US', opts)}</option>`;
+        return `<option value="${m.id}">${m.name} &middot; ${date.toLocaleDateString('en-US', opts)}</option>`;
       }).join('');
 
-      // Reset photos
       postPhotos = [];
       document.querySelectorAll('.photo-slot').forEach(slot => {
         slot.classList.remove('has-photo');
@@ -1155,11 +1677,9 @@
       const file = e.target.files[0];
       if (!file) return;
 
-      // Client-side compress
       const compressed = await compressImage(file, 1200, 0.82);
       postPhotos[activePhotoSlot] = compressed;
 
-      // Update UI
       const slots = document.querySelectorAll('.photo-slot');
       const slot = slots[activePhotoSlot];
       slot.classList.add('has-photo');
@@ -1216,13 +1736,9 @@
       btn.disabled = true;
       btn.textContent = 'Posting...';
 
-      // TODO: Upload photos to CDN and get URLs
-      // For now, photos are data URLs (will be replaced with CDN upload)
-      const photoUrls = photos; // placeholder
-
       const item = {
-        photos: photoUrls,
-        price: price * 100, // convert to cents
+        photos,
+        price: price * 100,
         market_id: document.getElementById('post-market').value,
         category: document.getElementById('post-category').value || null,
         condition: document.getElementById('post-condition').value,
@@ -1237,8 +1753,7 @@
       try {
         const res = await fetch(API + '/api/items', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
+          headers: authHeaders(),
           body: JSON.stringify(item),
         });
 
@@ -1279,13 +1794,12 @@
       }
     });
 
-    // Enter key submits login
     document.getElementById('phone-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') requestLogin();
     });
 
     // ── Boot ──────────────────────────────────────────────────
-    init();
+    handleRoute();
   </script>
 </body>
 </html>
