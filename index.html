@@ -220,6 +220,105 @@
       line-height: 1.5;
     }
 
+    /* ── Info Sections (buyer + dealer pages) ── */
+    .info-section {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 2px solid var(--text);
+    }
+    .info-section-title {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 22px;
+      color: var(--text);
+      letter-spacing: 0.03em;
+      margin-bottom: 16px;
+    }
+
+    /* How it works steps */
+    .steps { list-style: none; }
+    .step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+      align-items: flex-start;
+    }
+    .step-num {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 28px;
+      color: var(--accent);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 28px;
+    }
+    .step-text {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+      padding-top: 4px;
+    }
+    .step-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* FAQ */
+    .faq-item {
+      margin-bottom: 18px;
+    }
+    .faq-q {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .faq-a {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.5;
+    }
+
+    /* Dealer landing page */
+    #dealer-landing {
+      min-height: 100vh;
+      min-height: 100dvh;
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 0 24px;
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-bottom: max(48px, env(safe-area-inset-bottom));
+    }
+    .back-link {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .dealer-hero-text {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 28px;
+      color: var(--text);
+      line-height: 1.05;
+      margin: 20px 0 6px;
+    }
+    .dealer-hero-text .accent { color: var(--accent); }
+    .dealer-sub {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .dealer-free-badge {
+      display: inline-block;
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      color: var(--success);
+      background: #EDF7F0;
+      padding: 6px 14px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
     /* ── Verify Screen ───────────────────── */
     #verify {
       min-height: 100vh;
@@ -511,7 +610,7 @@
       <span class="logo-early">EARLY</span>
       <span class="logo-bird">BIRD</span>
     </div>
-    <a href="#" class="dealer-link" onclick="document.getElementById('phone-input').focus(); return false;">I'm a dealer</a>
+    <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">I'm a dealer</a>
   </div>
 
   <hr class="rule">
@@ -546,8 +645,132 @@
 
   <div class="hero-image" id="hero-image"></div>
 
-  <div class="disclaimer">
+  <!-- How it works -->
+  <div class="info-section">
+    <div class="info-section-title">HOW IT WORKS</div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link when inventory goes live before each market.</div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-text"><strong>Browse what dealers are bringing.</strong> See photos, prices, and booth locations before the gates open.</div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-text"><strong>Claim what you want.</strong> Message the dealer directly and arrange to pick it up at their booth.</div>
+      </li>
+    </ol>
+  </div>
+
+  <!-- FAQ -->
+  <div class="info-section">
+    <div class="info-section-title">FAQ</div>
+
+    <div class="faq-item">
+      <div class="faq-q">What is Early Bird?</div>
+      <div class="faq-a">Dealers at flea markets post photos and prices of what they're bringing. You browse and claim items before the market opens. Pick up at their booth on market day.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this free?</div>
+      <div class="faq-a">Yes. Register for free and start browsing.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">How do I pay for items?</div>
+      <div class="faq-a">You pay the dealer directly. Venmo, Zelle, or cash at the booth. Early Bird doesn't handle payments.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this affiliated with the markets?</div>
+      <div class="faq-a">No. Early Bird is an independent platform. Dealers choose to post here on their own.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What markets are on here?</div>
+      <div class="faq-a">We're starting with markets in the LA area. More coming soon.</div>
+    </div>
+  </div>
+
+  <div class="disclaimer" style="margin-top: 40px; margin-bottom: 20px;">
     Early Bird is not affiliated with or endorsed by any market listed here. All listings are posted by independent dealers.
+  </div>
+</div>
+
+<!-- DEALER LANDING PAGE -->
+<div id="dealer-landing" class="screen">
+  <a href="#" class="back-link" onclick="showScreen('landing'); return false;">← Back</a>
+
+  <div class="dealer-hero-text">
+    SELL TO SERIOUS BUYERS<br>
+    <span class="accent">BEFORE THE GATES OPEN</span>
+  </div>
+  <div class="dealer-sub">
+    Post photos and prices of what you're bringing to the market. Buyers browse your inventory and reach out to claim items before market day.
+  </div>
+
+  <div class="dealer-free-badge">100% FREE FOR DEALERS</div>
+
+  <div class="info-section" style="margin-top: 24px; padding-top: 20px;">
+    <div class="info-section-title">HOW IT WORKS</div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-text"><strong>Register with your phone number.</strong> We'll text you a link to get started. Takes 30 seconds.</div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-text"><strong>Post what you're bringing.</strong> Photos, price, and your booth number. That's it.</div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-text"><strong>Buyers message you directly.</strong> You choose who gets the item. Arrange payment however you want.</div>
+      </li>
+    </ol>
+  </div>
+
+  <div class="auth-section" style="margin-top: 24px;">
+    <input type="tel" class="auth-input" id="dealer-phone-input" placeholder="(310) 555-1234"
+           inputmode="tel" autocomplete="tel">
+    <button class="auth-btn" id="dealer-auth-btn" onclick="requestDealerMagicLink()">
+      GET STARTED
+    </button>
+    <div class="auth-fine" id="dealer-auth-msg">We'll text you a link to set up your booth.</div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-section-title">FAQ FOR DEALERS</div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is this really free?</div>
+      <div class="faq-a">Yes. No fees, no commission. You handle all payments directly with buyers. Venmo, Zelle, cash at the booth — your choice.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What do I need to post?</div>
+      <div class="faq-a">At minimum: one photo and a price. You can add a title, condition notes, and whether the price is firm or negotiable.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">When do buyers see my stuff?</div>
+      <div class="faq-a">Inventory goes live a few days before the market. You can post anytime before that. Buyers get notified when the listing window opens.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What happens after the market?</div>
+      <div class="faq-a">Listings expire within a day or two of the event ending. Each market is a fresh slate.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Am I obligated to sell to anyone?</div>
+      <div class="faq-a">No. You can hold items as a courtesy, but you choose who buys. Nothing is final until you say so.</div>
+    </div>
+  </div>
+
+  <div class="disclaimer" style="margin-top: 40px; margin-bottom: 20px;">
+    Early Bird is not affiliated with or endorsed by any market listed here.
   </div>
 </div>
 
@@ -877,14 +1100,50 @@ function route() {
   loadLanding();
 }
 
+// ── Dealer auth ───────────────────────────────────────────────
+async function requestDealerMagicLink() {
+  const phone = document.getElementById('dealer-phone-input').value.trim();
+  if (!phone) return;
+  const btn = document.getElementById('dealer-auth-btn');
+  const msg = document.getElementById('dealer-auth-msg');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  msg.textContent = '';
+  msg.className = 'auth-fine';
+
+  try {
+    const res = await api('/api/auth/request', { method: 'POST', body: { phone } });
+    if (res.ok) {
+      msg.textContent = 'Check your texts for a link.';
+      msg.className = 'auth-success';
+      btn.textContent = 'LINK SENT';
+    } else {
+      msg.textContent = res.error || 'Something went wrong.';
+      msg.className = 'auth-error';
+      btn.textContent = 'GET STARTED';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    msg.textContent = 'Connection error. Try again.';
+    msg.className = 'auth-error';
+    btn.textContent = 'GET STARTED';
+    btn.disabled = false;
+  }
+}
+
 // ── Phone formatting ──────────────────────────────────────────
-document.getElementById('phone-input').addEventListener('input', function() {
-  let d = this.value.replace(/\D/g, '');
-  if (d.length > 10) d = d.slice(0, 10);
-  if (d.length >= 6) this.value = `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
-  else if (d.length >= 3) this.value = `(${d.slice(0,3)}) ${d.slice(3)}`;
-  else this.value = d;
-});
+function formatPhoneInput(el) {
+  el.addEventListener('input', function() {
+    let d = this.value.replace(/\D/g, '');
+    if (d.length > 10) d = d.slice(0, 10);
+    if (d.length >= 6) this.value = `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    else if (d.length >= 3) this.value = `(${d.slice(0,3)}) ${d.slice(3)}`;
+    else this.value = d;
+  });
+}
+formatPhoneInput(document.getElementById('phone-input'));
+formatPhoneInput(document.getElementById('dealer-phone-input'));
+
 
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('hashchange', route);
