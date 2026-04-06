@@ -1393,6 +1393,7 @@
       <button class="mode-btn mode-active" id="mode-shop" onclick="switchMode('shop')">Shop</button>
       <button class="mode-btn" id="mode-sell" onclick="switchMode('sell')">Sell</button>
     </div>
+    <div id="market-selector" style="display:none;padding-bottom:10px;"></div>
   </div>
   <div id="feed-content"></div>
 </div>
@@ -1414,6 +1415,7 @@
     <div class="dealer-event-date" id="dealer-event-date"></div>
     <div class="dealer-countdown" id="dealer-countdown"></div>
   </div>
+  <div class="booth-number-row" id="booth-number-row" style="padding:0 24px;margin-bottom:12px;font-size:12px;"></div>
   <div class="free-notice">Selling on Early Bird is 100% free. Handle all payments directly with your buyers.</div>
   <button class="add-item-btn" onclick="showAddItem()">+ Add item</button>
   <ul class="my-items-list" id="my-items-list"></ul>
@@ -1548,6 +1550,8 @@
 
 <script>
 const API = 'https://early-bird.objectlesson.workers.dev';
+
+const PRE_DROP_SVG = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="#F0EFEC"/><text x="300" y="300" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono,monospace" font-size="11" fill="#CCCCCC" letter-spacing="0.15em" text-transform="uppercase">COMING SOON</text></svg>');
 
 let currentUser = null;
 let currentMarket = null;
@@ -1717,20 +1721,55 @@ async function verifyToken(token) {
   }
 }
 
+// ── Image Compression ────────────────────────────────────────
+function compressImage(file, maxWidth, quality) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob((blob) => {
+        resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }));
+      }, 'image/jpeg', quality);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function generateThumbnailDataUrl(file, maxWidth) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 // ── Onboarding ────────────────────────────────────────────────
 let selfieDataUrl = null;
 let selfieFile = null;
 
-function handleSelfie(input) {
+async function handleSelfie(input) {
   const file = input.files[0];
   if (!file) return;
-  selfieFile = file;
+  selfieFile = await compressImage(file, 600, 0.82);
   const reader = new FileReader();
   reader.onload = (e) => {
     selfieDataUrl = e.target.result;
     document.getElementById('selfie-preview').innerHTML = `<img src="${selfieDataUrl}" alt="selfie">`;
   };
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(selfieFile);
 }
 
 async function completeOnboarding() {
@@ -1817,10 +1856,39 @@ function switchMode(mode) {
   }
 }
 
+function renderMarketSelector() {
+  const sel = document.getElementById('market-selector');
+  if (allMarkets.length <= 1) { sel.style.display = 'none'; return; }
+  sel.style.display = 'block';
+  if (allMarkets.length === 2) {
+    // Tappable text that cycles
+    sel.innerHTML = `<a href="#" onclick="cycleMarket(); return false;" style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;">${currentMarket ? displayName(currentMarket.name) : ''} ▾</a>`;
+  } else {
+    // Dropdown for 3+
+    sel.innerHTML = `<select id="market-dropdown" onchange="selectMarket(this.value)" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:transparent;border:1px solid var(--input-bg);border-radius:4px;padding:6px 8px;outline:none;cursor:pointer;">
+      ${allMarkets.map(m => `<option value="${m.id}" ${m.id === currentMarket?.id ? 'selected' : ''}>${displayName(m.name)}</option>`).join('')}
+    </select>`;
+  }
+}
+
+function cycleMarket() {
+  if (allMarkets.length < 2) return;
+  const idx = allMarkets.findIndex(m => m.id === currentMarket?.id);
+  const next = (idx + 1) % allMarkets.length;
+  currentMarket = allMarkets[next];
+  loadFeed();
+}
+
+function selectMarket(marketId) {
+  const m = allMarkets.find(m => m.id === marketId);
+  if (m) { currentMarket = m; loadFeed(); }
+}
+
 async function loadFeed() {
   if (currentMarket) {
     document.getElementById('feed-event-name').textContent = currentMarket.name;
   }
+  renderMarketSelector();
   const content = document.getElementById('feed-content');
   try {
     const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
@@ -1831,7 +1899,8 @@ async function loadFeed() {
     }
     content.innerHTML = '<div class="item-grid">' + items.map(item => {
       const price = '$' + (item.price / 100).toLocaleString();
-      const photo = item.photos?.[0] || '';
+      let photo = item.photos?.[0] || '';
+      if (photo === '/pre-drop-placeholder.svg') photo = PRE_DROP_SVG;
       const dealer = item.dealer?.name || item.dealer?.business_name || '';
       let badge = '';
       if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
@@ -1847,7 +1916,7 @@ async function loadFeed() {
         <div class="item-card-info">
           <div class="item-card-price">${price}</div>
           ${item.title ? `<div class="item-card-meta" style="color:var(--text);font-weight:500;">${item.title}</div>` : ''}
-          <div class="item-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
+          <div class="item-card-meta">${dealer}${item.dealer?.booth_number ? ' · Booth ' + item.dealer.booth_number : ''}${item.price_posture === 'firm' || item.firm ? ' · Firm' : ''}</div>
           ${badge}
         </div>
       </div>`;
@@ -1956,6 +2025,14 @@ async function loadDealerHome() {
       date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   }
 
+  // Booth number
+  const boothRow = document.getElementById('booth-number-row');
+  if (currentUser?.booth_number) {
+    boothRow.innerHTML = `<span style="color:var(--muted);">Booth: </span><strong>${currentUser.booth_number}</strong> <a href="#" onclick="editBoothNumber(); return false;" style="color:var(--accent);text-decoration:none;font-size:11px;margin-left:6px;">(edit)</a>`;
+  } else {
+    boothRow.innerHTML = `<a href="#" onclick="editBoothNumber(); return false;" style="color:var(--accent);text-decoration:none;font-size:12px;">Add your booth number</a>`;
+  }
+
   // Load dealer's items
   if (!currentUser?.id) return;
   const list = document.getElementById('my-items-list');
@@ -2017,6 +2094,25 @@ async function updateItemStatus(itemId, status) {
   } catch (e) {
     console.error('Failed to update item status:', e);
   }
+}
+
+function editBoothNumber() {
+  const boothRow = document.getElementById('booth-number-row');
+  const current = currentUser?.booth_number || '';
+  boothRow.innerHTML = `<div style="display:flex;gap:8px;align-items:center;">
+    <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);outline:none;">
+    <button onclick="saveBoothNumber()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
+  </div>`;
+  document.getElementById('booth-input').focus();
+}
+
+async function saveBoothNumber() {
+  const val = document.getElementById('booth-input').value.trim();
+  try {
+    await api('/api/auth/me', { method: 'PATCH', body: { booth_number: val || null } });
+    currentUser.booth_number = val || null;
+    loadDealerHome();
+  } catch (e) { console.error('Failed to save booth number:', e); }
 }
 
 // ── Router ────────────────────────────────────────────────────
@@ -2128,6 +2224,7 @@ async function loadItemDetail(itemId) {
     html += `<div class="detail-seller">`;
     html += `<div class="detail-seller-name">${dealer}</div>`;
     if (biz) html += `<div class="detail-seller-biz">${biz}</div>`;
+    if (item.dealer?.booth_number) html += `<div class="detail-seller-biz">Booth ${item.dealer.booth_number}</div>`;
     html += `</div>`;
     infoEl.innerHTML = html;
 
@@ -2371,7 +2468,7 @@ async function loadConversation(token) {
     // Reply form
     actionsEl.innerHTML = `
       <div style="display:flex;gap:8px;padding:0 24px;">
-        <input type="text" class="form-input" id="reply-input" placeholder="Reply..." style="flex:1;">
+        <input type="text" class="form-input" id="reply-input" placeholder="Reply..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();sendReply('${token}');}">
         <button class="text-seller-btn" style="width:auto;padding:14px 20px;" onclick="sendReply('${token}')">Send</button>
       </div>`;
 
@@ -2434,17 +2531,15 @@ function showAddItem() {
   showScreen('add-item');
 }
 
-function handleItemPhotos(input) {
+async function handleItemPhotos(input) {
   const files = Array.from(input.files);
-  files.forEach(file => {
-    if (itemPhotos.length >= 5) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      itemPhotos.push({ file, dataUrl: e.target.result });
-      renderPhotoSlots();
-    };
-    reader.readAsDataURL(file);
-  });
+  for (const file of files) {
+    if (itemPhotos.length >= 5) break;
+    const compressed = await compressImage(file, 1200, 0.82);
+    const thumbDataUrl = await generateThumbnailDataUrl(file, 400);
+    itemPhotos.push({ file: compressed, dataUrl: thumbDataUrl });
+    renderPhotoSlots();
+  }
   input.value = '';
 }
 

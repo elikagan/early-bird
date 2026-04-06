@@ -327,6 +327,7 @@ async function handleUpdateDealer(request, env, dealer) {
   if (body.zelle !== undefined) updates.zelle = body.zelle;
   if (body.show_name_on_sold !== undefined) updates.show_name_on_sold = body.show_name_on_sold;
   if (body.photo_url !== undefined) updates.photo_url = body.photo_url;
+  if (body.booth_number !== undefined) updates.booth_number = body.booth_number;
 
   const res = await supabase(env, `dealers?id=eq.${dealer.id}`, {
     method: 'PATCH',
@@ -353,7 +354,7 @@ async function handleCreateMarket(request, env) {
 // ── Items ────────────────────────────────────────────────────
 
 async function handleGetItems(url, env) {
-  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name)&order=created_at.desc';
+  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number)&order=created_at.desc';
 
   const marketId = url.searchParams.get('market_id');
   if (marketId) query += `&market_id=eq.${marketId}`;
