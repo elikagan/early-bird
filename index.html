@@ -99,9 +99,7 @@
       color: var(--text); line-height: 1;
       margin-top: 6px;
     }
-    .event-meta {
-      font-size: 13px; color: var(--text-3); margin-top: 4px;
-    }
+    .event-date { color: var(--text-3); }
 
     /* ── Countdown ── */
     .countdown { margin-top: 40px; }
@@ -564,8 +562,7 @@
     <div>
       <div class="event-block" id="event-block">
         <div class="event-context">Early access to the best stuff at</div>
-        <div class="event-name" id="landing-event-name">—</div>
-        <div class="event-meta" id="landing-event-meta"></div>
+        <div class="event-name" id="landing-event-name">— <span class="event-date" id="landing-event-date"></span></div>
       </div>
 
       <div class="countdown" id="landing-countdown">
@@ -846,10 +843,10 @@ async function loadLanding() {
     if (markets.length) {
       // Skip test events, prefer the real one
       currentMarket = markets.find(m => !m.name.toLowerCase().includes('test')) || markets[0];
-      document.getElementById('landing-event-name').textContent = currentMarket.name.toUpperCase();
       const date = new Date(currentMarket.market_date + 'T00:00:00');
-      document.getElementById('landing-event-meta').textContent =
-        date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      const shortDate = (date.getMonth() + 1) + '.' + date.getDate();
+      document.getElementById('landing-event-name').childNodes[0].textContent = currentMarket.name.toUpperCase() + ' ';
+      document.getElementById('landing-event-date').textContent = shortDate;
       if (currentMarket.drop_time) startCountdown(new Date(currentMarket.drop_time));
     }
   } catch (e) { console.error('Failed to load markets:', e); }
