@@ -3137,9 +3137,8 @@ function adminLogin() {
   }).then(r => {
     if (r.ok) {
       localStorage.setItem('eb_admin_token', pw);
-      showScreen('admin');
-      document.getElementById('bottom-nav').classList.add('hidden');
-      loadAdminDealers(document.getElementById('admin-content'));
+      location.hash = '#/admin';
+      route();
     } else {
       err.textContent = 'Wrong password.';
     }
