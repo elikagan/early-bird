@@ -2890,7 +2890,7 @@ function showAddItem() {
   // Populate market dropdown
   const sel = document.getElementById('item-market');
   const markets = allMarkets.length ? allMarkets : (currentMarket ? [currentMarket] : []);
-  sel.innerHTML = markets.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+  sel.innerHTML = markets.map(m => `<option value="${m.id}">${marketLabel(m)}</option>`).join('');
 
   showScreen('add-item');
 }
@@ -3114,6 +3114,12 @@ function formatDate(d) { return new Date(d).toLocaleDateString(); }
 function formatDateTime(d) { return new Date(d).toLocaleString(); }
 function formatPrice(cents) { return '$' + (cents / 100).toLocaleString(); }
 function statusBadge(s) { return `<span class="admin-badge badge-${s}">${s}</span>`; }
+function marketLabel(m) {
+  if (!m) return 'Unknown';
+  const d = m.market_date ? new Date(m.market_date + 'T00:00:00') : null;
+  const short = d ? ` — ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : '';
+  return (m.name || 'Unnamed') + short;
+}
 function marketStatus(m) {
   const d = m.market_date;
   const today = new Date().toISOString().split('T')[0];
@@ -3329,8 +3335,12 @@ async function loadAdminMarkets(el) {
       <div class="auth-fine" id="admin-market-msg"></div>
     </div>`;
 
-    html += `<div class="admin-section-title">Markets (${markets.length})</div>`;
-    for (const m of markets) {
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const active = markets.filter(m => m.market_date >= weekAgo);
+    const archived = markets.filter(m => m.market_date < weekAgo);
+
+    html += `<div class="admin-section-title">Markets (${active.length})</div>`;
+    for (const m of active) {
       const dropStr = m.drop_time ? new Date(m.drop_time).toLocaleString() : 'No drop time';
       const test = m.is_test ? ' <span class="admin-badge" style="background:#FFF8E1;color:#F9A825;">TEST</span>' : '';
       html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'">
@@ -3346,6 +3356,25 @@ async function loadAdminMarkets(el) {
         </div>
       </div>`;
     }
+
+    if (archived.length) {
+      html += `<div class="admin-section-title" style="margin-top:24px;cursor:pointer;" onclick="document.getElementById('archived-markets').style.display=document.getElementById('archived-markets').style.display==='none'?'':'none';">
+        Archived (${archived.length}) ▸
+      </div>`;
+      html += `<div id="archived-markets" style="display:none;">`;
+      for (const m of archived) {
+        const test = m.is_test ? ' <span class="admin-badge" style="background:#FFF8E1;color:#F9A825;">TEST</span>' : '';
+        html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'" style="opacity:0.6;">
+          <div class="admin-card-row">
+            <span class="name">${m.name}${test}</span>
+            <div>${marketStatus(m)}</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
     el.innerHTML = html;
   } catch (e) {
     el.innerHTML = '<div style="color:var(--error);">Failed to load markets.</div>';
@@ -3405,7 +3434,7 @@ async function loadAdminBlast(el) {
   let marketOpts = '<option value="">No market (general)</option>';
   if (Array.isArray(markets)) {
     for (const m of markets) {
-      marketOpts += `<option value="${m.id}">${m.name} — ${m.market_date}</option>`;
+      marketOpts += `<option value="${m.id}">${marketLabel(m)}</option>`;
     }
   }
 
@@ -3436,7 +3465,7 @@ async function loadAdminBlast(el) {
     html += `<div class="admin-section-title">Blast history (${blasts.length})</div>`;
     for (const b of blasts) {
       const date = new Date(b.created_at).toLocaleString();
-      const marketName = b.markets?.name || 'General';
+      const marketName = b.markets ? marketLabel(b.markets) : 'General';
       const failed = b.fail_count > 0;
       const statusColor = failed ? 'var(--error)' : 'var(--success)';
       const statusText = failed
@@ -3592,7 +3621,7 @@ async function loadAdminDealerDetail(el, id) {
     if (data.items.length) {
       const byMarket = {};
       for (const item of data.items) {
-        const mName = item.market?.name || 'Unknown market';
+        const mName = item.market ? marketLabel(item.market) : 'Unknown market';
         if (!byMarket[mName]) byMarket[mName] = [];
         byMarket[mName].push(item);
       }
@@ -3679,7 +3708,7 @@ async function loadAdminItems(el) {
     adminItemsCache = { markets: markets || [], dealers: dealers || [] };
 
     let marketOpts = '<option value="">All markets</option>';
-    for (const m of (markets || [])) marketOpts += `<option value="${m.id}">${m.name}</option>`;
+    for (const m of (markets || [])) marketOpts += `<option value="${m.id}">${marketLabel(m)}</option>`;
     let dealerOpts = '<option value="">All dealers</option>';
     for (const d of (dealers || []).filter(d => d.role === 'dealer')) dealerOpts += `<option value="${d.id}">${d.name || d.phone}</option>`;
 
@@ -3708,7 +3737,7 @@ function renderAdminItems(items) {
   for (const item of items) {
     const photo = item.photos?.[0];
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
-    const market = item.market?.name || '';
+    const market = item.market ? marketLabel(item.market) : '';
     html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
       ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
       <div style="flex:1;">
@@ -3789,7 +3818,7 @@ async function loadAdminItemDetail(el, id) {
     // Dealer + Market links
     html += `<div style="font-size:12px;margin-bottom:16px;">`;
     if (dealer) html += `Dealer: <a onclick="location.hash='#/admin/dealers/${dealer.id}'" style="color:var(--accent);cursor:pointer;">${dealer.name || dealer.phone}</a>`;
-    if (market) html += ` · Market: <a onclick="location.hash='#/admin/markets/${market.id}'" style="color:var(--accent);cursor:pointer;">${market.name}</a>`;
+    if (market) html += ` · Market: <a onclick="location.hash='#/admin/markets/${market.id}'" style="color:var(--accent);cursor:pointer;">${marketLabel(market)}</a>`;
     html += `</div>`;
 
     // Stats

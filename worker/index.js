@@ -938,7 +938,7 @@ async function handleAdminEditDealer(request, env, id) {
 }
 
 async function handleAdminListItems(url, env) {
-  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name),market:markets(id,name)&order=created_at.desc';
+  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name),market:markets(id,name,market_date)&order=created_at.desc';
 
   const marketId = url.searchParams.get('market_id');
   const status = url.searchParams.get('status');
