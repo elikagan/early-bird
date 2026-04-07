@@ -156,6 +156,34 @@ export default {
         const itemId = path.split('/api/items/')[1].split('/inquiries')[0];
         res = await handleGetItemInquiries(env, dealer, itemId);
 
+      // Temporary debug: test SMS and check Telnyx config
+      } else if (path === '/api/debug/sms' && method === 'POST') {
+        const admin = await requireAdmin(request, env);
+        if (admin) { res = admin; } else {
+          const { to, text } = await request.json();
+          const smsRes = await fetch('https://api.telnyx.com/v2/messages', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${env.TELNYX_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ from: env.TELNYX_AUTH_NUMBER, to: normalizePhone(to), text: text || 'Test from Early Bird' }),
+          });
+          const body = await smsRes.json();
+          res = json({ telnyx_status: smsRes.status, telnyx_response: body });
+        }
+      } else if (path.startsWith('/api/debug/telnyx/') && (method === 'GET' || method === 'POST' || method === 'PATCH' || method === 'DELETE')) {
+        const admin = await requireAdmin(request, env);
+        if (admin) { res = admin; } else {
+          const telnyxPath = path.replace('/api/debug/telnyx/', '') + url.search;
+          const headers = { 'Authorization': `Bearer ${env.TELNYX_API_KEY}`, 'Content-Type': 'application/json' };
+          const opts = { method, headers };
+          if (method !== 'GET') opts.body = await request.text();
+          const telnyxRes = await fetch(`https://api.telnyx.com/v2/${telnyxPath}`, opts);
+          const body = await telnyxRes.json();
+          res = json({ status: telnyxRes.status, data: body });
+        }
+
       } else {
         res = json({ error: 'Not found' }, 404);
       }
