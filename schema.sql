@@ -86,6 +86,19 @@ CREATE TABLE messages (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- SMS Blasts (log of admin SMS broadcasts)
+CREATE TABLE sms_blasts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  market_id UUID REFERENCES markets(id),
+  audience TEXT NOT NULL CHECK (audience IN ('buyers', 'sellers', 'all')),
+  message TEXT NOT NULL,
+  sent_count INTEGER DEFAULT 0,
+  fail_count INTEGER DEFAULT 0,
+  total_count INTEGER DEFAULT 0,
+  errors JSONB,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Indexes
 CREATE INDEX idx_dealers_phone ON dealers(phone);
 CREATE INDEX idx_items_market_status ON items(market_id, status);
@@ -99,6 +112,7 @@ CREATE INDEX idx_conversations_token ON conversations(token);
 CREATE INDEX idx_conversations_item ON conversations(item_id);
 CREATE INDEX idx_messages_conversation ON messages(conversation_id);
 CREATE INDEX idx_auth_tokens_token ON auth_tokens(token) WHERE used = false;
+CREATE INDEX idx_sms_blasts_created ON sms_blasts(created_at DESC);
 
 -- Enable RLS (service role bypasses, worker handles all auth)
 ALTER TABLE dealers ENABLE ROW LEVEL SECURITY;
@@ -108,6 +122,7 @@ ALTER TABLE auth_tokens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sms_blasts ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies
 CREATE POLICY "Anyone can read markets" ON markets FOR SELECT USING (true);

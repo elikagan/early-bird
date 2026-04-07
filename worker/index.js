@@ -148,6 +148,8 @@ export default {
         res = await requireAdmin(request, env) || await handleAdminConversations(url, env);
       } else if (path === '/api/admin/sms-blast' && method === 'POST') {
         res = await requireAdmin(request, env) || await handleSMSBlast(request, env);
+      } else if (path === '/api/admin/sms-blasts' && method === 'GET') {
+        res = await requireAdmin(request, env) || await handleListBlasts(env);
 
       // Item inquiries (seller view)
       } else if (path.match(/^\/api\/items\/[^/]+\/inquiries$/) && method === 'GET') {
@@ -885,8 +887,6 @@ async function handleSMSBlast(request, env) {
   } else if (audience === 'sellers') {
     query = 'dealers?role=eq.dealer&select=id,phone,name';
   } else {
-    // "all" — each dealer row is unique, no dedup needed.
-    // Dealers with role "dealer" are sellers who can also buy — they get the message once.
     query = 'dealers?select=id,phone,role,name';
   }
 
@@ -894,7 +894,6 @@ async function handleSMSBlast(request, env) {
   const dealers = await res.json();
   if (!Array.isArray(dealers)) return json({ error: 'Failed to fetch dealers' }, 500);
 
-  // Send in parallel chunks of 20 to avoid hitting Worker CPU limits
   const withPhone = dealers.filter(d => d.phone);
   const CHUNK_SIZE = 20;
   let sent = 0;
@@ -906,10 +905,30 @@ async function handleSMSBlast(request, env) {
       chunk.map(d => sendSMS(env, d.phone, body.message))
     );
     results.forEach((r, idx) => {
-      if (r.status === 'fulfilled') sent++;
-      else errors.push({ dealer_id: chunk[idx].id, error: r.reason?.message });
+      if (r.status === 'fulfilled' && r.value?.ok) sent++;
+      else errors.push({ phone: chunk[idx].phone, error: r.value?.error || r.reason?.message });
     });
   }
 
-  return json({ sent, total: dealers.length, errors: errors.length ? errors : undefined });
+  // Log blast to database
+  await supabase(env, 'sms_blasts', {
+    method: 'POST',
+    body: JSON.stringify({
+      market_id: body.market_id || null,
+      audience,
+      message: body.message,
+      sent_count: sent,
+      fail_count: errors.length,
+      total_count: withPhone.length,
+      errors: errors.length ? errors : null,
+    }),
+  });
+
+  return json({ sent, total: withPhone.length, fail_count: errors.length, errors: errors.length ? errors : undefined });
+}
+
+async function handleListBlasts(env) {
+  const res = await supabase(env, 'sms_blasts?select=*,markets(name)&order=created_at.desc&limit=20');
+  const blasts = await res.json();
+  return json(blasts);
 }

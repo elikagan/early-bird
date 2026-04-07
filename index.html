@@ -3255,8 +3255,27 @@ async function adminCreateMarket() {
 }
 
 async function loadAdminBlast(el) {
-  el.innerHTML = `<div class="admin-form">
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+
+  // Fetch markets and past blasts in parallel
+  const [markets, blasts] = await Promise.all([
+    adminApi('/api/markets'),
+    adminApi('/api/admin/sms-blasts'),
+  ]);
+
+  let marketOpts = '<option value="">No market (general)</option>';
+  if (Array.isArray(markets)) {
+    for (const m of markets) {
+      marketOpts += `<option value="${m.id}">${m.name} — ${m.market_date}</option>`;
+    }
+  }
+
+  let html = `<div class="admin-form">
     <div class="admin-section-title">Send SMS blast</div>
+    <div class="form-field">
+      <label class="form-label">Market</label>
+      <select class="form-select" id="admin-blast-market">${marketOpts}</select>
+    </div>
     <div class="form-field">
       <label class="form-label">Audience</label>
       <select class="form-select" id="admin-blast-audience">
@@ -3272,26 +3291,63 @@ async function loadAdminBlast(el) {
     <button class="auth-btn" onclick="adminSendBlast()">Send blast</button>
     <div class="auth-fine" id="admin-blast-status"></div>
   </div>`;
+
+  // Blast history
+  if (Array.isArray(blasts) && blasts.length) {
+    html += `<div class="admin-section-title">Blast history (${blasts.length})</div>`;
+    for (const b of blasts) {
+      const date = new Date(b.created_at).toLocaleString();
+      const marketName = b.markets?.name || 'General';
+      const failed = b.fail_count > 0;
+      const statusColor = failed ? 'var(--error)' : 'var(--success)';
+      const statusText = failed
+        ? `${b.sent_count}/${b.total_count} sent, ${b.fail_count} failed`
+        : `${b.sent_count}/${b.total_count} sent`;
+
+      html += `<div class="admin-card">
+        <div class="admin-card-row">
+          <span class="name" style="font-size:12px;">${marketName}</span>
+          <span style="font-size:11px;color:var(--muted);">${date}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${b.audience} · <span style="color:${statusColor};">${statusText}</span></div>
+        <div style="font-size:11px;color:var(--text);margin-top:6px;white-space:pre-wrap;background:var(--input-bg);padding:8px;border-radius:4px;">${b.message}</div>
+      </div>`;
+    }
+  }
+
+  el.innerHTML = html;
 }
 
 async function adminSendBlast() {
+  const marketId = document.getElementById('admin-blast-market').value;
   const audience = document.getElementById('admin-blast-audience').value;
   const message = document.getElementById('admin-blast-msg').value.trim();
   const status = document.getElementById('admin-blast-status');
 
   if (!message) { status.textContent = 'Message required.'; status.className = 'auth-error'; return; }
-  if (!confirm(`Send SMS to ${audience}?`)) return;
+
+  const marketSelect = document.getElementById('admin-blast-market');
+  const marketName = marketSelect.options[marketSelect.selectedIndex].text;
+  if (!confirm(`Send SMS to ${audience}?\n\nMarket: ${marketName}\n\nMessage:\n${message}`)) return;
 
   status.textContent = 'Sending...';
   status.className = 'auth-fine';
 
   try {
-    const res = await adminApi('/api/admin/sms-blast', {
-      method: 'POST',
-      body: { audience, message }
-    });
-    status.textContent = `Sent to ${res.sent}/${res.total} users.`;
-    status.className = 'auth-success';
+    const body = { audience, message };
+    if (marketId) body.market_id = marketId;
+    const res = await adminApi('/api/admin/sms-blast', { method: 'POST', body });
+    if (res.error) {
+      status.textContent = res.error;
+      status.className = 'auth-error';
+      return;
+    }
+    let msg = `Sent to ${res.sent}/${res.total} users.`;
+    if (res.fail_count > 0) msg += ` ${res.fail_count} failed.`;
+    status.textContent = msg;
+    status.className = res.fail_count > 0 ? 'auth-error' : 'auth-success';
+    // Refresh to show in history
+    setTimeout(() => loadAdminBlast(document.getElementById('admin-content')), 1000);
   } catch (e) {
     status.textContent = 'Error sending blast.';
     status.className = 'auth-error';
