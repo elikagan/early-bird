@@ -3197,10 +3197,10 @@ async function loadAdminDashboard(el) {
     const data = await adminApi('/api/admin/dashboard');
 
     let html = `<div class="admin-stats-grid">
-      <div class="admin-stat-card"><div class="value">${data.dealer_count}</div><div class="label">Active dealers</div></div>
-      <div class="admin-stat-card"><div class="value">${data.buyer_count}</div><div class="label">Buyers</div></div>
-      <div class="admin-stat-card"><div class="value">${data.items_this_week}</div><div class="label">Items this week</div></div>
-      <div class="admin-stat-card"><div class="value">${data.sold_this_week}</div><div class="label">Sold this week</div></div>
+      <div class="admin-stat-card admin-clickable" onclick="location.hash='#/admin/dealers'"><div class="value">${data.dealer_count}</div><div class="label">Active dealers</div></div>
+      <div class="admin-stat-card admin-clickable" onclick="location.hash='#/admin/dealers'"><div class="value">${data.buyer_count}</div><div class="label">Buyers</div></div>
+      <div class="admin-stat-card admin-clickable" onclick="location.hash='#/admin/items'"><div class="value">${data.items_this_week}</div><div class="label">Items this week</div></div>
+      <div class="admin-stat-card admin-clickable" onclick="location.hash='#/admin/items'"><div class="value">${data.sold_this_week}</div><div class="label">Sold this week</div></div>
     </div>`;
 
     if (data.next_market) {
