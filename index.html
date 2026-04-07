@@ -431,6 +431,11 @@
     }
     .item-card-img img { width: 100%; height: 100%; object-fit: cover; }
     .item-card-info { padding: 16px var(--side) 20px; }
+    .item-card-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
     .item-card-price {
       font-size: 20px;
       font-weight: 700;
@@ -3459,10 +3464,9 @@ function applyFeedFilters() {
         </button>
       </div>
       <div class="item-card-info">
-        <div class="item-card-price">${price}</div>
+        <div class="item-card-price-row"><div class="item-card-price">${price}</div>${badge}</div>
         ${item.title ? `<div class="item-card-title">${item.title}</div>` : ''}
         <div class="item-card-meta">${dealer}${item.dealer?.booth_number ? ' · Booth ' + item.dealer.booth_number : ''}${item.price_posture === 'firm' || item.firm ? ' · Firm' : ''}</div>
-        ${badge}
       </div>
     </div>`;
   }).join('') + '</div>';
