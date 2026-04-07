@@ -612,6 +612,7 @@
       min-height: 100vh;
       min-height: 100dvh;
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
+      overflow-x: hidden;
     }
     .detail-back {
       position: fixed;
@@ -718,6 +719,8 @@
       color: var(--text);
       line-height: 1.5;
       margin-top: 12px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
     .detail-seller {
       margin-top: 20px;
@@ -2678,43 +2681,50 @@ async function textSeller(itemId) {
 
   const item = currentItem;
   const price = item?.price ? '$' + (item.price / 100).toLocaleString() : '';
-  const title = item?.title || item?.notes || 'this item';
-
-  // Prepopulated boilerplate messages — buyer modifies if they want
-  const buyMsg = `I want to buy ${title} for ${price}`;
-  const offerMsg = `I'd like to make an offer on ${title}`;
-  const inquireMsg = `I have a question about ${title}`;
 
   const actionsEl = document.getElementById('detail-actions');
   actionsEl.innerHTML = `
     <div style="padding:0 24px 24px;">
       <div style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Message seller</div>
       <div id="msg-options" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-        <button class="msg-option-btn msg-option-active" onclick="selectMsgOption(this, '${buyMsg.replace(/'/g, "\\'")}')">Buy</button>
-        <button class="msg-option-btn" onclick="selectMsgOption(this, '${offerMsg.replace(/'/g, "\\'")}')">Make an offer</button>
-        <button class="msg-option-btn" onclick="selectMsgOption(this, '${inquireMsg.replace(/'/g, "\\'")}')">Ask a question</button>
+        <button class="msg-option-btn" onclick="sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
+        <button class="msg-option-btn" onclick="showOfferInput('${itemId}')">Make an offer</button>
+        <button class="msg-option-btn" onclick="showQuestionInput('${itemId}')">Ask a question</button>
       </div>
-      <textarea class="form-input" id="seller-msg-input" rows="2" style="resize:none;margin-bottom:12px;font-size:13px;">${buyMsg}</textarea>
-      <button class="text-seller-btn" id="send-msg-btn" onclick="sendFirstMessage('${itemId}')">Send message</button>
+      <div id="msg-custom-input" style="display:none;">
+        <textarea class="form-input" id="seller-msg-input" rows="2" style="resize:none;margin-bottom:12px;font-size:13px;" placeholder="Type your message..."></textarea>
+        <button class="text-seller-btn" id="send-msg-btn" onclick="sendFirstMessage('${itemId}')">Send</button>
+      </div>
     </div>`;
 }
 
-function selectMsgOption(btn, msg) {
-  document.querySelectorAll('.msg-option-btn').forEach(b => b.classList.remove('msg-option-active'));
-  btn.classList.add('msg-option-active');
+function showOfferInput(itemId) {
+  const input = document.getElementById('msg-custom-input');
   const textarea = document.getElementById('seller-msg-input');
-  textarea.value = msg;
+  input.style.display = 'block';
+  textarea.placeholder = 'What\'s your offer?';
+  textarea.value = '';
   textarea.focus();
 }
 
-async function sendFirstMessage(itemId) {
+function showQuestionInput(itemId) {
+  const input = document.getElementById('msg-custom-input');
+  const textarea = document.getElementById('seller-msg-input');
+  input.style.display = 'block';
+  textarea.placeholder = 'What do you want to know?';
+  textarea.value = '';
+  textarea.focus();
+}
+
+async function sendFirstMessage(itemId, directMsg) {
   const input = document.getElementById('seller-msg-input');
   const btn = document.getElementById('send-msg-btn');
-  const message = input.value.trim();
-  if (!message) { input.focus(); return; }
+  const message = directMsg || (input ? input.value.trim() : '');
+  if (!message) { if (input) input.focus(); return; }
 
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
+  // Disable all option buttons to prevent double-tap
+  document.querySelectorAll('.msg-option-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
   try {
     const res = await api('/api/conversations', {
@@ -2722,19 +2732,19 @@ async function sendFirstMessage(itemId) {
       body: { item_id: itemId, message }
     });
     if (res.error) {
-      btn.textContent = res.error;
-      btn.disabled = false;
-      setTimeout(() => { btn.textContent = 'Send message'; }, 3000);
+      if (btn) { btn.textContent = res.error; btn.disabled = false; }
+      document.querySelectorAll('.msg-option-btn').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
       return;
     }
-    btn.textContent = 'Sent!';
-    btn.style.background = '#2E7D32';
+    // Show sent state briefly, then go to conversation
+    const actionsEl = document.getElementById('detail-actions');
+    actionsEl.innerHTML = `<div style="text-align:center;padding:20px;color:var(--accent);font-weight:600;">Sent!</div>`;
     setTimeout(() => {
       window.location.hash = `#/c/${res.conversation_token}`;
-    }, 800);
+    }, 600);
   } catch (e) {
-    btn.textContent = 'Error. Try again.';
-    btn.disabled = false;
+    document.querySelectorAll('.msg-option-btn').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+    if (btn) { btn.textContent = 'Error. Try again.'; btn.disabled = false; }
   }
 }
 
