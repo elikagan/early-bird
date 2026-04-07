@@ -1085,6 +1085,130 @@
     .nav-tab.active { color: var(--accent); }
     .nav-tab svg { width: 22px; height: 22px; }
 
+    /* Unread badge */
+    .unread-badge {
+      position: absolute;
+      top: -6px; right: -10px;
+      min-width: 16px; height: 16px;
+      background: var(--error);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+    .unread-badge.hidden { display: none; }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      top: max(12px, env(safe-area-inset-top));
+      left: 16px; right: 16px;
+      z-index: 9999;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(-120%);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .toast.visible { transform: translateY(0); }
+    .toast-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .toast-text { flex: 1; min-width: 0; }
+    .toast-name { font-size: 12px; font-weight: 600; }
+    .toast-msg { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Filter bottom sheet */
+    .sheet-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .sheet-overlay.open { opacity: 1; pointer-events: auto; }
+    .sheet {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 201;
+      background: #fff;
+      border-radius: 16px 16px 0 0;
+      padding: 20px 24px;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    .sheet-overlay.open .sheet { transform: translateY(0); }
+    .sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--dim);
+      border-radius: 2px;
+      margin: 0 auto 16px;
+    }
+    .sheet-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .sheet-field { margin-bottom: 14px; }
+    .sheet-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+
+    /* Messages filter toggle */
+    .msg-toggle {
+      display: flex;
+      gap: 2px;
+      background: var(--input-bg);
+      border-radius: 6px;
+      padding: 3px;
+      margin: 0 24px 12px;
+    }
+    .msg-toggle-btn {
+      flex: 1;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 7px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+    }
+    .msg-toggle-btn.active {
+      color: var(--text);
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* Saved/All toggle inside Browse */
+    .browse-toggle {
+      display: flex;
+      gap: 0;
+      margin-left: auto;
+    }
+    .browse-toggle-btn {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border: 1px solid var(--input-bg);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .browse-toggle-btn:first-child { border-radius: 4px 0 0 4px; }
+    .browse-toggle-btn:last-child { border-radius: 0 4px 4px 0; border-left: none; }
+    .browse-toggle-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+
     /* ── Dealer Home ─────────────────────── */
     #dealer-home {
       min-height: 100vh;
@@ -1635,17 +1759,42 @@
 <div id="feed" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-      <div class="feed-event" id="feed-event-name"></div>
+      <div style="display:flex;align-items:baseline;gap:8px;">
+        <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
+        <span id="feed-item-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="browse-toggle" id="browse-toggle">
+          <button class="browse-toggle-btn active" onclick="setBrowseMode('all')">All</button>
+          <button class="browse-toggle-btn" onclick="setBrowseMode('saved')">Saved</button>
+        </div>
+        <button onclick="openFilterSheet()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--muted);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
+          </svg>
+        </button>
+      </div>
     </div>
-    <div id="feed-filters" style="display:flex;gap:8px;padding-bottom:10px;align-items:center;">
-      <select id="filter-category" onchange="applyFeedFilters()" style="flex:1;font-size:13px;padding:6px 8px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-bg);border-radius:6px;outline:none;">
-        <option value="">All Categories</option>
-      </select>
-      <select id="filter-dealer" onchange="applyFeedFilters()" style="flex:1;font-size:13px;padding:6px 8px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-bg);border-radius:6px;outline:none;">
-        <option value="">All Dealers</option>
-      </select>
-      <span id="feed-item-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;"></span>
+    <div class="feed-event" id="feed-event-name" style="font-size:12px;color:var(--muted);padding-bottom:8px;"></div>
+  </div>
+  <!-- Filter bottom sheet -->
+  <div class="sheet-overlay" id="filter-sheet" onclick="closeFilterSheet()">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Filters</div>
+      <div class="sheet-field">
+        <div class="sheet-label">Category</div>
+        <select id="filter-category" onchange="applyFeedFilters()" class="form-select" style="padding:10px 12px;font-size:14px;">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div class="sheet-field">
+        <div class="sheet-label">Dealer</div>
+        <select id="filter-dealer" onchange="applyFeedFilters()" class="form-select" style="padding:10px 12px;font-size:14px;">
+          <option value="">All Dealers</option>
+        </select>
+      </div>
+      <button onclick="closeFilterSheet()" style="width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;">Done</button>
     </div>
   </div>
   <div id="feed-content"></div>
@@ -1680,6 +1829,11 @@
       <div class="feed-logo">Messages</div>
     </div>
   </div>
+  <div class="msg-toggle nav-dealer-only hidden" id="msg-filter-toggle">
+    <button class="msg-toggle-btn active" onclick="filterMessages('all')">All</button>
+    <button class="msg-toggle-btn" onclick="filterMessages('buying')">Buying</button>
+    <button class="msg-toggle-btn" onclick="filterMessages('selling')">Selling</button>
+  </div>
   <div id="messages-content">
     <div class="empty-state">
       <div style="font-size:32px;margin-bottom:12px;">&#128172;</div>
@@ -1697,6 +1851,12 @@
     </div>
   </div>
   <div id="favorites-content"></div>
+</div>
+
+<!-- MARKET TEASER -->
+<div id="market-teaser" class="screen">
+  <div class="detail-back"><a href="#" onclick="event.preventDefault(); showScreen('landing');">&#8592; Back</a></div>
+  <div id="teaser-content" style="padding:0 24px;padding-top:max(60px,env(safe-area-inset-top));padding-bottom:40px;max-width:480px;margin:0 auto;"></div>
 </div>
 
 <!-- ITEM DETAIL -->
@@ -1852,7 +2012,7 @@
       <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
       <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
     </svg>
-    Shop
+    Browse
   </button>
   <button class="nav-tab nav-dealer-only hidden" data-tab="dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1860,24 +2020,18 @@
     </svg>
     Booth
   </button>
-  <button class="nav-tab" data-tab="favorites" onclick="switchTab('favorites')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-    </svg>
-    Favorites
-  </button>
   <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
-    Messages
+    <span style="position:relative;">Messages<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
   </button>
   <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="12" cy="12" r="3"></circle>
       <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
     </svg>
-    Settings
+    Account
   </button>
 </nav>
 
@@ -1926,13 +2080,40 @@ function showScreen(id) {
 
 function switchTab(tab) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  const tabEl = document.querySelector(`[data-tab="${tab}"]`);
+  if (tabEl) tabEl.classList.add('active');
   showScreen(tab);
   if (tab === 'feed') loadFeed();
   if (tab === 'dealer-home') loadDealerHome();
-  if (tab === 'favorites') loadFavorites();
   if (tab === 'messages') loadMessages();
   if (tab === 'settings') loadSettings();
+}
+
+// ── Filter sheet ─────────────────────────────────────────────
+function openFilterSheet() {
+  document.getElementById('filter-sheet').classList.add('open');
+}
+function closeFilterSheet() {
+  document.getElementById('filter-sheet').classList.remove('open');
+}
+
+// ── Browse mode (All / Saved) ────────────────────────────────
+let browseMode = 'all';
+function setBrowseMode(mode) {
+  browseMode = mode;
+  document.querySelectorAll('.browse-toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFeedFilters();
+}
+
+// ── Message filter (All / Buying / Selling) ──────────────────
+let msgFilter = 'all';
+let allConversations = [];
+function filterMessages(filter) {
+  msgFilter = filter;
+  document.querySelectorAll('.msg-toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderConversations();
 }
 
 // ── Landing ───────────────────────────────────────────────────
@@ -1971,7 +2152,7 @@ function renderMarkets(markets) {
     const date = new Date(m.market_date + 'T00:00:00');
     const shortDate = (date.getMonth() + 1) + '.' + date.getDate();
     const countdown = m.drop_time ? formatCountdown(new Date(m.drop_time)) : '';
-    return `<div class="market-item">
+    return `<div class="market-item" style="cursor:pointer;" onclick="openMarketTeaser('${m.id}')">
       <div class="market-name">${displayName(m.name)} <span class="market-date">${shortDate}</span></div>
       ${countdown ? `<div class="market-countdown" data-drop="${m.drop_time}">${countdown}</div>` : ''}
     </div>`;
@@ -1995,6 +2176,52 @@ async function loadLanding() {
     const markets = await api('/api/markets');
     if (markets.length) renderMarkets(markets);
   } catch (e) { console.error('Failed to load markets:', e); }
+}
+
+async function openMarketTeaser(marketId) {
+  const m = allMarkets.find(m => m.id === marketId);
+  if (!m) return;
+  showScreen('market-teaser');
+  document.getElementById('bottom-nav').classList.add('hidden');
+
+  const content = document.getElementById('teaser-content');
+  const date = new Date(m.market_date + 'T00:00:00');
+  const dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const countdown = m.drop_time ? formatCountdown(new Date(m.drop_time)) : '';
+  const isLive = m.drop_time && new Date(m.drop_time) <= new Date();
+
+  // Fetch items for this market to show preview
+  let previewHtml = '';
+  let itemCount = 0;
+  let dealerCount = 0;
+  try {
+    const items = await api(`/api/items?market_id=${marketId}`);
+    itemCount = items.length;
+    const dealers = new Set(items.map(i => i.dealer_id));
+    dealerCount = dealers.size;
+    const previewItems = items.slice(0, 6);
+    if (previewItems.length) {
+      previewHtml = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px;">' +
+        previewItems.map(item => {
+          let photo = item.photos?.[0] || '';
+          if (photo === '/pre-drop-placeholder.svg') photo = PRE_DROP_SVG;
+          return `<div style="aspect-ratio:1;border-radius:6px;overflow:hidden;background:var(--card-bg);">${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div>`;
+        }).join('') + '</div>';
+    }
+  } catch (e) {}
+
+  content.innerHTML = `
+    <div style="margin-top:20px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);letter-spacing:0.5px;">${displayName(m.name)}</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:6px;">${dateStr}</div>
+      ${countdown ? `<div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${isLive ? 'var(--accent)' : 'var(--muted)'};margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;">${isLive ? '&#9679; Live now' : countdown}</div>` : ''}
+      <div style="display:flex;gap:16px;margin-top:16px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1;">${itemCount}<span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;">items</span></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1;">${dealerCount}<span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;">dealers</span></div>
+      </div>
+      ${previewHtml}
+      ${isLive ? `<button onclick="selectMarket('${m.id}'); enterApp();" style="width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:20px;">Browse inventory</button>` : ''}
+    </div>`;
 }
 
 // ── Auth flow ─────────────────────────────────────────────────
@@ -2148,7 +2375,7 @@ async function enterApp() {
   document.body.classList.add('in-app');
   const isDealer = currentUser?.role === 'dealer';
 
-  // Show My Items tab for dealers, hide mode toggles (no longer needed)
+  // Show dealer-only elements (Booth tab, message filter toggle)
   document.querySelectorAll('.nav-dealer-only').forEach(el => {
     el.classList.toggle('hidden', !isDealer);
   });
@@ -2209,14 +2436,20 @@ function applyFeedFilters() {
   const category = document.getElementById('filter-category').value;
   const dealerId = document.getElementById('filter-dealer').value;
   let filtered = feedItems;
+  if (browseMode === 'saved') filtered = filtered.filter(i => userFavorites.has(i.id));
   if (category) filtered = filtered.filter(i => i.category === category);
   if (dealerId) filtered = filtered.filter(i => i.dealer?.id === dealerId);
 
-  document.getElementById('feed-item-count').textContent = filtered.length + ' item' + (filtered.length !== 1 ? 's' : '');
+  const label = browseMode === 'saved' ? filtered.length + ' saved' : filtered.length + ' item' + (filtered.length !== 1 ? 's' : '');
+  document.getElementById('feed-item-count').textContent = label;
 
   const content = document.getElementById('feed-content');
   if (!filtered.length) {
-    content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
+    if (browseMode === 'saved') {
+      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#9825;</div><h2>No saved items</h2><p>Tap the heart on items you love and they&#39;ll show up here.</p></div>';
+    } else {
+      content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
+    }
     return;
   }
   content.innerHTML = '<div class="item-grid">' + filtered.map(item => {
@@ -2257,6 +2490,8 @@ async function toggleFavorite(itemId, btn) {
     btn.querySelector('svg').setAttribute('fill', 'currentColor');
     await api('/api/favorites', { method: 'POST', body: { item_id: itemId } });
   }
+  // Refresh count when in saved mode
+  if (browseMode === 'saved') applyFeedFilters();
 }
 
 async function loadFavorites() {
@@ -2292,36 +2527,52 @@ async function loadMessages() {
     const asBuyer = res.as_buyer || [];
     const asSeller = res.as_seller || [];
 
-    // Merge and sort by created_at desc
-    const all = [
+    allConversations = [
       ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller', _otherPhoto: c.seller?.photo_url })),
       ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer', _otherPhoto: c.buyer?.photo_url })),
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    if (!all.length) {
-      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#128172;</div><h2>No messages yet</h2><p>When you message a seller about an item, your conversation will appear here.</p></div>';
-      return;
-    }
-
-    content.innerHTML = all.map(conv => {
-      const photo = conv.item?.photos?.[0] || '';
-      const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
-      const roleLabel = conv._role === 'buyer' ? 'You inquired' : 'Inquiry from';
-      const timeAgo = getTimeAgo(conv.created_at);
-      const avatar = conv._otherPhoto
-        ? `<img src="${conv._otherPhoto}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
-        : '';
-      return `<a href="#/c/${conv.token}" class="conv-item" style="text-decoration:none;color:inherit;">
-        <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
-        <div class="conv-info">
-          <div class="conv-name" style="display:flex;align-items:center;gap:8px;">${avatar}${conv._other}</div>
-          <div class="conv-meta">${roleLabel} · ${price} · ${timeAgo}</div>
-        </div>
-      </a>`;
-    }).join('');
+    renderConversations();
   } catch (e) {
     content.innerHTML = '<div class="empty-state"><p>Failed to load messages.</p></div>';
   }
+}
+
+function renderConversations() {
+  const content = document.getElementById('messages-content');
+  let convs = allConversations;
+  if (msgFilter === 'buying') convs = convs.filter(c => c._role === 'buyer');
+  if (msgFilter === 'selling') convs = convs.filter(c => c._role === 'seller');
+
+  if (!convs.length) {
+    const msg = msgFilter === 'all'
+      ? 'When you message a seller about an item, your conversation will appear here.'
+      : msgFilter === 'buying'
+        ? 'No conversations as a buyer yet.'
+        : 'No conversations as a seller yet.';
+    content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#128172;</div><h2>No messages</h2><p>' + msg + '</p></div>';
+    return;
+  }
+
+  content.innerHTML = convs.map(conv => {
+    const photo = conv.item?.photos?.[0] || '';
+    const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
+    const title = conv.item?.title || '';
+    const roleLabel = conv._role === 'buyer' ? 'You inquired' : 'Inquiry from';
+    const timeAgo = getTimeAgo(conv.created_at);
+    const initials = conv._other.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const avatar = conv._otherPhoto
+      ? `<img src="${conv._otherPhoto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
+      : `<div style="width:36px;height:36px;border-radius:50%;background:var(--card-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--muted);flex-shrink:0;">${initials}</div>`;
+    return `<a href="#/c/${conv.token}" class="conv-item" style="text-decoration:none;color:inherit;">
+      <div class="conv-thumb" style="width:56px;height:56px;border-radius:6px;overflow:hidden;flex-shrink:0;">${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div>
+      <div class="conv-info" style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">${avatar}<span style="font-weight:600;font-size:14px;">${conv._other}</span></div>
+        <div style="font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title ? title + ' · ' : ''}${price}</div>
+        <div class="conv-meta" style="font-size:11px;color:var(--muted);margin-top:2px;">${roleLabel} · ${timeAgo}</div>
+      </div>
+    </a>`;
+  }).join('');
 }
 
 function getTimeAgo(dateStr, short = false) {
@@ -2334,6 +2585,37 @@ function getTimeAgo(dateStr, short = false) {
   if (hrs < 24) return short ? `${hrs}h` : `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
   return short ? `${days}d` : `${days}d ago`;
+}
+
+function showToast(message, duration = 3000) {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = 'position:fixed;top:max(20px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  toast.style.cssText = 'background:var(--text);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:auto;';
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.style.opacity = '1');
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+function updateUnreadBadge(count) {
+  const badge = document.getElementById('nav-unread-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count > 9 ? '9+' : count;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
 }
 
 async function loadDealerHome() {
