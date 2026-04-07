@@ -194,17 +194,9 @@ export default {
       } else if (path === '/api/debug/sms' && method === 'POST') {
         const admin = await requireAdmin(request, env);
         if (admin) { res = admin; } else {
-          const { to, text } = await request.json();
-          const smsRes = await fetch('https://api.telnyx.com/v2/messages', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${env.TELNYX_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ from: env.TELNYX_AUTH_NUMBER, to: normalizePhone(to), text: text || 'Test from Early Bird' }),
-          });
-          const body = await smsRes.json();
-          res = json({ telnyx_status: smsRes.status, telnyx_response: body });
+          const { to, body: msgBody } = await request.json();
+          const result = await sendSMS(env, normalizePhone(to), msgBody || 'Test from Early Bird');
+          res = json(result);
         }
       } else if (path.startsWith('/api/debug/telnyx/') && (method === 'GET' || method === 'POST' || method === 'PATCH' || method === 'DELETE')) {
         const admin = await requireAdmin(request, env);
@@ -304,21 +296,22 @@ function normalizePhone(phone) {
 }
 
 async function sendSMS(env, to, text) {
-  const smsRes = await fetch('https://api.telnyx.com/v2/messages', {
+  const smsRes = await fetch('https://api.pingram.io/send', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${env.TELNYX_API_KEY}`,
+      'Authorization': `Bearer ${env.PINGRAM_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.TELNYX_AUTH_NUMBER,
-      to,
-      text,
+      type: 'sms',
+      to: { id: to, number: to },
+      sms: { message: text },
+      forceChannels: ['SMS'],
     }),
   });
   if (!smsRes.ok) {
     const errBody = await smsRes.text();
-    console.error('Telnyx SMS failed:', smsRes.status, errBody);
+    console.error('Pingram SMS failed:', smsRes.status, errBody);
     return { ok: false, status: smsRes.status, error: errBody };
   }
   return { ok: true };
