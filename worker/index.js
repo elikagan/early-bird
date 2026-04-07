@@ -235,7 +235,7 @@ function normalizePhone(phone) {
 }
 
 async function sendSMS(env, to, text) {
-  return fetch('https://api.telnyx.com/v2/messages', {
+  const smsRes = await fetch('https://api.telnyx.com/v2/messages', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${env.TELNYX_API_KEY}`,
@@ -247,6 +247,12 @@ async function sendSMS(env, to, text) {
       text,
     }),
   });
+  if (!smsRes.ok) {
+    const errBody = await smsRes.text();
+    console.error('Telnyx SMS failed:', smsRes.status, errBody);
+    return { ok: false, status: smsRes.status, error: errBody };
+  }
+  return { ok: true };
 }
 
 // ── Auth ─────────────────────────────────────────────────────
@@ -291,7 +297,10 @@ async function handleAuthRequest(request, env) {
     ? `Hey ${dealer.name}, tap to open Early Bird: ${magicLink}`
     : `Tap to open Early Bird: ${magicLink}`;
 
-  await sendSMS(env, normalized, message);
+  const smsResult = await sendSMS(env, normalized, message);
+  if (!smsResult.ok) {
+    return json({ ok: false, error: 'SMS delivery failed', detail: smsResult.error }, 502);
+  }
   return json({ ok: true, message: 'Magic link sent' });
 }
 
