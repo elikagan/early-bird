@@ -917,7 +917,7 @@ async function handleAdminDealerDetail(env, id) {
 
 async function handleAdminEditDealer(request, env, id) {
   const body = await request.json();
-  const allowed = ['name', 'business_name', 'role', 'active', 'booth_number', 'venmo', 'zelle'];
+  const allowed = ['name', 'business_name', 'role', 'active', 'booth_number', 'venmo', 'zelle', 'photo_url'];
   const updates = {};
   for (const key of allowed) {
     if (body[key] !== undefined) updates[key] = body[key];

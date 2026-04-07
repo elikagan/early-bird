@@ -54,10 +54,9 @@ Pre-market marketplace where flea market dealers post what they're bringing so b
 ## Design System: "The Text Message"
 
 ### Typography
-- **UI text:** System font stack (`--font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`)
-- **Data/prices:** JetBrains Mono (`--font-mono`) — ONLY for prices, counts, phone numbers, timestamps, countdowns, stat values. Never on labels, body text, or buttons.
+- **Font:** JetBrains Mono everywhere. One font, no exceptions. The monospaced aesthetic IS the brand ("The Text Message" design system).
 - **Scale:** 10px caption, 11px label/uppercase, 12px small body, 13px body, 14px large body, 15px input, 20px heading, 24px hero
-- **Prices:** Weight 700, font-variant-numeric: tabular-nums, always `--font-mono`
+- **Prices:** Weight 700, font-variant-numeric: tabular-nums
 
 ### Color Tokens
 | Token | Value | Usage |
@@ -110,14 +109,14 @@ Tab screens: feed, dealer-home, messages, favorites, settings.
 - 52px circle, accent bg, shadow. Above bottom nav.
 
 ### Logo
-- "EARLY BIRD_" — one line, system font 700, 20px. Underscore blinks like a cursor (1s step-end infinite).
+- "EARLY BIRD_" — one line, JetBrains Mono 700, 20px. Underscore blinks like a cursor (1s step-end infinite).
 - No icon. No mascot. No stacked wordmark.
 
 ### Motion
 - Minimal-functional. Blinking cursor is the only animation. Countdown is live-updating text, no transition effects.
 
 ### Rules
-1. Mono font ONLY on prices, counts, phone numbers, timestamps. Never on labels or body text.
+1. JetBrains Mono on everything. It's the brand font — headlines, body, buttons, labels, prices. No system fonts.
 2. No screen-level side padding on tab screens. Content elements handle their own via `--side`.
 3. One segmented control style everywhere. No bespoke toggle variants.
 4. All tab screens use `.feed-header` as first child. No inline header styles.
@@ -333,7 +332,7 @@ The current UI is functionally complete but visually rough. Next session should:
 | Date | Decision | Rationale |
 |------|----------|-----------|
 | 2026-04-06 | JetBrains Mono only | Original decision: one font. Monospaced = insider feel. |
-| 2026-04-07 | System font for UI, mono for data | Mono on body text hurts readability. System font for UI, JetBrains Mono reserved for prices/counts/data. |
+| 2026-04-07 | JetBrains Mono only (reverted) | System font experiment was wrong — mono IS the brand. Reverted to JetBrains Mono everywhere. |
 | 2026-04-07 | Unified segmented control | One `.seg-ctrl` component replaces 5 different toggle styles. |
 | 2026-04-07 | No screen-level side padding | Tab screens have no side padding. Content elements handle their own. Fixes double-padding bugs. |
 | 2026-04-06 | Single accent color (#0066FF) | Like a link in a text. When it appears, it means something. |

@@ -307,8 +307,8 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--success);
-      background: #EDF7F0;
+      color: var(--accent);
+      background: #E8F0FE;
       padding: 8px 14px;
       border-radius: 6px;
       margin-bottom: 24px;
@@ -434,7 +434,7 @@
       padding-bottom: 10px;
     }
     .feed-logo {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--text);
@@ -474,6 +474,12 @@
       font-size: 20px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
+    }
+    .item-card-title {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 500;
+      margin-top: 4px;
     }
     .item-card-meta {
       font-size: 12px;
@@ -668,8 +674,8 @@
       padding: 10px 0;
     }
     .carousel-dot {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--dim);
       border: none;
@@ -700,11 +706,6 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.02em;
     }
-    .detail-price-note {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
     .detail-condition {
       display: inline-block;
       font-size: 11px;
@@ -725,6 +726,7 @@
     .detail-seller {
       margin-top: 20px;
       padding-top: 20px;
+      border-top: 1px solid var(--input-bg);
     }
     .detail-seller-name {
       font-size: 14px;
@@ -756,17 +758,6 @@
     }
     .text-seller-btn:hover { background: var(--accent-hover); }
     .text-seller-btn:disabled { opacity: 0.5; cursor: default; }
-    .msg-option-btn {
-      background: var(--input-bg);
-      border: none;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text);
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      text-align: left;
-    }
     .detail-status-badge {
       width: 100%;
       text-align: center;
@@ -962,6 +953,7 @@
       margin-bottom: 6px;
       display: block;
     }
+    .form-label .required { color: var(--error); }
     .form-input {
       width: 100%;
       padding: 14px 16px;
@@ -983,6 +975,9 @@
       color: var(--text);
       outline: none;
       -webkit-appearance: none;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
     .form-select:focus { box-shadow: 0 0 0 2px var(--accent); }
     .form-row {
@@ -1193,12 +1188,12 @@
     .dealer-countdown strong { font-variant-numeric: tabular-nums; }
 
     .free-notice {
-      background: #EDF7F0;
+      background: #E8F0FE;
       border-radius: 6px;
       padding: 14px 16px;
       margin: 24px 0;
       font-size: 12px;
-      color: var(--success);
+      color: var(--accent);
       font-weight: 500;
     }
     /* FAB */
@@ -1281,11 +1276,11 @@
       flex-shrink: 0;
     }
     .my-item-action {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      padding: 7px 12px;
+      padding: 8px 14px;
       border-radius: 6px;
       border: 1px solid var(--input-bg);
       background: #fff;
@@ -1372,7 +1367,9 @@
       margin-bottom: 20px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .admin-tabs::-webkit-scrollbar { display: none; }
     .admin-form { margin-bottom: 16px; }
     .admin-form .form-field { margin-bottom: 12px; }
     .admin-stat {
@@ -1388,7 +1385,17 @@
     .admin-stat-card { background: var(--input-bg); border-radius: 6px; padding: 14px 16px; }
     .admin-stat-card .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .admin-stat-card .label { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .admin-back { font-size: 12px; color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; cursor: pointer; }
+    .admin-back { font-size: 12px; color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: 2px; margin-bottom: 16px; cursor: pointer; transition: color 0.15s; }
+    .admin-back::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      background: currentColor;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;
+      flex-shrink: 0;
+    }
     .admin-back:hover { color: var(--text); }
     .admin-clickable { cursor: pointer; transition: opacity 0.15s; }
     .admin-clickable:hover { opacity: 0.7; }
@@ -1397,7 +1404,7 @@
     .badge-hold { background: #FFF8E1; color: #F9A825; }
     .badge-sold { background: var(--input-bg); color: var(--muted); }
     .badge-deleted { background: #FDECEA; color: var(--error); }
-    .badge-upcoming { background: #EDF7F0; color: var(--success); }
+    .badge-upcoming { background: #E8F0FE; color: var(--accent); }
     .badge-past { background: var(--input-bg); color: var(--muted); }
     .badge-inactive { background: #FDECEA; color: var(--error); }
     .admin-actions { display: flex; gap: 6px; margin-top: 8px; }
@@ -1494,6 +1501,1095 @@
       margin-top: 24px;
     }
 
+    /* ══════════════════════════════════════════════════════════
+       DESIGN SYSTEM v2 — Consolidated Components
+       All new classes for the redesign. Old classes remain
+       above until Phase 2 swaps HTML/JS to use these.
+       ══════════════════════════════════════════════════════════ */
+
+    /* ── Buttons ─────────────────────────────────────────── */
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 16px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; }
+    .btn-primary.btn-dark { background: var(--text); }
+    .btn-primary.btn-dark:hover { background: #333; }
+    .btn-primary.btn-compact { width: auto; padding: 10px 16px; font-size: 11px; }
+    .btn-primary.btn-muted { background: var(--muted); }
+    .btn-primary.btn-muted:hover { background: #555; }
+
+    .btn-secondary {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 4px;
+      border: 1px solid var(--input-bg);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .btn-secondary:hover { background: var(--input-bg); }
+    .btn-secondary:active { transform: scale(0.97); }
+    .btn-secondary.danger { color: var(--error); border-color: var(--error); }
+    .btn-secondary.danger:hover { background: #FDECEA; }
+
+    .btn-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-radius: 6px;
+      border: 1.5px solid var(--input-bg);
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .btn-chip:hover { border-color: var(--dim); }
+    .btn-chip.disabled { opacity: 0.5; cursor: default; }
+    .btn-chip.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #E8F0FE;
+    }
+
+    .btn-danger {
+      width: 100%;
+      padding: 14px;
+      background: none;
+      border: 1px solid var(--error);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--error);
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-top: 24px;
+    }
+    .btn-danger:hover { background: #FDECEA; }
+
+    /* ── Inputs (consolidated) ───────────────────────────── */
+
+    .fi {
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--input-bg);
+      border: none;
+      padding: 14px 16px;
+      border-radius: 6px;
+      outline: none;
+      font-variant-numeric: tabular-nums;
+      transition: box-shadow 0.15s;
+    }
+    .fi::placeholder { color: var(--dim); }
+    .fi:focus { box-shadow: 0 0 0 2px var(--accent); }
+
+    .fs {
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--input-bg);
+      border: none;
+      padding: 14px 16px;
+      padding-right: 40px;
+      border-radius: 6px;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23AAAAAA' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      transition: box-shadow 0.15s;
+    }
+    .fs:focus { box-shadow: 0 0 0 2px var(--accent); }
+
+    .fl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    /* ── Status Pills (consolidated) ─────────────────────── */
+
+    .status-pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+    .status-pill.live { background: #EDF7F0; color: var(--success); }
+    .status-pill.hold { background: #FDF6E3; color: #B8960C; }
+    .status-pill.sold { background: #EEE; color: var(--muted); }
+    .status-pill.upcoming { background: #E8F0FE; color: var(--accent); }
+    .status-pill.past { background: var(--input-bg); color: var(--muted); }
+    .status-pill.deleted { background: #FDECEA; color: var(--error); }
+
+    .posture-pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 10px;
+      background: var(--input-bg);
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .status-banner {
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .status-banner.sold { background: #EEE; color: var(--muted); }
+    .status-banner.hold { background: #FDF6E3; color: #B8960C; }
+
+    /* ── Info Badge ──────────────────────────────────────── */
+
+    .info-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 6px;
+      background: #E8F0FE;
+      color: var(--accent);
+    }
+
+    /* ── Back Link (standard in-app) ─────────────────────── */
+
+    .back-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 8px 0;
+      transition: color 0.15s;
+    }
+    .back-link::before {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      background: currentColor;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M15 18l-6-6 6-6'/%3E%3C/svg%3E") center/contain no-repeat;
+      flex-shrink: 0;
+    }
+    .back-link:hover { color: var(--text); }
+
+    /* ── Error / Loading / Empty ──────────────────────────── */
+
+    .error-text {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 8px;
+    }
+    .success-text {
+      font-size: 12px;
+      color: var(--success);
+      margin-top: 8px;
+    }
+    .loading-text {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .list-error {
+      padding: 14px var(--side);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .empty-state-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    .loading-center {
+      display: flex;
+      justify-content: center;
+      padding: 60px 0;
+    }
+    .loading-center .spinner {
+      border-color: rgba(0,102,255,0.2);
+      border-top-color: var(--accent);
+    }
+
+    /* ── Tappable / Interactive ───────────────────────────── */
+
+    .tappable {
+      transition: background 0.15s;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tappable:active { background: var(--input-bg); }
+    @media (hover: hover) {
+      .tappable:hover { background: rgba(0,0,0,0.02); }
+      .seg-btn:hover:not(.active) { color: var(--text); }
+      .nav-tab:hover { color: var(--text); }
+    }
+
+    /* ── Heart Animation ─────────────────────────────────── */
+
+    @keyframes heart-pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .fav-btn { transition: transform 0.15s; }
+    @media (hover: hover) {
+      .fav-btn:hover { transform: scale(1.1); }
+    }
+    .fav-btn.fav-active { animation: heart-pop 0.3s ease; }
+
+    /* ── Unread Dot ──────────────────────────────────────── */
+
+    @keyframes dot-pulse {
+      0% { transform: scale(0); }
+      60% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .unread-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      animation: dot-pulse 0.3s ease;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       JS-RENDERED LAYOUT CLASSES
+       ══════════════════════════════════════════════════════════ */
+
+    /* ── Feed Header (restructured) ──────────────────────── */
+
+    .feed-header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .feed-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feed-item-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .feed-filter-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      color: var(--muted);
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    @media (hover: hover) {
+      .feed-filter-btn:hover { background: var(--input-bg); color: var(--text); }
+    }
+    .feed-market-link {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      padding-bottom: 8px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    @media (hover: hover) {
+      .feed-market-link:hover { color: var(--text); }
+    }
+
+    /* ── Conversation Header ─────────────────────────────── */
+
+    .conv-detail-header {
+      padding: 0 var(--side);
+      padding-top: max(12px, env(safe-area-inset-top));
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .conv-item-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--input-bg);
+    }
+    .conv-item-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--input-bg);
+    }
+    .conv-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .conv-item-price {
+      font-size: 15px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .conv-item-title {
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .conv-party-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+    }
+    .conv-party-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .conv-party-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .conv-party-phone {
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    @media (hover: hover) {
+      .conv-party-phone:hover { text-decoration: underline; }
+    }
+    .conv-payment {
+      font-size: 11px;
+      color: var(--muted);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--input-bg);
+    }
+    .conv-no-messages {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 20px 0;
+    }
+
+    /* ── Chat Bubbles ────────────────────────────────────── */
+
+    .msg-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .msg-row.sent { justify-content: flex-end; }
+    .msg-row.received { justify-content: flex-start; }
+    .msg-bubble {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .msg-bubble.sent {
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-bubble.received {
+      background: var(--input-bg);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .msg-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .msg-time {
+      font-size: 10px;
+      color: var(--dim);
+      text-align: center;
+      margin: 12px 0 8px;
+    }
+
+    /* ── Reply Bar (fixed bottom) ────────────────────────── */
+
+    .conv-reply-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg);
+      border-top: 1px solid var(--input-bg);
+      padding: 12px var(--side);
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .conv-reply-bar .fi { flex: 1; font-size: 13px; padding: 12px 14px; }
+
+    /* ── Messages List — Composite Thumbnail ─────────────── */
+
+    .conv-thumb-composite {
+      position: relative;
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+    }
+    .conv-thumb-composite .conv-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--input-bg);
+    }
+    .conv-thumb-composite .conv-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .conv-thumb-avatar {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      overflow: hidden;
+      background: var(--input-bg);
+    }
+    .conv-thumb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .conv-thumb-avatar-placeholder {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      background: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .conv-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .conv-name-row .name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .conv-price-line {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .conv-item.unread .conv-name-row .name { font-weight: 700; }
+
+    /* ── Market Teaser ───────────────────────────────────── */
+
+    .teaser-content {
+      padding: 0 var(--side);
+      padding-top: max(60px, env(safe-area-inset-top));
+      padding-bottom: 40px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .teaser-header { margin-top: 20px; }
+    .teaser-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .teaser-date {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .teaser-countdown {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .teaser-countdown.live { color: var(--accent); }
+    .teaser-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .teaser-stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      line-height: 1;
+    }
+    .teaser-stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .teaser-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 16px;
+    }
+    .teaser-preview-cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--input-bg);
+    }
+    .teaser-preview-cell img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── Booth / Dealer Home ──────────────────────────────── */
+
+    .booth-number {
+      font-size: 12px;
+    }
+    .booth-event-name {
+      font-size: 12px;
+      color: var(--muted);
+      padding-bottom: 4px;
+    }
+    .booth-countdown {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      padding-bottom: 8px;
+    }
+    .booth-stats {
+      display: flex;
+      gap: 16px;
+      padding: 0 var(--side) 12px;
+    }
+    .booth-stat {
+      font-size: 13px;
+    }
+    .booth-stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 18px;
+      font-variant-numeric: tabular-nums;
+    }
+    .booth-stat-label {
+      color: var(--muted);
+    }
+    .booth-stat-label.hold { color: #B8960C; }
+    .booth-number-display {
+      font-weight: 600;
+      color: var(--text);
+    }
+    .booth-number-display span {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .booth-number-edit {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .booth-input {
+      width: 80px;
+      padding: 8px 10px;
+      background: var(--input-bg);
+      border: none;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+    }
+    .booth-setup-card {
+      background: var(--input-bg);
+      border-radius: 6px;
+      padding: 16px;
+      margin: 0 var(--side) 16px;
+    }
+    .booth-setup-card .fl { margin-bottom: 4px; }
+
+    /* ── Compose Flow (item detail) ──────────────────────── */
+
+    .compose-header {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .compose-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .compose-input-area {
+      display: none;
+    }
+    .compose-input-area.visible { display: block; }
+    .compose-textarea {
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--input-bg);
+      border: none;
+      padding: 14px 16px;
+      border-radius: 6px;
+      outline: none;
+      resize: none;
+      margin-bottom: 12px;
+      transition: box-shadow 0.15s;
+    }
+    .compose-textarea:focus { box-shadow: 0 0 0 2px var(--accent); }
+    .compose-sent {
+      text-align: center;
+      padding: 20px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Item Detail (additions) ──────────────────────────── */
+
+    .detail-title {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .detail-loading {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 20px 0;
+    }
+    .detail-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 20px 0;
+    }
+    .detail-ownership {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 20px 0;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       ADMIN CLASSES
+       ══════════════════════════════════════════════════════════ */
+
+    .admin-loading {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .admin-error {
+      color: var(--error);
+      font-size: 12px;
+    }
+    .admin-empty {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .admin-login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 24px;
+    }
+    .admin-login-logo {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .admin-login-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .admin-login-input {
+      max-width: 280px;
+      width: 100%;
+      text-align: center;
+    }
+    .admin-login-btn {
+      max-width: 280px;
+      width: 100%;
+    }
+    .admin-login-error {
+      font-size: 12px;
+      color: var(--error);
+      min-height: 16px;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .admin-header-links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .admin-link {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    @media (hover: hover) {
+      .admin-link:hover { color: var(--accent-hover); }
+    }
+    .admin-link--muted {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    @media (hover: hover) {
+      .admin-link--muted:hover { color: var(--text); }
+    }
+    .admin-detail-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .admin-detail-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .admin-detail-link {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    @media (hover: hover) {
+      .admin-detail-link:hover { text-decoration: underline; }
+    }
+    .admin-row-card {
+      display: flex;
+      align-items: center;
+    }
+    .admin-row-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .admin-row-card-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .admin-btn-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .admin-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-search-input {
+      width: 140px;
+      font-size: 11px;
+      padding: 6px 8px;
+      background: var(--input-bg);
+      border: none;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      outline: none;
+    }
+    .admin-badge--test {
+      background: #FFF8E1;
+      color: #F9A825;
+    }
+    .admin-card--dimmed { opacity: 0.6; }
+    .admin-archived-toggle {
+      cursor: pointer;
+      margin-top: 24px;
+    }
+    .admin-archived-section {
+      display: none;
+    }
+    .admin-photo-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .admin-photo-thumb {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .admin-item-price {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .admin-item-info-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .admin-item-condition {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .admin-item-notes {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .admin-item-stats {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .admin-conversation-row {
+      padding: 8px 0;
+      border-top: 1px solid var(--input-bg);
+    }
+    .admin-conversation-name {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .admin-conversation-msg {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .admin-conversation-time {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .blast-history-item {
+      margin-bottom: 12px;
+    }
+    .blast-history-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .blast-status-ok { color: var(--success); }
+    .blast-status-fail { color: var(--error); }
+    .blast-history-body {
+      font-size: 11px;
+      color: var(--text);
+      margin-top: 6px;
+      white-space: pre-wrap;
+      background: var(--input-bg);
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    /* ── Toast notification ─────────────────────────────────── */
+
+    .toast-container {
+      position: fixed;
+      top: max(20px, env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--text);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: auto;
+    }
+    .toast.visible { opacity: 1; }
+
+    /* ── Settings — auto-save toast ──────────────────────── */
+
+    .save-toast {
+      position: fixed;
+      top: max(12px, env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%) translateY(-120%);
+      background: var(--text);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    .save-toast.visible {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Settings content wrapper ─────────────────────────── */
+
+    .settings-content {
+      padding: 0 var(--side);
+    }
+    .settings-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--input-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 8px auto 8px;
+      overflow: hidden;
+    }
+    .settings-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .settings-phone {
+      text-align: center;
+      font-size: 12px;
+      color: var(--dim);
+      margin-bottom: 20px;
+    }
+
+    /* ── Utility classes ────────────────────────────────────── */
+
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .mb-4 { margin-bottom: 4px; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-12 { margin-bottom: 12px; }
+    .mb-16 { margin-bottom: 16px; }
+    .text-center { text-align: center; }
+    .text-muted { color: var(--muted); font-size: 12px; }
+    .text-error { color: var(--error); font-size: 12px; }
+    .text-dim { color: var(--dim); font-size: 11px; }
+    .flex-1 { flex: 1; min-width: 0; }
+    .shrink-0 { flex-shrink: 0; }
+    .w-full { width: 100%; }
+    .pad-side { padding: 0 var(--side); }
+    .img-cover { width: 100%; height: 100%; object-fit: cover; }
+    .img-avatar { border-radius: 50%; object-fit: cover; }
+
+    /* ── Filter sheet button ──────────────────────────────── */
+
+    .filter-done-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--text);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s;
+    }
+    .filter-done-btn:hover { background: #333; }
+
+    /* ── Nav tab label (for relative positioning of badge) ── */
+
+    .nav-tab-label {
+      position: relative;
+    }
+
   </style>
 </head>
 <body>
@@ -1512,15 +2608,15 @@
         <!-- Populated by JS, fallback below -->
         <div class="market-item">
           <div class="market-name">DTWN MODERNISM <span class="market-date">4.26</span></div>
-          <div class="market-countdown">drops in --d --h --m</div>
+          <div class="market-countdown">loading...</div>
         </div>
         <div class="market-item">
           <div class="market-name">PCC FLEA <span class="market-date">5.4</span></div>
-          <div class="market-countdown">drops in --d --h --m</div>
+          <div class="market-countdown">loading...</div>
         </div>
         <div class="market-item">
           <div class="market-name">ROSE BOWL <span class="market-date">5.11</span></div>
-          <div class="market-countdown">drops in --d --h --m</div>
+          <div class="market-countdown">loading...</div>
         </div>
       </div>
     </div>
@@ -1587,7 +2683,7 @@
 
 <!-- DEALER LANDING PAGE -->
 <div id="dealer-landing" class="screen">
-  <a href="#" class="back-link" onclick="showScreen('landing'); return false;">← Back</a>
+  <a href="#" class="back-link" onclick="showScreen('landing'); return false;">Back</a>
 
   <div class="dealer-headline">
     Sell to serious buyers<br>
@@ -1681,30 +2777,30 @@
     <input type="text" id="onboard-name" placeholder="How dealers/buyers will know you">
   </div>
 
-  <button class="auth-btn" onclick="completeOnboarding()" style="margin-top: 8px;">Let's go</button>
+  <button class="auth-btn mt-8" onclick="completeOnboarding()">Let's go</button>
 </div>
 
 <!-- FEED -->
 <div id="feed" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div style="display:flex;align-items:baseline;gap:8px;">
+      <div class="feed-header-left">
         <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-        <span id="feed-item-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
+        <span id="feed-item-count" class="feed-item-count"></span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
+      <div class="feed-header-right">
         <div class="browse-toggle seg-ctrl" id="browse-toggle">
           <button class="seg-btn active" onclick="setBrowseMode('all', this)">All</button>
           <button class="seg-btn" onclick="setBrowseMode('saved', this)">Saved</button>
         </div>
-        <button onclick="openFilterSheet()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--muted);">
+        <button class="feed-filter-btn" onclick="openFilterSheet()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
           </svg>
         </button>
       </div>
     </div>
-    <a href="#" id="feed-event-name" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;" style="display:block;font-size:12px;color:var(--accent);padding-bottom:8px;text-decoration:none;">← Markets</a>
+    <a href="#" id="feed-event-name" class="feed-market-link back-link" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;">Markets</a>
   </div>
   <!-- Filter bottom sheet -->
   <div class="sheet-overlay" id="filter-sheet" onclick="closeFilterSheet()">
@@ -1713,17 +2809,17 @@
       <div class="sheet-title">Filters</div>
       <div class="sheet-field">
         <div class="sheet-label">Category</div>
-        <select id="filter-category" onchange="applyFeedFilters()" class="form-select" style="padding:10px 12px;font-size:14px;">
+        <select id="filter-category" onchange="applyFeedFilters()" class="fs">
           <option value="">All Categories</option>
         </select>
       </div>
       <div class="sheet-field">
         <div class="sheet-label">Dealer</div>
-        <select id="filter-dealer" onchange="applyFeedFilters()" class="form-select" style="padding:10px 12px;font-size:14px;">
+        <select id="filter-dealer" onchange="applyFeedFilters()" class="fs">
           <option value="">All Dealers</option>
         </select>
       </div>
-      <button onclick="closeFilterSheet()" style="width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;">Done</button>
+      <button class="filter-done-btn" onclick="closeFilterSheet()">Done</button>
     </div>
   </div>
   <div id="feed-content"></div>
@@ -1734,15 +2830,16 @@
   <div class="feed-header">
     <div class="feed-header-top">
       <div class="feed-logo">My Booth</div>
-      <div id="booth-number-row" style="font-size:12px;"></div>
+      <div id="booth-number-row" class="booth-number"></div>
     </div>
-    <div id="booth-event-name" style="font-size:12px;color:var(--muted);padding-bottom:8px;"></div>
+    <div id="booth-event-name" class="booth-event-name"></div>
+    <div id="booth-countdown" class="booth-countdown"></div>
   </div>
-  <div id="booth-stats" style="display:flex;gap:16px;padding:0 var(--side) 12px;"></div>
+  <div id="booth-stats" class="booth-stats"></div>
   <ul class="my-items-list" id="my-items-list"></ul>
   <div class="empty-state" id="dealer-empty">
     <h2>Your booth is empty</h2>
-    <p>Post the items you&#39;re bringing. Buyers will see them when inventory goes live.</p>
+    <p>Post items you&#39;re bringing to the market.</p>
   </div>
   <button class="fab" onclick="showAddItem()" aria-label="Add item">+</button>
 </div>
@@ -1762,7 +2859,7 @@
   <div id="messages-content">
     <div class="empty-state">
       <h2>No messages yet</h2>
-      <p>When you message a seller about an item, your conversation will appear here.</p>
+      <p>Conversations with sellers will show up here.</p>
     </div>
   </div>
 </div>
@@ -1779,14 +2876,14 @@
 
 <!-- MARKET TEASER -->
 <div id="market-teaser" class="screen">
-  <div class="detail-back"><a href="#" onclick="event.preventDefault(); showScreen('landing');">&#8592; Back</a></div>
-  <div id="teaser-content" style="padding:0 24px;padding-top:max(60px,env(safe-area-inset-top));padding-bottom:40px;max-width:480px;margin:0 auto;"></div>
+  <div class="detail-back"><a href="#" onclick="event.preventDefault(); showScreen('landing');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg> Back</a></div>
+  <div id="teaser-content" class="teaser-content"></div>
 </div>
 
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
   <div class="detail-back">
-    <a href="#" onclick="showScreen('feed'); document.getElementById('bottom-nav').classList.remove('hidden'); return false;">← Back</a>
+    <a href="#" onclick="showScreen('feed'); document.getElementById('bottom-nav').classList.remove('hidden'); return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg> Back</a>
   </div>
   <div class="detail-photos" id="detail-photos"></div>
   <div class="detail-info" id="detail-info"></div>
@@ -1795,9 +2892,10 @@
 
 <!-- ADD ITEM -->
 <div id="add-item" class="screen">
-  <a href="#" style="font-size:12px; color:var(--accent); text-decoration:none; font-weight:500;" onclick="showScreen('dealer-home'); switchTab('dealer-home'); return false;">← Back</a>
+  <a href="#" class="back-link" onclick="showScreen('dealer-home'); switchTab('dealer-home'); return false;">Back</a>
   <div class="add-item-title">Add item</div>
 
+  <label class="form-label">Photos <span class="required">*</span></label>
   <div class="photo-upload-area" id="photo-slots">
     <div class="photo-slot" onclick="document.getElementById('photo-file').click()">
       <span class="add-icon">+</span>
@@ -1811,7 +2909,7 @@
   </div>
 
   <div class="form-field">
-    <label class="form-label">Price</label>
+    <label class="form-label">Price <span class="required">*</span></label>
     <input type="text" class="form-input" id="item-price" placeholder="$" inputmode="decimal">
   </div>
 
@@ -1857,29 +2955,30 @@
       <div class="feed-logo">Settings</div>
     </div>
   </div>
-  <div style="padding:0 var(--side);">
-    <div class="settings-title">Profile</div>
+  <div class="settings-content">
+    <div class="settings-avatar" id="settings-avatar"></div>
+    <div class="settings-phone" id="settings-phone"></div>
 
     <div class="settings-section">
       <div class="field">
         <label>Name</label>
-        <input type="text" id="settings-name" placeholder="Your name">
+        <input type="text" id="settings-name" placeholder="Your name" onblur="saveSettings()">
       </div>
       <div class="field">
         <label>Business name</label>
-        <input type="text" id="settings-biz" placeholder="Optional">
+        <input type="text" id="settings-biz" placeholder="Optional" onblur="saveSettings()">
       </div>
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section nav-dealer-only hidden">
       <div class="section-title">Payment</div>
       <div class="field">
         <label>Venmo</label>
-        <input type="text" id="settings-venmo" placeholder="@username">
+        <input type="text" id="settings-venmo" placeholder="@username" onblur="saveSettings()">
       </div>
       <div class="field">
         <label>Zelle</label>
-        <input type="text" id="settings-zelle" placeholder="Phone or email">
+        <input type="text" id="settings-zelle" placeholder="Phone or email" onblur="saveSettings()">
       </div>
     </div>
 
@@ -1888,13 +2987,12 @@
       <div class="settings-row">
         <span class="settings-label">Show name on sold items</span>
         <label class="settings-toggle">
-          <input type="checkbox" id="settings-show-sold" checked>
+          <input type="checkbox" id="settings-show-sold" checked onchange="saveSettings()">
           <span class="slider"></span>
         </label>
       </div>
     </div>
 
-    <button class="auth-btn" onclick="saveSettings()">Save changes</button>
     <div class="auth-fine" id="settings-msg"></div>
 
     <button class="logout-btn" onclick="logout()">Log out</button>
@@ -1903,22 +3001,22 @@
 
 <!-- ADMIN LOGIN -->
 <div id="admin-login" class="screen">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:24px;">
-    <div style="font-size:20px;font-weight:700;letter-spacing:-0.5px;">EARLY BIRD<span style="animation:blink 1s step-end infinite;">_</span></div>
-    <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Admin</div>
-    <input type="password" class="form-input" id="admin-password" placeholder="Password" style="width:280px;text-align:center;" autofocus>
-    <button class="auth-btn" id="admin-login-btn" style="width:280px;" onclick="adminLogin()">Log in</button>
-    <div id="admin-login-error" style="font-size:12px;color:var(--error);min-height:16px;"></div>
+  <div class="admin-login-container">
+    <div class="admin-login-logo">EARLY BIRD<span class="cursor">_</span></div>
+    <div class="admin-login-label">Admin</div>
+    <input type="password" class="fi admin-login-input" id="admin-password" placeholder="Password" autofocus>
+    <button class="btn-primary admin-login-btn" id="admin-login-btn" onclick="adminLogin()">Log in</button>
+    <div id="admin-login-error" class="admin-login-error"></div>
   </div>
 </div>
 
 <!-- ADMIN CMS -->
 <div id="admin" class="screen">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <div class="admin-header">
     <div class="admin-title">Admin</div>
-    <div style="display:flex;gap:16px;align-items:center;">
-      <a href="#" style="font-size:12px;color:var(--accent);text-decoration:none;" onclick="enterApp(); return false;">← App</a>
-      <a href="#" style="font-size:12px;color:var(--muted);text-decoration:none;" onclick="adminLogout(); return false;">Log out</a>
+    <div class="admin-header-links">
+      <a href="#" class="admin-link back-link" onclick="enterApp(); return false;">App</a>
+      <a href="#" class="admin-link--muted" onclick="adminLogout(); return false;">Log out</a>
     </div>
   </div>
   <div class="admin-tabs seg-ctrl">
@@ -1938,7 +3036,7 @@
       <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
       <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
     </svg>
-    Browse
+    Shop
   </button>
   <button class="nav-tab nav-dealer-only hidden" data-tab="dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1950,7 +3048,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
     </svg>
-    <span style="position:relative;">Messages<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
+    <span class="nav-tab-label">Messages<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
   </button>
   <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2078,7 +3176,7 @@ function renderMarkets(markets) {
     const date = new Date(m.market_date + 'T00:00:00');
     const shortDate = (date.getMonth() + 1) + '.' + date.getDate();
     const countdown = m.drop_time ? formatCountdown(new Date(m.drop_time)) : '';
-    return `<div class="market-item" style="cursor:pointer;" onclick="openMarketTeaser('${m.id}')">
+    return `<div class="market-item tappable" onclick="openMarketTeaser('${m.id}')">
       <div class="market-name">${displayName(m.name)} <span class="market-date">${shortDate}</span></div>
       ${countdown ? `<div class="market-countdown" data-drop="${m.drop_time}">${countdown}</div>` : ''}
     </div>`;
@@ -2127,26 +3225,26 @@ async function openMarketTeaser(marketId) {
     dealerCount = dealers.size;
     const previewItems = items.slice(0, 6);
     if (previewItems.length) {
-      previewHtml = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:16px;">' +
+      previewHtml = '<div class="teaser-preview-grid">' +
         previewItems.map(item => {
           let photo = item.photos?.[0] || '';
           if (photo === '/pre-drop-placeholder.svg') photo = PRE_DROP_SVG;
-          return `<div style="aspect-ratio:1;border-radius:6px;overflow:hidden;background:var(--card-bg);">${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div>`;
+          return `<div class="teaser-preview-cell">${photo ? `<img src="${photo}" class="img-cover">` : ''}</div>`;
         }).join('') + '</div>';
     }
   } catch (e) {}
 
   content.innerHTML = `
-    <div style="margin-top:20px;">
-      <div style="font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em;">${displayName(m.name)}</div>
-      <div style="font-size:14px;color:var(--muted);margin-top:6px;">${dateStr}</div>
-      ${countdown ? `<div style="font-size:13px;color:${isLive ? 'var(--accent)' : 'var(--muted)'};margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;">${isLive ? '&#9679; Live now' : countdown}</div>` : ''}
-      <div style="display:flex;gap:16px;margin-top:16px;">
-        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:'JetBrains Mono',monospace;">${itemCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">items</span></div>
-        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:'JetBrains Mono',monospace;">${dealerCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">dealers</span></div>
+    <div class="teaser-header">
+      <div class="teaser-title">${displayName(m.name)}</div>
+      <div class="teaser-date">${dateStr}</div>
+      ${countdown ? `<div class="teaser-countdown${isLive ? ' live' : ''}">${isLive ? '&#9679; Live now' : countdown}</div>` : ''}
+      <div class="teaser-stats">
+        <div><span class="teaser-stat-value">${itemCount}</span> <span class="teaser-stat-label">items</span></div>
+        <div><span class="teaser-stat-value">${dealerCount}</span> <span class="teaser-stat-label">dealers</span></div>
       </div>
       ${previewHtml}
-      ${isLive ? `<button onclick="selectMarket('${m.id}'); enterApp();" style="width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:20px;">Browse inventory</button>` : ''}
+      ${isLive ? `<button class="btn-primary btn-dark mt-24" onclick="selectMarket('${m.id}'); enterApp();">Shop inventory</button>` : ''}
     </div>`;
 }
 
@@ -2262,7 +3360,7 @@ async function handleSelfie(input) {
 
 async function completeOnboarding() {
   const name = document.getElementById('onboard-name').value.trim();
-  if (!name) { alert('Please enter your name.'); return; }
+  if (!name) { showToast('Please enter your name'); return; }
 
   const updates = { name };
 
@@ -2324,9 +3422,10 @@ async function loadFeed() {
   if (currentMarket) {
     const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
     const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
-    document.getElementById('feed-event-name').textContent = '← ' + currentMarket.name + (dateStr ? ' · ' + dateStr : '');
+    document.getElementById('feed-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
   }
   const content = document.getElementById('feed-content');
+  if (!feedItems.length) content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
   try {
     const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
     feedItems = await api(`/api/items${q}`);
@@ -2371,9 +3470,9 @@ function applyFeedFilters() {
   const content = document.getElementById('feed-content');
   if (!filtered.length) {
     if (browseMode === 'saved') {
-      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#9825;</div><h2>No saved items</h2><p>Tap the heart on items you love and they&#39;ll show up here.</p></div>';
+      content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#9825;</div><h2>No saved items</h2><p>Heart items to save them here.</p></div>';
     } else {
-      content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
+      content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Inventory not posted yet. Check back soon.</p></div>';
     }
     return;
   }
@@ -2395,7 +3494,7 @@ function applyFeedFilters() {
       </div>
       <div class="item-card-info">
         <div class="item-card-price">${price}</div>
-        ${item.title ? `<div class="item-card-meta" style="color:var(--text);font-weight:500;">${item.title}</div>` : ''}
+        ${item.title ? `<div class="item-card-title">${item.title}</div>` : ''}
         <div class="item-card-meta">${dealer}${item.dealer?.booth_number ? ' · Booth ' + item.dealer.booth_number : ''}${item.price_posture === 'firm' || item.firm ? ' · Firm' : ''}</div>
         ${badge}
       </div>
@@ -2421,10 +3520,11 @@ async function toggleFavorite(itemId, btn) {
 
 async function loadFavorites() {
   const content = document.getElementById('favorites-content');
+  content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
   try {
     const favs = await api('/api/favorites');
     if (!favs?.length) {
-      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#9825;</div><h2>No favorites yet</h2><p>Tap the heart on items you love and they&#39;ll show up here.</p></div>';
+      content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#9825;</div><h2>No favorites yet</h2><p>Heart items to save them here.</p></div>';
       return;
     }
     content.innerHTML = '<div class="fav-grid">' + favs.map(fav => {
@@ -2433,7 +3533,10 @@ async function loadFavorites() {
       const photo = item.photos?.[0] || '';
       const dealer = item.dealer?.name || item.dealer?.business_name || '';
       return `<div class="fav-card" onclick="openItem('${item.id}')">
-        <div class="fav-card-img">${photo ? `<img src="${photo}" loading="lazy">` : ''}</div>
+        <div class="fav-card-img">
+          ${photo ? `<img src="${photo}" loading="lazy">` : ''}
+          <button class="fav-btn fav-active" onclick="event.stopPropagation(); toggleFavorite('${item.id}', this)" aria-label="Unfavorite"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
+        </div>
         <div class="fav-card-info">
           <div class="fav-card-price">${price}</div>
           <div class="fav-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
@@ -2447,6 +3550,7 @@ async function loadFavorites() {
 
 async function loadMessages() {
   const content = document.getElementById('messages-content');
+  content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
   try {
     const res = await api('/api/conversations');
     const asBuyer = res.as_buyer || [];
@@ -2471,7 +3575,7 @@ function renderConversations() {
 
   if (!convs.length) {
     const msg = msgFilter === 'all'
-      ? 'When you message a seller about an item, your conversation will appear here.'
+      ? 'Conversations with sellers will show up here.'
       : msgFilter === 'buying'
         ? 'No conversations as a buyer yet.'
         : 'No conversations as a seller yet.';
@@ -2486,15 +3590,18 @@ function renderConversations() {
     const roleLabel = conv._role === 'buyer' ? 'You inquired' : 'Inquiry from';
     const timeAgo = getTimeAgo(conv.created_at);
     const initials = conv._other.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    const avatar = conv._otherPhoto
-      ? `<img src="${conv._otherPhoto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
-      : `<div style="width:36px;height:36px;border-radius:50%;background:var(--card-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--muted);flex-shrink:0;">${initials}</div>`;
-    return `<a href="#/c/${conv.token}" class="conv-item" style="text-decoration:none;color:inherit;">
-      <div class="conv-thumb" style="width:56px;height:56px;border-radius:6px;overflow:hidden;flex-shrink:0;">${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div>
-      <div class="conv-info" style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">${avatar}<span style="font-weight:600;font-size:14px;">${conv._other}</span></div>
-        <div style="font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${title ? title + ' · ' : ''}${price}</div>
-        <div class="conv-meta" style="font-size:11px;color:var(--muted);margin-top:2px;">${roleLabel} · ${timeAgo}</div>
+    const avatarEl = conv._otherPhoto
+      ? `<div class="conv-thumb-avatar"><img src="${conv._otherPhoto}"></div>`
+      : `<div class="conv-thumb-avatar-placeholder">${initials}</div>`;
+    return `<a href="#/c/${conv.token}" class="conv-item">
+      <div class="conv-thumb-composite">
+        <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
+        ${avatarEl}
+      </div>
+      <div class="conv-info flex-1">
+        <div class="conv-name-row"><span class="name">${conv._other}</span></div>
+        <div class="conv-price-line">${title ? title + ' · ' : ''}${price}</div>
+        <div class="conv-meta">${roleLabel} · ${timeAgo}</div>
       </div>
     </a>`;
   }).join('');
@@ -2517,17 +3624,16 @@ function showToast(message, duration = 3000) {
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.style.cssText = 'position:fixed;top:max(20px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+    container.className = 'toast-container';
     document.body.appendChild(container);
   }
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
-  toast.style.cssText = 'background:var(--text);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:auto;';
   container.appendChild(toast);
-  requestAnimationFrame(() => toast.style.opacity = '1');
+  requestAnimationFrame(() => toast.classList.add('visible'));
   setTimeout(() => {
-    toast.style.opacity = '0';
+    toast.classList.remove('visible');
     setTimeout(() => toast.remove(), 300);
   }, duration);
 }
@@ -2548,14 +3654,26 @@ async function loadDealerHome() {
     const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
     const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
     document.getElementById('booth-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
+    // Countdown
+    const cdEl = document.getElementById('booth-countdown');
+    if (d && d > new Date()) {
+      const diff = d - Date.now();
+      const days = Math.floor(diff / 86400000);
+      const hrs = Math.floor((diff % 86400000) / 3600000);
+      cdEl.textContent = days > 0 ? `${days}d ${hrs}h until market` : `${hrs}h until market`;
+    } else if (d && d.toDateString() === new Date().toDateString()) {
+      cdEl.textContent = 'Today!';
+    } else {
+      cdEl.textContent = '';
+    }
   }
 
   // Booth number
   const boothRow = document.getElementById('booth-number-row');
   if (currentUser?.booth_number) {
-    boothRow.innerHTML = `<span style="font-weight:600;color:var(--text);">Booth <span style="font-family:'JetBrains Mono',monospace;">${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:11px;margin-left:4px;">edit</a>`;
+    boothRow.innerHTML = `<span class="booth-number-display">Booth <span>${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" class="booth-number-edit">edit</a>`;
   } else {
-    boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:12px;">+ Add booth number</a>`;
+    boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" class="admin-link">+ Add booth number</a>`;
   }
 
   // Load dealer's items
@@ -2563,6 +3681,7 @@ async function loadDealerHome() {
   const list = document.getElementById('my-items-list');
   const emptyState = document.getElementById('dealer-empty');
   const statsRow = document.getElementById('booth-stats');
+  if (!list.children.length) list.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
 
   try {
     const q = currentMarket ? `?dealer_id=${currentUser.id}&market_id=${currentMarket.id}` : `?dealer_id=${currentUser.id}`;
@@ -2574,9 +3693,9 @@ async function loadDealerHome() {
     const sold = items.filter(i => i.status === 'sold').length;
     if (items.length) {
       statsRow.innerHTML = `
-        <div style="font-size:13px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;">${live}</span> <span style="color:var(--muted);">live</span></div>
-        <div style="font-size:13px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;">${hold}</span> <span style="color:#B8960C;">hold</span></div>
-        <div style="font-size:13px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;">${sold}</span> <span style="color:var(--muted);">sold</span></div>`;
+        <div class="booth-stat"><span class="booth-stat-value">${live}</span> <span class="booth-stat-label">live</span></div>
+        <div class="booth-stat"><span class="booth-stat-value">${hold}</span> <span class="booth-stat-label hold">hold</span></div>
+        <div class="booth-stat"><span class="booth-stat-value">${sold}</span> <span class="booth-stat-label">sold</span></div>`;
     } else {
       statsRow.innerHTML = '';
     }
@@ -2637,7 +3756,7 @@ async function loadDealerHome() {
     }).join('');
   } catch (e) {
     console.error('Failed to load dealer items:', e);
-    list.innerHTML = '<li style="padding:14px 24px;color:var(--muted);font-size:12px;">Failed to load items.</li>';
+    list.innerHTML = '<li class="list-error">Failed to load items.</li>';
   }
 }
 
@@ -2653,9 +3772,9 @@ async function updateItemStatus(itemId, status) {
 function editBoothNumber() {
   const boothRow = document.getElementById('booth-number-row');
   const current = currentUser?.booth_number || '';
-  boothRow.innerHTML = `<div style="display:flex;gap:8px;align-items:center;">
-    <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);outline:none;">
-    <button onclick="saveBoothNumber()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
+  boothRow.innerHTML = `<div class="admin-btn-row">
+    <input type="text" id="booth-input" class="booth-input" value="${current}" placeholder="e.g. E25">
+    <button class="btn-primary btn-compact" onclick="saveBoothNumber()">Save</button>
   </div>`;
   document.getElementById('booth-input').focus();
 }
@@ -2785,7 +3904,7 @@ async function loadItemDetail(itemId) {
   try {
     const item = await api(`/api/items/${itemId}`);
     if (item.error) {
-      infoEl.innerHTML = '<p style="color:var(--muted);padding:20px 0;">Item not found.</p>';
+      infoEl.innerHTML = '<p class="detail-empty">Item not found.</p>';
       return;
     }
     currentItem = item;
@@ -2814,12 +3933,12 @@ async function loadItemDetail(itemId) {
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
     const biz = item.dealer?.business_name && item.dealer?.name ? item.dealer.business_name : '';
     let html = '';
-    if (item.title) html += `<div style="font-size:14px;color:var(--muted);margin-bottom:4px;">${item.title}</div>`;
+    if (item.title) html += `<div class="detail-title">${item.title}</div>`;
     html += `<div class="detail-price">${price}</div>`;
-    if (item.price_posture === 'make_offer') html += `<div class="detail-price-note">Make me an offer</div>`;
-    else if (item.price_posture === 'flexible') html += `<div class="detail-price-note">Flexible</div>`;
-    else if (item.firm) html += `<div class="detail-price-note">Firm</div>`;
-    else html += `<div class="detail-price-note">Open to offers</div>`;
+    if (item.price_posture === 'make_offer') html += `<span class="posture-pill">Make me an offer</span>`;
+    else if (item.price_posture === 'flexible') html += `<span class="posture-pill">Flexible</span>`;
+    else if (item.firm) html += `<span class="posture-pill">Firm</span>`;
+    else html += `<span class="posture-pill">Open to offers</span>`;
     if (item.condition) html += `<div class="detail-condition">${item.condition}</div>`;
     if (item.notes) html += `<div class="detail-notes">${item.notes}</div>`;
     html += `<div class="detail-seller">`;
@@ -2838,13 +3957,13 @@ async function loadItemDetail(itemId) {
       actionsEl.innerHTML = `<div class="detail-status-badge detail-badge-hold">Held for ${buyerName}</div>`;
     } else if (item.dealer_id === getDealerId()) {
       // Seller viewing own item — load all inquiries
-      actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">Loading inquiries...</div>`;
+      actionsEl.innerHTML = `<div class="detail-loading">Loading inquiries...</div>`;
       loadSellerInquiries(item.id, actionsEl);
     } else {
       actionsEl.innerHTML = `<button class="text-seller-btn" id="text-seller-btn" onclick="textSeller('${item.id}')">I want this</button>`;
     }
   } catch (e) {
-    infoEl.innerHTML = '<p style="color:var(--error);">Failed to load item.</p>';
+    infoEl.innerHTML = '<p class="text-error">Failed to load item.</p>';
   }
 }
 
@@ -2852,7 +3971,7 @@ async function loadSellerInquiries(itemId, actionsEl) {
   try {
     const inquiries = await api(`/api/items/${itemId}/inquiries`);
     if (!Array.isArray(inquiries) || inquiries.length === 0) {
-      actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">No inquiries yet.</div>`;
+      actionsEl.innerHTML = `<div class="detail-empty">No inquiries yet.</div>`;
       return;
     }
 
@@ -2892,7 +4011,7 @@ async function loadSellerInquiries(itemId, actionsEl) {
     html += `</div>`;
     actionsEl.innerHTML = html;
   } catch (e) {
-    actionsEl.innerHTML = `<div class="detail-price-note" style="text-align:center;">This is your listing.</div>`;
+    actionsEl.innerHTML = `<div class="detail-ownership">This is your listing.</div>`;
   }
 }
 
@@ -2906,7 +4025,7 @@ async function sellerAction(itemId, buyerId, status, buyerName) {
     });
     loadItemDetail(itemId);
   } catch (e) {
-    alert('Failed to update item status.');
+    showToast('Failed to update item status');
   }
 }
 async function textSeller(itemId) {
@@ -2918,22 +4037,22 @@ async function textSeller(itemId) {
 
   const actionsEl = document.getElementById('detail-actions');
   actionsEl.innerHTML = `
-    <div style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Message seller</div>
-    <div id="msg-options" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-      <button class="msg-option-btn" onclick="sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
-      <button class="msg-option-btn" onclick="showOfferInput('${itemId}')">Make an offer</button>
-      <button class="msg-option-btn" onclick="showQuestionInput('${itemId}')">Ask a question</button>
+    <div class="compose-header">Message seller</div>
+    <div id="msg-options" class="compose-options">
+      <button class="btn-chip" onclick="sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
+      <button class="btn-chip" onclick="showOfferInput('${itemId}')">Make an offer</button>
+      <button class="btn-chip" onclick="showQuestionInput('${itemId}')">Ask a question</button>
     </div>
-    <div id="msg-custom-input" style="display:none;">
-      <textarea class="form-input" id="seller-msg-input" rows="2" style="resize:none;margin-bottom:12px;font-size:13px;width:100%;" placeholder="Type your message..."></textarea>
-      <button class="text-seller-btn" id="send-msg-btn" onclick="sendFirstMessage('${itemId}')">Send</button>
+    <div id="msg-custom-input" class="compose-input-area">
+      <textarea class="compose-textarea" id="seller-msg-input" rows="2" placeholder="Type your message..."></textarea>
+      <button class="btn-primary" id="send-msg-btn" onclick="sendFirstMessage('${itemId}')">Send</button>
     </div>`;
 }
 
 function showOfferInput(itemId) {
   const input = document.getElementById('msg-custom-input');
   const textarea = document.getElementById('seller-msg-input');
-  input.style.display = 'block';
+  input.classList.add('visible');
   textarea.placeholder = 'What\'s your offer?';
   textarea.value = '';
   textarea.focus();
@@ -2942,7 +4061,7 @@ function showOfferInput(itemId) {
 function showQuestionInput(itemId) {
   const input = document.getElementById('msg-custom-input');
   const textarea = document.getElementById('seller-msg-input');
-  input.style.display = 'block';
+  input.classList.add('visible');
   textarea.placeholder = 'What do you want to know?';
   textarea.value = '';
   textarea.focus();
@@ -2955,7 +4074,7 @@ async function sendFirstMessage(itemId, directMsg) {
   if (!message) { if (input) input.focus(); return; }
 
   // Disable all option buttons to prevent double-tap
-  document.querySelectorAll('.msg-option-btn').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+  document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = true; b.classList.add('disabled'); });
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
   try {
@@ -2965,17 +4084,17 @@ async function sendFirstMessage(itemId, directMsg) {
     });
     if (res.error) {
       if (btn) { btn.textContent = res.error; btn.disabled = false; }
-      document.querySelectorAll('.msg-option-btn').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+      document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); });
       return;
     }
     // Show sent state briefly, then go to conversation
     const actionsEl = document.getElementById('detail-actions');
-    actionsEl.innerHTML = `<div style="text-align:center;padding:20px;color:var(--accent);font-weight:600;">Sent!</div>`;
+    actionsEl.innerHTML = `<div class="compose-sent">Sent!</div>`;
     setTimeout(() => {
       window.location.hash = `#/c/${res.conversation_token}`;
     }, 600);
   } catch (e) {
-    document.querySelectorAll('.msg-option-btn').forEach(b => { b.disabled = false; b.style.opacity = '1'; });
+    document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); });
     if (btn) { btn.textContent = 'Error. Try again.'; btn.disabled = false; }
   }
 }
@@ -2999,7 +4118,7 @@ async function loadConversation(token) {
   try {
     const res = await api(`/api/conversations/${token}`);
     if (res.error) {
-      infoEl.innerHTML = `<p style="color:var(--error);">${res.error}</p>`;
+      infoEl.innerHTML = `<p class="text-error">${res.error}</p>`;
       actionsEl.innerHTML = '';
       return;
     }
@@ -3022,39 +4141,53 @@ async function loadConversation(token) {
       ? [conv.seller?.venmo ? `Venmo: ${conv.seller.venmo}` : '', conv.seller?.zelle ? `Zelle: ${conv.seller.zelle}` : ''].filter(Boolean).join(' · ')
       : '';
 
-    let html = '';
+    let html = '<div class="conv-detail-header">';
     if (photo) {
-      html += `<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;">`;
-      html += `<div style="width:60px;height:60px;border-radius:6px;overflow:hidden;flex-shrink:0;background:var(--input-bg);"><img src="${photo}" style="width:100%;height:100%;object-fit:cover;"></div>`;
-      html += `<div><div style="font-weight:700;font-variant-numeric:tabular-nums;">${price}</div>`;
-      const avatarSmall = otherPhotoUrl ? `<img src="${otherPhotoUrl}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;">` : '';
-      html += `<div style="font-size:12px;color:var(--muted);">${avatarSmall}${otherName}</div>`;
-      if (otherPhone) html += `<a href="tel:${otherPhone}" style="font-size:11px;color:var(--accent);text-decoration:none;">${otherPhone}</a>`;
+      html += `<div class="conv-item-row">`;
+      html += `<div class="conv-item-thumb"><img src="${photo}"></div>`;
+      html += `<div><div class="conv-item-price">${price}</div>`;
+      html += `<div class="conv-item-title">${otherName}</div>`;
+      if (otherPhone) html += `<a href="tel:${otherPhone}" class="conv-party-phone">${otherPhone}</a>`;
       html += `</div></div>`;
     } else {
-      const avatarLarge = otherPhotoUrl ? `<img src="${otherPhotoUrl}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:8px;">` : '';
-      html += `<div style="font-weight:600;margin-bottom:4px;">${avatarLarge}${otherName}</div>`;
-      if (otherPhone) html += `<div style="margin-bottom:16px;"><a href="tel:${otherPhone}" style="font-size:11px;color:var(--accent);text-decoration:none;">${otherPhone}</a></div>`;
+      html += `<div class="conv-party-row">`;
+      if (otherPhotoUrl) html += `<img src="${otherPhotoUrl}" class="conv-party-avatar">`;
+      html += `<div><div class="conv-party-name">${otherName}</div>`;
+      if (otherPhone) html += `<a href="tel:${otherPhone}" class="conv-party-phone">${otherPhone}</a>`;
+      html += `</div></div>`;
     }
-    if (otherPayment) html += `<div style="font-size:11px;color:var(--muted);margin-bottom:16px;">${otherPayment}</div>`;
+    if (otherPayment) html += `<div class="conv-payment">${otherPayment}</div>`;
+    html += '</div>';
 
     // Messages
     if (messages.length === 0) {
-      html += `<div style="color:var(--muted);font-size:13px;">No messages yet. The seller has been notified via SMS.</div>`;
+      html += `<div class="conv-no-messages">No messages yet. Seller notified via SMS.</div>`;
     } else {
+      let lastTime = 0;
       messages.forEach(msg => {
         const isMe = msg.sender_id === currentUser?.id
           || (role === 'buyer' && msg.direction === 'buyer_to_seller')
           || (role === 'seller' && msg.direction === 'seller_to_buyer');
-        const align = isMe ? 'flex-end' : 'flex-start';
-        const bg = isMe ? 'var(--accent)' : 'var(--input-bg)';
-        const color = isMe ? '#fff' : 'var(--text)';
+        const dir = isMe ? 'sent' : 'received';
+        // Time separator if gap > 5 min
+        if (msg.created_at) {
+          const t = new Date(msg.created_at).getTime();
+          if (!lastTime || t - lastTime > 300000) {
+            const d = new Date(msg.created_at);
+            const now = new Date();
+            const isToday = d.toDateString() === now.toDateString();
+            const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            const label = isToday ? timeStr : d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + timeStr;
+            html += `<div class="msg-time">${label}</div>`;
+          }
+          lastTime = t;
+        }
         const msgAvatar = (!isMe && otherPhotoUrl)
-          ? `<img src="${otherPhotoUrl}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;align-self:flex-end;">`
+          ? `<img src="${otherPhotoUrl}" class="msg-avatar">`
           : '';
-        html += `<div style="display:flex;justify-content:${align};align-items:flex-end;gap:6px;margin-bottom:8px;">`;
+        html += `<div class="msg-row ${dir}">`;
         if (!isMe && msgAvatar) html += msgAvatar;
-        html += `<div style="max-width:75%;padding:10px 14px;border-radius:12px;background:${bg};color:${color};font-size:13px;line-height:1.4;">${msg.body}</div>`;
+        html += `<div class="msg-bubble ${dir}">${msg.body}</div>`;
         html += `</div>`;
       });
     }
@@ -3062,13 +4195,13 @@ async function loadConversation(token) {
 
     // Reply form
     actionsEl.innerHTML = `
-      <div style="display:flex;gap:8px;padding:0 24px;">
-        <input type="text" class="form-input" id="reply-input" placeholder="Reply..." style="flex:1;" onkeydown="if(event.key==='Enter'){event.preventDefault();sendReply('${token}');}">
-        <button class="text-seller-btn" style="width:auto;padding:14px 20px;" onclick="sendReply('${token}')">Send</button>
+      <div class="conv-reply-bar">
+        <input type="text" class="fi" id="reply-input" placeholder="Reply..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendReply('${token}');}">
+        <button class="btn-primary btn-compact" onclick="sendReply('${token}')">Send</button>
       </div>`;
 
   } catch (e) {
-    infoEl.innerHTML = '<p style="color:var(--error);">Failed to load conversation.</p>';
+    infoEl.innerHTML = '<p class="text-error">Failed to load conversation.</p>';
     actionsEl.innerHTML = '';
   }
 }
@@ -3085,7 +4218,7 @@ async function sendReply(token) {
     });
     if (res.error) {
       input.value = message; // restore on error
-      alert(res.error);
+      showToast(res.error);
       return;
     }
     loadConversation(token);
@@ -3296,6 +4429,17 @@ function photoDrop(e, targetIdx) {
 // ── Settings ────────────────────────────────────────────────
 function loadSettings() {
   if (!currentUser) return;
+  // Avatar
+  const avatarEl = document.getElementById('settings-avatar');
+  if (currentUser.photo_url) {
+    avatarEl.innerHTML = `<img src="${currentUser.photo_url}">`;
+  } else {
+    const initials = (currentUser.name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    avatarEl.textContent = initials;
+  }
+  // Phone
+  document.getElementById('settings-phone').textContent = currentUser.phone || '';
+  // Fields
   document.getElementById('settings-name').value = currentUser.name || '';
   document.getElementById('settings-biz').value = currentUser.business_name || '';
   document.getElementById('settings-venmo').value = currentUser.venmo || '';
@@ -3303,25 +4447,25 @@ function loadSettings() {
   document.getElementById('settings-show-sold').checked = currentUser.show_name_on_sold !== false;
 }
 
+let _settingsSaveTimer;
 async function saveSettings() {
-  const updates = {
-    name: document.getElementById('settings-name').value.trim() || null,
-    business_name: document.getElementById('settings-biz').value.trim() || null,
-    venmo: document.getElementById('settings-venmo').value.trim() || null,
-    zelle: document.getElementById('settings-zelle').value.trim() || null,
-    show_name_on_sold: document.getElementById('settings-show-sold').checked,
-  };
-  const msg = document.getElementById('settings-msg');
-  try {
-    await api('/api/auth/me', { method: 'PATCH', body: updates });
-    currentUser = await api('/api/auth/me');
-    msg.textContent = 'Saved!';
-    msg.className = 'auth-success';
-    setTimeout(() => { msg.textContent = ''; }, 2000);
-  } catch (e) {
-    msg.textContent = 'Error saving.';
-    msg.className = 'auth-error';
-  }
+  clearTimeout(_settingsSaveTimer);
+  _settingsSaveTimer = setTimeout(async () => {
+    const updates = {
+      name: document.getElementById('settings-name').value.trim() || null,
+      business_name: document.getElementById('settings-biz').value.trim() || null,
+      venmo: document.getElementById('settings-venmo').value.trim() || null,
+      zelle: document.getElementById('settings-zelle').value.trim() || null,
+      show_name_on_sold: document.getElementById('settings-show-sold').checked,
+    };
+    try {
+      await api('/api/auth/me', { method: 'PATCH', body: updates });
+      currentUser = await api('/api/auth/me');
+      showToast('Saved');
+    } catch (e) {
+      showToast('Error saving');
+    }
+  }, 300);
 }
 
 function logout() {
@@ -3343,7 +4487,15 @@ function setAdminTab(name) {
 }
 
 function formatDate(d) { return new Date(d).toLocaleDateString(); }
-function formatDateTime(d) { return new Date(d).toLocaleString(); }
+function formatDateTime(d) {
+  const dt = new Date(d);
+  const now = new Date();
+  const diff = now - dt;
+  if (diff < 3600000) return Math.max(1, Math.floor(diff / 60000)) + 'm ago';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+  if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 function formatPrice(cents) { return '$' + (cents / 100).toLocaleString(); }
 function statusBadge(s) { return `<span class="admin-badge badge-${s}">${s}</span>`; }
 function marketLabel(m) {
@@ -3424,7 +4576,7 @@ function adminTab(tab, btn) {
 
 // ── Dashboard ─────────────────────────────────────────────
 async function loadAdminDashboard(el) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const data = await adminApi('/api/admin/dashboard');
 
@@ -3438,12 +4590,12 @@ async function loadAdminDashboard(el) {
     if (data.next_market) {
       const m = data.next_market;
       const daysUntil = Math.ceil((new Date(m.market_date) - new Date()) / (1000 * 60 * 60 * 24));
-      html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'" style="margin-bottom:24px;">
+      html += `<div class="admin-card admin-clickable mb-24" onclick="location.hash='#/admin/markets/${m.id}'">
         <div class="admin-card-row">
           <span class="name">${m.name}</span>
           <span class="admin-badge badge-upcoming">${daysUntil <= 0 ? 'Today' : daysUntil + 'd away'}</span>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count} items · ${m.dealer_count} dealers</div>
+        <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count} items · ${m.dealer_count} dealers</div>
       </div>`;
     }
 
@@ -3455,7 +4607,7 @@ async function loadAdminDashboard(el) {
         const link = a.entity_id ? `onclick="location.hash='#/admin/${a.entity_type}s/${a.entity_id}'"` : '';
         html += `<div class="admin-timeline-item ${a.entity_id ? 'admin-clickable' : ''}" ${link}>
           <span class="action">${label}</span>
-          <span style="margin-left:6px;">${formatDateTime(a.created_at)}</span>
+          <span class="admin-conversation-time">${formatDateTime(a.created_at)}</span>
         </div>`;
       }
       html += `</div>`;
@@ -3463,30 +4615,30 @@ async function loadAdminDashboard(el) {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load dashboard.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load dashboard.</div>';
   }
 }
 
 // ── Dealers List ──────────────────────────────────────────
 async function loadAdminDealers(el) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const dealers = await adminApi('/api/admin/dealers');
     let html = `<div class="admin-form">
       <div class="admin-section-title">Invite dealer</div>
-      <div class="form-field"><input type="tel" class="form-input" id="admin-dealer-phone" placeholder="Phone number"></div>
-      <div class="form-field"><input type="text" class="form-input" id="admin-dealer-name" placeholder="Name"></div>
-      <div class="form-field"><input type="text" class="form-input" id="admin-dealer-biz" placeholder="Business name (optional)"></div>
-      <div style="display:flex;gap:8px;">
-        <button class="auth-btn" style="flex:1;" onclick="adminCreateDealer('dealer')">Add as Dealer</button>
-        <button class="auth-btn" style="flex:1;background:var(--muted);" onclick="adminCreateDealer('buyer')">Add as Buyer</button>
+      <div class="form-field"><input type="tel" class="fi" id="admin-dealer-phone" placeholder="Phone number"></div>
+      <div class="form-field"><input type="text" class="fi" id="admin-dealer-name" placeholder="Name"></div>
+      <div class="form-field"><input type="text" class="fi" id="admin-dealer-biz" placeholder="Business name (optional)"></div>
+      <div class="admin-btn-row">
+        <button class="btn-primary flex-1" onclick="adminCreateDealer('dealer')">Add as Dealer</button>
+        <button class="btn-primary btn-muted flex-1" onclick="adminCreateDealer('buyer')">Add as Buyer</button>
       </div>
       <div class="auth-fine" id="admin-dealer-msg"></div>
     </div>`;
 
-    html += `<div class="admin-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+    html += `<div class="admin-section-title admin-section-header">
       <span>All users (${dealers.length})</span>
-      <input type="text" class="form-input" id="admin-dealer-search" placeholder="Search..." style="width:140px;font-size:11px;padding:6px 8px;" oninput="filterDealerList()">
+      <input type="text" class="admin-search-input" id="admin-dealer-search" placeholder="Search..." oninput="filterDealerList()">
     </div>`;
 
     html += `<div id="admin-dealer-list">`;
@@ -3501,13 +4653,13 @@ async function loadAdminDealers(el) {
           </div>
           <span class="role ${roleClass}">${d.role}</span>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${d.phone}</div>
+        <div class="admin-row-card-meta">${d.phone}</div>
       </div>`;
     }
     html += `</div>`;
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load dealers.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load dealers.</div>';
   }
 }
 
@@ -3545,19 +4697,19 @@ async function adminCreateDealer(role) {
 }
 
 async function loadAdminMarkets(el) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const markets = await adminApi('/api/admin/markets');
     let html = `<div class="admin-form">
       <div class="admin-section-title">Create market</div>
-      <div class="form-field"><input type="text" class="form-input" id="admin-market-name" placeholder="Market name (e.g. Rose Bowl)"></div>
-      <div class="form-field"><input type="date" class="form-input" id="admin-market-date"></div>
+      <div class="form-field"><input type="text" class="fi" id="admin-market-name" placeholder="Market name (e.g. Rose Bowl)"></div>
+      <div class="form-field"><input type="date" class="fi" id="admin-market-date"></div>
       <div class="form-field">
-        <label class="form-label">Drop time (optional)</label>
-        <input type="datetime-local" class="form-input" id="admin-market-drop">
+        <label class="fl">Drop time (optional)</label>
+        <input type="datetime-local" class="fi" id="admin-market-drop">
       </div>
-      <div class="settings-row" style="padding:6px 0;">
-        <span class="settings-label" style="font-size:12px;">Test market?</span>
+      <div class="settings-row">
+        <span class="settings-label">Test market?</span>
         <label class="settings-toggle">
           <input type="checkbox" id="admin-market-test">
           <span class="slider"></span>
@@ -3573,14 +4725,14 @@ async function loadAdminMarkets(el) {
     html += `<div class="admin-section-title">Markets (${active.length})</div>`;
     for (const m of active) {
       const dropStr = m.drop_time ? new Date(m.drop_time).toLocaleString() : 'No drop time';
-      const test = m.is_test ? ' <span class="admin-badge" style="background:#FFF8E1;color:#F9A825;">TEST</span>' : '';
+      const test = m.is_test ? ' <span class="admin-badge admin-badge--test">TEST</span>' : '';
       html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'">
         <div class="admin-card-row">
           <span class="name">${m.name}${test}</span>
           <div>${marketStatus(m)}</div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">Drop: ${dropStr}</div>
+        <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
+        <div class="admin-row-card-meta">Drop: ${dropStr}</div>
         <div class="admin-actions">
           <button class="admin-action-btn" onclick="event.stopPropagation();adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
           <button class="admin-action-btn" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',true)">Archive</button>
@@ -3590,18 +4742,18 @@ async function loadAdminMarkets(el) {
     }
 
     if (archived.length) {
-      html += `<div class="admin-section-title" style="margin-top:24px;cursor:pointer;" onclick="document.getElementById('archived-markets').style.display=document.getElementById('archived-markets').style.display==='none'?'':'none';">
+      html += `<div class="admin-section-title admin-archived-toggle" onclick="document.getElementById('archived-markets').style.display=document.getElementById('archived-markets').style.display==='none'?'':'none';">
         📦 Archive (${archived.length}) ▸
       </div>`;
-      html += `<div id="archived-markets" style="display:none;">`;
+      html += `<div id="archived-markets" class="admin-archived-section">`;
       for (const m of archived) {
-        const test = m.is_test ? ' <span class="admin-badge" style="background:#FFF8E1;color:#F9A825;">TEST</span>' : '';
-        html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'" style="opacity:0.6;">
+        const test = m.is_test ? ' <span class="admin-badge admin-badge--test">TEST</span>' : '';
+        html += `<div class="admin-card admin-clickable admin-card--dimmed" onclick="location.hash='#/admin/markets/${m.id}'">
           <div class="admin-card-row">
             <span class="name">${m.name}${test}</span>
             <div>${marketStatus(m)}</div>
           </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
+          <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
           <div class="admin-actions">
             <button class="admin-action-btn" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',false)">Unarchive</button>
             <button class="admin-action-btn danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
@@ -3613,7 +4765,7 @@ async function loadAdminMarkets(el) {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load markets.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load markets.</div>';
   }
 }
 
@@ -3623,23 +4775,23 @@ async function adminEditMarketInline(id, name, date) {
   try {
     await adminApi(`/api/admin/markets/${id}`, { method: 'PATCH', body: { name: newName } });
     loadAdminMarkets(document.getElementById('admin-content'));
-  } catch (e) { alert('Failed to update market.'); }
+  } catch (e) { showToast('Failed to update market'); }
 }
 
 async function adminArchiveMarket(id, archive) {
   try {
     await adminApi(`/api/admin/markets/${id}`, { method: 'PATCH', body: { archived: archive } });
     loadAdminMarkets(document.getElementById('admin-content'));
-  } catch (e) { alert('Failed to update market.'); }
+  } catch (e) { showToast('Failed to update market'); }
 }
 
 async function adminDeleteMarket(id, name) {
   if (!confirm(`Delete "${name}"? This only works if the market has no items.`)) return;
   try {
     const res = await adminApi(`/api/admin/markets/${id}`, { method: 'DELETE' });
-    if (res.error) { alert(res.error); return; }
+    if (res.error) { showToast(res.error); return; }
     loadAdminMarkets(document.getElementById('admin-content'));
-  } catch (e) { alert('Failed to delete market.'); }
+  } catch (e) { showToast('Failed to delete market'); }
 }
 
 async function adminCreateMarket() {
@@ -3666,7 +4818,7 @@ async function adminCreateMarket() {
 }
 
 async function loadAdminBlast(el) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
 
   // Fetch markets and past blasts in parallel
   const [markets, blasts] = await Promise.all([
@@ -3684,22 +4836,22 @@ async function loadAdminBlast(el) {
   let html = `<div class="admin-form">
     <div class="admin-section-title">Send SMS blast</div>
     <div class="form-field">
-      <label class="form-label">Market</label>
-      <select class="form-select" id="admin-blast-market">${marketOpts}</select>
+      <label class="fl">Market</label>
+      <select class="fs" id="admin-blast-market">${marketOpts}</select>
     </div>
     <div class="form-field">
-      <label class="form-label">Audience</label>
-      <select class="form-select" id="admin-blast-audience">
+      <label class="fl">Audience</label>
+      <select class="fs" id="admin-blast-audience">
         <option value="all">All users</option>
         <option value="buyers">Buyers only</option>
         <option value="sellers">Dealers only</option>
       </select>
     </div>
     <div class="form-field">
-      <label class="form-label">Message</label>
-      <textarea class="form-input" id="admin-blast-msg" rows="4" style="resize:vertical;" placeholder="Type your message..."></textarea>
+      <label class="fl">Message</label>
+      <textarea class="compose-textarea" id="admin-blast-msg" rows="4" placeholder="Type your message..."></textarea>
     </div>
-    <button class="auth-btn" onclick="adminSendBlast()">Send blast</button>
+    <button class="btn-primary" onclick="adminSendBlast()">Send blast</button>
     <div class="auth-fine" id="admin-blast-status"></div>
   </div>`;
 
@@ -3715,13 +4867,13 @@ async function loadAdminBlast(el) {
         ? `${b.sent_count}/${b.total_count} sent, ${b.fail_count} failed`
         : `${b.sent_count}/${b.total_count} sent`;
 
-      html += `<div class="admin-card">
+      html += `<div class="admin-card blast-history-item">
         <div class="admin-card-row">
-          <span class="name" style="font-size:12px;">${marketName}</span>
-          <span style="font-size:11px;color:var(--muted);">${date}</span>
+          <span class="name">${marketName}</span>
+          <span class="admin-conversation-time">${date}</span>
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${b.audience} · <span style="color:${statusColor};">${statusText}</span></div>
-        <div style="font-size:11px;color:var(--text);margin-top:6px;white-space:pre-wrap;background:var(--input-bg);padding:8px;border-radius:4px;">${b.message}</div>
+        <div class="blast-history-meta">${b.audience} · <span class="${failed ? 'blast-status-fail' : 'blast-status-ok'}">${statusText}</span></div>
+        <div class="blast-history-body">${b.message}</div>
       </div>`;
     }
   }
@@ -3767,18 +4919,18 @@ async function adminSendBlast() {
 
 // ── Market Detail ─────────────────────────────────────────
 async function loadAdminMarketDetail(el, id) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const data = await adminApi(`/api/admin/markets/${id}`);
-    if (data.error) { el.innerHTML = `<div style="color:var(--error);">${data.error}</div>`; return; }
+    if (data.error) { el.innerHTML = `<div class="admin-error">${data.error}</div>`; return; }
 
     const m = data.market;
     const s = data.stats;
-    let html = `<a class="admin-back" onclick="location.hash='#/admin/markets'">← Markets</a>`;
+    let html = `<a class="admin-back" onclick="location.hash='#/admin/markets'">Markets</a>`;
     const archivedBadge = m.archived ? ' <span class="admin-badge badge-inactive">archived</span>' : '';
-    html += `<div style="font-size:18px;font-weight:700;margin-bottom:4px;">${m.name} ${marketStatus(m)}${archivedBadge}</div>`;
-    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${formatDate(m.market_date)}${m.drop_time ? ' · Drop: ' + formatDateTime(m.drop_time) : ''}${m.is_test ? ' · TEST' : ''}</div>`;
-    html += `<div class="admin-actions" style="margin-bottom:16px;">
+    html += `<div class="admin-detail-title">${m.name} ${marketStatus(m)}${archivedBadge}</div>`;
+    html += `<div class="admin-detail-meta mb-8">${formatDate(m.market_date)}${m.drop_time ? ' · Drop: ' + formatDateTime(m.drop_time) : ''}${m.is_test ? ' · TEST' : ''}</div>`;
+    html += `<div class="admin-actions mb-16">
       <button class="admin-action-btn" onclick="adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
       <button class="admin-action-btn" onclick="adminArchiveMarket('${m.id}',${!m.archived})">${m.archived ? 'Unarchive' : 'Archive'}</button>
       <button class="admin-action-btn danger" onclick="adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
@@ -3797,14 +4949,14 @@ async function loadAdminMarketDetail(el, id) {
       for (const item of data.items) {
         const photo = item.photos?.[0];
         const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
-        html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
+        html += `<div class="admin-card admin-clickable admin-row-card" onclick="location.hash='#/admin/items/${item.id}'">
           ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
-          <div style="flex:1;">
+          <div class="admin-row-card-info">
             <div class="admin-card-row">
               <span class="name">${formatPrice(item.price)}${item.title ? ' — ' + item.title : ''}</span>
               ${statusBadge(item.status)}
             </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;">by <a onclick="event.stopPropagation();location.hash='#/admin/dealers/${item.dealer_id}'" style="color:var(--accent);cursor:pointer;">${dealer}</a></div>
+            <div class="admin-row-card-meta">by <a onclick="event.stopPropagation();location.hash='#/admin/dealers/${item.dealer_id}'" class="admin-detail-link">${dealer}</a></div>
           </div>
         </div>`;
       }
@@ -3814,10 +4966,10 @@ async function loadAdminMarketDetail(el, id) {
     if (data.blasts.length) {
       html += `<div class="admin-section-title">SMS Blasts (${data.blasts.length})</div>`;
       for (const b of data.blasts) {
-        const statusColor = b.fail_count > 0 ? 'var(--error)' : 'var(--success)';
-        html += `<div class="admin-card">
-          <div style="font-size:12px;color:var(--muted);">${formatDateTime(b.created_at)} · ${b.audience} · <span style="color:${statusColor};">${b.sent_count}/${b.total_count} sent</span></div>
-          <div style="font-size:11px;margin-top:4px;white-space:pre-wrap;background:var(--input-bg);padding:8px;border-radius:4px;">${b.message}</div>
+        const blastFailed = b.fail_count > 0;
+        html += `<div class="admin-card blast-history-item">
+          <div class="blast-history-meta">${formatDateTime(b.created_at)} · ${b.audience} · <span class="${blastFailed ? 'blast-status-fail' : 'blast-status-ok'}">${b.sent_count}/${b.total_count} sent</span></div>
+          <div class="blast-history-body">${b.message}</div>
         </div>`;
       }
     }
@@ -3833,25 +4985,25 @@ async function loadAdminMarketDetail(el, id) {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load market detail.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load market detail.</div>';
   }
 }
 
 // ── Dealer Detail ────────────────────────────────────────
 async function loadAdminDealerDetail(el, id) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const data = await adminApi(`/api/admin/dealers/${id}`);
-    if (data.error) { el.innerHTML = `<div style="color:var(--error);">${data.error}</div>`; return; }
+    if (data.error) { el.innerHTML = `<div class="admin-error">${data.error}</div>`; return; }
 
     const d = data.dealer;
     const roleClass = d.role === 'dealer' ? 'role-dealer' : 'role-buyer';
-    let html = `<a class="admin-back" onclick="location.hash='#/admin/dealers'">← Dealers</a>`;
-    html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-      <div style="font-size:18px;font-weight:700;">${d.name || 'No name'} <span class="role ${roleClass}" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;padding:2px 6px;border-radius:4px;">${d.role}</span></div>
+    let html = `<a class="admin-back" onclick="location.hash='#/admin/dealers'">Dealers</a>`;
+    html += `<div class="admin-header mb-4">
+      <div class="admin-detail-title">${d.name || 'No name'} <span class="role ${roleClass}">${d.role}</span></div>
       ${d.active === false ? '<span class="admin-badge badge-inactive">inactive</span>' : ''}
     </div>`;
-    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">`;
+    html += `<div class="admin-detail-meta mb-16">`;
     if (d.business_name) html += `${d.business_name} · `;
     html += `${d.phone}`;
     if (d.booth_number) html += ` · Booth ${d.booth_number}`;
@@ -3860,7 +5012,7 @@ async function loadAdminDealerDetail(el, id) {
     html += `</div>`;
 
     // Quick actions
-    html += `<div class="admin-actions" style="margin-bottom:16px;">
+    html += `<div class="admin-actions mb-16">
       <button class="admin-action-btn" onclick="adminEditDealerField('${d.id}','name','${(d.name||'').replace(/'/g,"\\'")}')">Edit name</button>
       <button class="admin-action-btn" onclick="adminEditDealerField('${d.id}','role','${d.role}')">Change role</button>
       <button class="admin-action-btn ${d.active !== false ? 'danger' : ''}" onclick="adminToggleDealerActive('${d.id}',${d.active !== false})">${d.active !== false ? 'Deactivate' : 'Reactivate'}</button>
@@ -3876,12 +5028,12 @@ async function loadAdminDealerDetail(el, id) {
       }
       html += `<div class="admin-section-title">Items (${data.items.length})</div>`;
       for (const [mName, items] of Object.entries(byMarket)) {
-        html += `<div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:0.1em;">${mName}</div>`;
+        html += `<div class="fl mt-8">${mName}</div>`;
         for (const item of items) {
           const photo = item.photos?.[0];
-          html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
+          html += `<div class="admin-card admin-clickable admin-row-card" onclick="location.hash='#/admin/items/${item.id}'">
             ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
-            <div style="flex:1;">
+            <div class="admin-row-card-info">
               <div class="admin-card-row">
                 <span class="name">${formatPrice(item.price)}${item.title ? ' — ' + item.title : ''}</span>
                 ${statusBadge(item.status)}
@@ -3898,9 +5050,9 @@ async function loadAdminDealerDetail(el, id) {
       for (const c of data.conversations) {
         const other = c.buyer_id === d.id ? c.seller?.name : c.buyer?.name;
         const price = c.item?.price ? formatPrice(c.item.price) : '';
-        html += `<div class="admin-card">
-          <div style="font-size:12px;">with ${other || 'Unknown'} · ${price}</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${formatDateTime(c.created_at)}</div>
+        html += `<div class="admin-card admin-conversation-row">
+          <div class="admin-conversation-name">with ${other || 'Unknown'} · ${price}</div>
+          <div class="admin-conversation-time">${formatDateTime(c.created_at)}</div>
         </div>`;
       }
     }
@@ -3916,7 +5068,7 @@ async function loadAdminDealerDetail(el, id) {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load dealer detail.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load dealer detail.</div>';
   }
 }
 
@@ -3932,7 +5084,7 @@ async function adminEditDealerField(id, field, currentVal) {
   try {
     await adminApi(`/api/admin/dealers/${id}`, { method: 'PATCH', body: { [field]: newVal } });
     loadAdminDealerDetail(document.getElementById('admin-content'), id);
-  } catch (e) { alert('Failed to update.'); }
+  } catch (e) { showToast('Failed to update'); }
 }
 
 async function adminToggleDealerActive(id, isActive) {
@@ -3940,14 +5092,14 @@ async function adminToggleDealerActive(id, isActive) {
   try {
     await adminApi(`/api/admin/dealers/${id}`, { method: 'PATCH', body: { active: !isActive } });
     loadAdminDealerDetail(document.getElementById('admin-content'), id);
-  } catch (e) { alert('Failed to update.'); }
+  } catch (e) { showToast('Failed to update'); }
 }
 
 // ── Items List ───────────────────────────────────────────
 let adminItemsCache = { markets: [], dealers: [] };
 
 async function loadAdminItems(el) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const [itemsData, markets, dealers] = await Promise.all([
       adminApi('/api/admin/items'),
@@ -3976,28 +5128,28 @@ async function loadAdminItems(el) {
     el.innerHTML = html;
     renderAdminItems(itemsData.items || []);
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load items.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load items.</div>';
   }
 }
 
 function renderAdminItems(items) {
   const list = document.getElementById('admin-items-list');
-  if (!items.length) { list.innerHTML = '<div style="color:var(--muted);font-size:12px;">No items found.</div>'; return; }
+  if (!items.length) { list.innerHTML = '<div class="admin-empty">No items found.</div>'; return; }
   let html = '';
   for (const item of items) {
     const photo = item.photos?.[0];
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
     const market = item.market ? marketLabel(item.market) : '';
-    html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
+    html += `<div class="admin-card admin-clickable admin-row-card" onclick="location.hash='#/admin/items/${item.id}'">
       ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
-      <div style="flex:1;">
+      <div class="admin-row-card-info">
         <div class="admin-card-row">
           <span class="name">${formatPrice(item.price)}${item.title ? ' — ' + item.title : ''}</span>
           ${statusBadge(item.status)}
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${dealer} · ${market}</div>
+        <div class="admin-row-card-meta">${dealer} · ${market}</div>
       </div>
-      <div class="admin-actions" style="margin-top:0;flex-shrink:0;" onclick="event.stopPropagation();">
+      <div class="admin-actions shrink-0" onclick="event.stopPropagation();">
         ${item.status === 'live' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','hold')">Hold</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
         ${item.status === 'hold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
         ${item.status === 'sold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button>` : ''}
@@ -4024,42 +5176,42 @@ async function adminQuickItemStatus(id, status) {
   try {
     await adminApi(`/api/admin/items/${id}`, { method: 'PATCH', body: { status } });
     filterAdminItems();
-  } catch (e) { alert('Failed to update.'); }
+  } catch (e) { showToast('Failed to update'); }
 }
 
 // ── Item Detail ──────────────────────────────────────────
 async function loadAdminItemDetail(el, id) {
-  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  el.innerHTML = '<div class="admin-loading">Loading...</div>';
   try {
     const data = await adminApi(`/api/admin/items/${id}`);
-    if (data.error) { el.innerHTML = `<div style="color:var(--error);">${data.error}</div>`; return; }
+    if (data.error) { el.innerHTML = `<div class="admin-error">${data.error}</div>`; return; }
 
     const item = data.item;
     const dealer = data.dealer;
     const market = data.market;
 
-    let html = `<a class="admin-back" onclick="location.hash='#/admin/items'">← Items</a>`;
+    let html = `<a class="admin-back" onclick="location.hash='#/admin/items'">Items</a>`;
 
     // Photos
     const photos = item.photos || [];
     if (photos.length) {
-      html += `<div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;">`;
+      html += `<div class="admin-photo-strip">`;
       for (const url of photos) {
-        html += `<img src="${url}" style="width:120px;height:120px;object-fit:cover;border-radius:6px;flex-shrink:0;">`;
+        html += `<img src="${url}" class="admin-photo-thumb">`;
       }
       html += `</div>`;
     }
 
-    html += `<div style="font-size:24px;font-weight:700;margin-bottom:4px;font-variant-numeric:tabular-nums;">${formatPrice(item.price)}</div>`;
-    if (item.title) html += `<div style="font-size:14px;color:var(--muted);margin-bottom:4px;">${item.title}</div>`;
-    html += `<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">${statusBadge(item.status)}`;
-    if (item.condition) html += ` <span style="font-size:11px;color:var(--muted);">${item.condition}</span>`;
-    if (item.price_posture && item.price_posture !== 'firm') html += ` <span style="font-size:11px;color:var(--muted);">${item.price_posture}</span>`;
+    html += `<div class="admin-item-price">${formatPrice(item.price)}</div>`;
+    if (item.title) html += `<div class="detail-title">${item.title}</div>`;
+    html += `<div class="admin-item-info-row">${statusBadge(item.status)}`;
+    if (item.condition) html += ` <span class="admin-item-condition">${item.condition}</span>`;
+    if (item.price_posture && item.price_posture !== 'firm') html += ` <span class="admin-item-condition">${item.price_posture}</span>`;
     html += `</div>`;
-    if (item.notes) html += `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">${item.notes}</div>`;
+    if (item.notes) html += `<div class="admin-item-notes">${item.notes}</div>`;
 
     // Status actions
-    html += `<div class="admin-actions" style="margin-bottom:16px;">`;
+    html += `<div class="admin-actions mb-16">`;
     if (item.status === 'deleted') {
       html += `<button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')">Restore</button>`;
     } else {
@@ -4071,13 +5223,13 @@ async function loadAdminItemDetail(el, id) {
     html += `</div>`;
 
     // Dealer + Market links
-    html += `<div style="font-size:12px;margin-bottom:16px;">`;
-    if (dealer) html += `Dealer: <a onclick="location.hash='#/admin/dealers/${dealer.id}'" style="color:var(--accent);cursor:pointer;">${dealer.name || dealer.phone}</a>`;
-    if (market) html += ` · Market: <a onclick="location.hash='#/admin/markets/${market.id}'" style="color:var(--accent);cursor:pointer;">${marketLabel(market)}</a>`;
+    html += `<div class="admin-detail-meta mb-16">`;
+    if (dealer) html += `Dealer: <a onclick="location.hash='#/admin/dealers/${dealer.id}'" class="admin-detail-link">${dealer.name || dealer.phone}</a>`;
+    if (market) html += ` · Market: <a onclick="location.hash='#/admin/markets/${market.id}'" class="admin-detail-link">${marketLabel(market)}</a>`;
     html += `</div>`;
 
     // Stats
-    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">${data.favorite_count} favorite${data.favorite_count !== 1 ? 's' : ''} · ${data.conversations.length} conversation${data.conversations.length !== 1 ? 's' : ''}</div>`;
+    html += `<div class="admin-item-stats">${data.favorite_count} favorite${data.favorite_count !== 1 ? 's' : ''} · ${data.conversations.length} conversation${data.conversations.length !== 1 ? 's' : ''}</div>`;
 
     // Conversations
     if (data.conversations.length) {
@@ -4085,10 +5237,10 @@ async function loadAdminItemDetail(el, id) {
       for (const c of data.conversations) {
         const buyer = c.buyer?.name || c.buyer?.business_name || 'Unknown';
         const lastMsg = c.messages?.[c.messages.length - 1];
-        html += `<div class="admin-card">
-          <div style="font-size:12px;font-weight:500;">${buyer}</div>
-          ${lastMsg ? `<div style="font-size:11px;color:var(--muted);margin-top:2px;">"${lastMsg.body.substring(0, 80)}${lastMsg.body.length > 80 ? '...' : ''}"</div>` : ''}
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${formatDateTime(c.created_at)}</div>
+        html += `<div class="admin-card admin-conversation-row">
+          <div class="admin-conversation-name">${buyer}</div>
+          ${lastMsg ? `<div class="admin-conversation-msg">"${lastMsg.body.substring(0, 80)}${lastMsg.body.length > 80 ? '...' : ''}"</div>` : ''}
+          <div class="admin-conversation-time">${formatDateTime(c.created_at)}</div>
         </div>`;
       }
     }
@@ -4104,7 +5256,7 @@ async function loadAdminItemDetail(el, id) {
 
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load item detail.</div>';
+    el.innerHTML = '<div class="admin-error">Failed to load item detail.</div>';
   }
 }
 
@@ -4112,7 +5264,7 @@ async function adminSetItemStatus(id, status) {
   try {
     await adminApi(`/api/admin/items/${id}`, { method: 'PATCH', body: { status } });
     loadAdminItemDetail(document.getElementById('admin-content'), id);
-  } catch (e) { alert('Failed to update.'); }
+  } catch (e) { showToast('Failed to update'); }
 }
 
 async function adminDeleteItem(id) {
@@ -4120,7 +5272,7 @@ async function adminDeleteItem(id) {
   try {
     await adminApi(`/api/admin/items/${id}`, { method: 'DELETE' });
     location.hash = '#/admin/items';
-  } catch (e) { alert('Failed to delete.'); }
+  } catch (e) { showToast('Failed to delete'); }
 }
 
 // ── Init ──────────────────────────────────────────────────────
