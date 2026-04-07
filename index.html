@@ -245,7 +245,7 @@
         box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         min-height: auto;
       }
-      #feed, #item-detail, #messages, #favorites, #settings, #dealer-home, #add-item {
+      #feed, #item-detail, #messages, #favorites, #settings, #dealer-home, #add-item, #admin, #admin-login {
         max-width: 900px;
         margin: 0 auto;
         background: var(--bg);
@@ -2433,7 +2433,7 @@ function route() {
   if (convMatch) { loadConversation(convMatch[1]); return; }
 
   if (hash === '#/admin') {
-    const token = sessionStorage.getItem('eb_admin_token');
+    const token = localStorage.getItem('eb_admin_token');
     if (token) {
       showScreen('admin');
       document.getElementById('bottom-nav').classList.add('hidden');
@@ -3074,7 +3074,7 @@ function adminLogin() {
     headers: { 'Authorization': `Bearer ${pw}` }
   }).then(r => {
     if (r.ok) {
-      sessionStorage.setItem('eb_admin_token', pw);
+      localStorage.setItem('eb_admin_token', pw);
       showScreen('admin');
       document.getElementById('bottom-nav').classList.add('hidden');
       loadAdminDealers(document.getElementById('admin-content'));
@@ -3090,7 +3090,7 @@ function adminLogin() {
 }
 
 function adminLogout() {
-  sessionStorage.removeItem('eb_admin_token');
+  localStorage.removeItem('eb_admin_token');
   document.getElementById('admin-password').value = '';
   showScreen('admin-login');
 }
@@ -3102,7 +3102,7 @@ document.addEventListener('keydown', e => {
 });
 
 function getAdminToken() {
-  return sessionStorage.getItem('eb_admin_token');
+  return localStorage.getItem('eb_admin_token');
 }
 
 function adminApi(path, opts = {}) {
