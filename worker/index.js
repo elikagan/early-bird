@@ -542,9 +542,9 @@ async function handleStartConversation(request, env, dealer) {
   if (!body.message) return json({ error: 'message required' }, 400);
 
   // Get the item + seller
-  const itemRes = await supabase(env, `items?id=eq.${body.item_id}&select=*,dealer:dealers(*)`);
+  const itemRes = await supabase(env, `items?id=eq.${body.item_id}&select=*,dealer:dealers!items_dealer_id_fkey(*)`);
   const items = await itemRes.json();
-  if (!items.length) return json({ error: 'Item not found' }, 404);
+  if (!Array.isArray(items) || !items.length) return json({ error: 'Item not found' }, 404);
   const item = items[0];
   const seller = item.dealer;
 

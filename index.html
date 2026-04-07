@@ -7,13 +7,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     /*
      * DESIGN SYSTEM: "The Text Message"
-     * Font: JetBrains Mono (one font, all weights)
-     * Colors: #1A1A1A text, #888 muted, #CCC dim, #0066FF accent
+     * Font: Inter for UI text, JetBrains Mono for prices/data only
+     * Colors: #1A1A1A text, #666 muted, #AAA dim, #0066FF accent
      * Background: #FAFAF8
      * Spacing: 32px between groups, 48px between zones
      * No borders, no dividers — spacing is the only structure
@@ -23,8 +24,8 @@
     :root {
       --bg: #FAFAF8;
       --text: #1A1A1A;
-      --muted: #888888;
-      --dim: #CCCCCC;
+      --muted: #666666;
+      --dim: #AAAAAA;
       --accent: #0066FF;
       --accent-hover: #0052CC;
       --error: #D32F2F;
@@ -37,7 +38,7 @@
       width: 100%;
     }
     body {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
@@ -146,10 +147,9 @@
       background: var(--accent);
       color: #FFFFFF;
       border: none;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       padding: 16px 20px;
       border-radius: 6px;
@@ -375,7 +375,6 @@
       background: var(--input-bg);
       border: none;
       border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
       color: var(--text);
       outline: none;
@@ -462,7 +461,8 @@
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      background: var(--bg);
+      background: #fff;
+      border-bottom: 1px solid var(--input-bg);
     }
     .item-card-img {
       width: 100%;
@@ -622,14 +622,17 @@
       position: fixed;
       top: 0; left: 0;
       z-index: 100;
-      padding: max(10px, env(safe-area-inset-top)) 16px 8px;
+      padding: max(10px, env(safe-area-inset-top)) 16px 16px;
+      right: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%);
+      pointer-events: none;
     }
     .detail-back a {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       color: #fff;
       text-decoration: none;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      pointer-events: auto;
     }
     .detail-photos {
       /* No padding — photo goes edge to edge from top */
@@ -743,10 +746,9 @@
       background: var(--accent);
       color: #FFFFFF;
       border: none;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       padding: 16px 20px;
       border-radius: 6px;
@@ -760,10 +762,9 @@
     .msg-option-btn {
       background: var(--input-bg);
       border: none;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--muted);
+      color: var(--text);
       padding: 10px 14px;
       border-radius: 6px;
       cursor: pointer;
@@ -878,7 +879,6 @@
     .inquiry-action-btn {
       background: var(--input-bg);
       border: none;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.1em;
@@ -976,7 +976,6 @@
       background: var(--input-bg);
       border: none;
       border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
       color: var(--text);
       outline: none;
@@ -988,7 +987,6 @@
       background: var(--input-bg);
       border: none;
       border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
       color: var(--text);
       outline: none;
@@ -1040,7 +1038,6 @@
     .mode-toggle.hidden { display: none; }
     .mode-btn {
       flex: 1;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -1083,7 +1080,6 @@
       cursor: pointer;
       border: none;
       background: none;
-      font-family: 'JetBrains Mono', monospace;
     }
     .nav-tab.active { color: var(--accent); }
     .nav-tab svg { width: 22px; height: 22px; }
@@ -1132,10 +1128,9 @@
       color: white;
       border: none;
       border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       cursor: pointer;
       margin-bottom: 24px;
@@ -1180,7 +1175,6 @@
       flex-shrink: 0;
     }
     .my-item-action {
-      font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.05em;
@@ -1304,7 +1298,6 @@
     }
     .admin-tab {
       flex: 1;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -1349,12 +1342,12 @@
     .badge-past { background: var(--input-bg); color: var(--muted); }
     .badge-inactive { background: #FDECEA; color: var(--error); }
     .admin-actions { display: flex; gap: 6px; margin-top: 8px; }
-    .admin-action-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; background: var(--input-bg); color: var(--muted); }
+    .admin-action-btn { font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; background: var(--input-bg); color: var(--muted); }
     .admin-action-btn:hover { background: var(--dim); color: var(--text); }
     .admin-action-btn.danger { color: var(--error); }
     .admin-action-btn.danger:hover { background: #FDECEA; }
     .admin-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .admin-filter-bar select { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 8px; border: none; background: var(--input-bg); border-radius: 4px; color: var(--text); }
+    .admin-filter-bar select { font-size: 11px; padding: 6px 8px; border: none; background: var(--input-bg); border-radius: 4px; color: var(--text); }
     .admin-timeline { margin-top: 16px; }
     .admin-timeline-item { font-size: 12px; padding: 8px 0; color: var(--muted); }
     .admin-timeline-item + .admin-timeline-item { border-top: 1px solid var(--input-bg); }
@@ -1437,12 +1430,16 @@
       background: none;
       border: 1px solid var(--error);
       border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 600;
       color: var(--error);
       cursor: pointer;
       margin-top: 24px;
+    }
+
+    /* Mono only for prices, numbers, data */
+    .item-card-price, .detail-price, .auth-input {
+      font-family: 'JetBrains Mono', monospace;
     }
   </style>
 </head>
@@ -1685,7 +1682,9 @@
   </div>
   <div id="messages-content">
     <div class="empty-state">
-      <p>No messages yet. Conversations about items will show up here.</p>
+      <div style="font-size:32px;margin-bottom:12px;">&#128172;</div>
+      <h2>No messages yet</h2>
+      <p>When you message a seller about an item, your conversation will appear here.</p>
     </div>
   </div>
 </div>
@@ -1859,13 +1858,13 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
-    My Items
+    Booth
   </button>
   <button class="nav-tab" data-tab="favorites" onclick="switchTab('favorites')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
     </svg>
-    Saved
+    Favorites
   </button>
   <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2265,7 +2264,7 @@ async function loadFavorites() {
   try {
     const favs = await api('/api/favorites');
     if (!favs?.length) {
-      content.innerHTML = '<div class="empty-state"><h2>No favorites yet</h2><p>Tap the heart on items you like to save them here.</p></div>';
+      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#9825;</div><h2>No favorites yet</h2><p>Tap the heart on items you love and they'll show up here.</p></div>';
       return;
     }
     content.innerHTML = '<div class="fav-grid">' + favs.map(fav => {
@@ -2300,7 +2299,7 @@ async function loadMessages() {
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     if (!all.length) {
-      content.innerHTML = '<div class="empty-state"><p>No messages yet. Conversations about items will show up here.</p></div>';
+      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#128172;</div><h2>No messages yet</h2><p>When you message a seller about an item, your conversation will appear here.</p></div>';
       return;
     }
 
@@ -2421,7 +2420,7 @@ function editBoothNumber() {
   const current = currentUser?.booth_number || '';
   boothRow.innerHTML = `<div style="display:flex;gap:8px;align-items:center;">
     <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);outline:none;">
-    <button onclick="saveBoothNumber()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
+    <button onclick="saveBoothNumber()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
   </div>`;
   document.getElementById('booth-input').focus();
 }
