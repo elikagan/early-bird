@@ -1765,8 +1765,8 @@
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="browse-toggle" id="browse-toggle">
-          <button class="browse-toggle-btn active" onclick="setBrowseMode('all')">All</button>
-          <button class="browse-toggle-btn" onclick="setBrowseMode('saved')">Saved</button>
+          <button class="browse-toggle-btn active" onclick="setBrowseMode('all', this)">All</button>
+          <button class="browse-toggle-btn" onclick="setBrowseMode('saved', this)">Saved</button>
         </div>
         <button onclick="openFilterSheet()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--muted);">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1830,9 +1830,9 @@
     </div>
   </div>
   <div class="msg-toggle nav-dealer-only hidden" id="msg-filter-toggle">
-    <button class="msg-toggle-btn active" onclick="filterMessages('all')">All</button>
-    <button class="msg-toggle-btn" onclick="filterMessages('buying')">Buying</button>
-    <button class="msg-toggle-btn" onclick="filterMessages('selling')">Selling</button>
+    <button class="msg-toggle-btn active" onclick="filterMessages('all', this)">All</button>
+    <button class="msg-toggle-btn" onclick="filterMessages('buying', this)">Buying</button>
+    <button class="msg-toggle-btn" onclick="filterMessages('selling', this)">Selling</button>
   </div>
   <div id="messages-content">
     <div class="empty-state">
@@ -2099,20 +2099,20 @@ function closeFilterSheet() {
 
 // ── Browse mode (All / Saved) ────────────────────────────────
 let browseMode = 'all';
-function setBrowseMode(mode) {
+function setBrowseMode(mode, el) {
   browseMode = mode;
   document.querySelectorAll('.browse-toggle-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
   applyFeedFilters();
 }
 
 // ── Message filter (All / Buying / Selling) ──────────────────
 let msgFilter = 'all';
 let allConversations = [];
-function filterMessages(filter) {
+function filterMessages(filter, el) {
   msgFilter = filter;
   document.querySelectorAll('.msg-toggle-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (el) el.classList.add('active');
   renderConversations();
 }
 
