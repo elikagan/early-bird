@@ -13,6 +13,7 @@ CREATE TABLE dealers (
   zelle TEXT,
   booth_number TEXT,           -- e.g. "E25", confirmable per event
   show_name_on_sold BOOLEAN DEFAULT true,
+  active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -99,6 +100,16 @@ CREATE TABLE sms_blasts (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Admin audit log
+CREATE TABLE admin_actions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  action TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id UUID,
+  details JSONB,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Indexes
 CREATE INDEX idx_dealers_phone ON dealers(phone);
 CREATE INDEX idx_items_market_status ON items(market_id, status);
@@ -113,6 +124,8 @@ CREATE INDEX idx_conversations_item ON conversations(item_id);
 CREATE INDEX idx_messages_conversation ON messages(conversation_id);
 CREATE INDEX idx_auth_tokens_token ON auth_tokens(token) WHERE used = false;
 CREATE INDEX idx_sms_blasts_created ON sms_blasts(created_at DESC);
+CREATE INDEX idx_admin_actions_created ON admin_actions(created_at DESC);
+CREATE INDEX idx_admin_actions_entity ON admin_actions(entity_type, entity_id);
 
 -- Enable RLS (service role bypasses, worker handles all auth)
 ALTER TABLE dealers ENABLE ROW LEVEL SECURITY;
@@ -123,6 +136,7 @@ ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sms_blasts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_actions ENABLE ROW LEVEL SECURITY;
 
 -- Public read policies
 CREATE POLICY "Anyone can read markets" ON markets FOR SELECT USING (true);

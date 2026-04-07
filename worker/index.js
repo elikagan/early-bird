@@ -136,10 +136,40 @@ export default {
         res = await handleServeImage(env, key);
 
       // Admin
+      } else if (path === '/api/admin/dashboard' && method === 'GET') {
+        res = await requireAdmin(request, env) || await handleAdminDashboard(env);
       } else if (path === '/api/admin/dealers' && method === 'POST') {
         res = await requireAdmin(request, env) || await handleCreateDealer(request, env);
       } else if (path === '/api/admin/dealers' && method === 'GET') {
         res = await requireAdmin(request, env) || await handleListDealers(env);
+      } else if (path.match(/^\/api\/admin\/dealers\/[^/]+$/) && method === 'GET') {
+        const id = path.split('/api/admin/dealers/')[1];
+        res = await requireAdmin(request, env) || await handleAdminDealerDetail(env, id);
+      } else if (path.match(/^\/api\/admin\/dealers\/[^/]+$/) && method === 'PATCH') {
+        const id = path.split('/api/admin/dealers/')[1];
+        res = await requireAdmin(request, env) || await handleAdminEditDealer(request, env, id);
+      } else if (path === '/api/admin/markets' && method === 'GET') {
+        res = await requireAdmin(request, env) || await handleAdminListMarkets(env);
+      } else if (path.match(/^\/api\/admin\/markets\/[^/]+$/) && method === 'GET') {
+        const id = path.split('/api/admin/markets/')[1];
+        res = await requireAdmin(request, env) || await handleAdminMarketDetail(env, id);
+      } else if (path.match(/^\/api\/admin\/markets\/[^/]+$/) && method === 'PATCH') {
+        const id = path.split('/api/admin/markets/')[1];
+        res = await requireAdmin(request, env) || await handleAdminEditMarket(request, env, id);
+      } else if (path.match(/^\/api\/admin\/markets\/[^/]+$/) && method === 'DELETE') {
+        const id = path.split('/api/admin/markets/')[1];
+        res = await requireAdmin(request, env) || await handleAdminDeleteMarket(env, id);
+      } else if (path === '/api/admin/items' && method === 'GET') {
+        res = await requireAdmin(request, env) || await handleAdminListItems(url, env);
+      } else if (path.match(/^\/api\/admin\/items\/[^/]+$/) && method === 'GET') {
+        const id = path.split('/api/admin/items/')[1];
+        res = await requireAdmin(request, env) || await handleAdminItemDetail(env, id);
+      } else if (path.match(/^\/api\/admin\/items\/[^/]+$/) && method === 'PATCH') {
+        const id = path.split('/api/admin/items/')[1];
+        res = await requireAdmin(request, env) || await handleAdminEditItem(request, env, id);
+      } else if (path.match(/^\/api\/admin\/items\/[^/]+$/) && method === 'DELETE') {
+        const id = path.split('/api/admin/items/')[1];
+        res = await requireAdmin(request, env) || await handleAdminDeleteItem(env, id);
       } else if (path === '/api/admin/activity' && method === 'GET') {
         res = await requireAdmin(request, env) || await handleActivity(url, env);
       } else if (path === '/api/admin/proxy-post' && method === 'POST') {
@@ -150,6 +180,8 @@ export default {
         res = await requireAdmin(request, env) || await handleSMSBlast(request, env);
       } else if (path === '/api/admin/sms-blasts' && method === 'GET') {
         res = await requireAdmin(request, env) || await handleListBlasts(env);
+      } else if (path === '/api/admin/sms-blast-preview' && method === 'GET') {
+        res = await requireAdmin(request, env) || await handleBlastPreview(url, env);
 
       // Item inquiries (seller view)
       } else if (path.match(/^\/api\/items\/[^/]+\/inquiries$/) && method === 'GET') {
@@ -246,6 +278,13 @@ async function requireAdmin(request, env) {
   const token = authHeader.replace('Bearer ', '');
   if (token !== env.ADMIN_TOKEN) return json({ error: 'Admin access required' }, 403);
   return null;
+}
+
+async function logAdminAction(env, action, entityType, entityId, details) {
+  await supabase(env, 'admin_actions', {
+    method: 'POST',
+    body: { action, entity_type: entityType, entity_id: entityId, details },
+  });
 }
 
 function generateToken(length = 8) {
@@ -749,6 +788,233 @@ async function handleServeImage(env, key) {
 
 // ── Admin ────────────────────────────────────────────────────
 
+async function handleAdminDashboard(env) {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const today = new Date().toISOString().split('T')[0];
+
+  const [dealersRes, itemsWeekRes, nextMarketRes, actionsRes] = await Promise.all([
+    supabase(env, 'dealers?select=id,role,active'),
+    supabase(env, `items?created_at=gte.${weekAgo}&select=id,status`),
+    supabase(env, `markets?market_date=gte.${today}&select=*&order=market_date.asc&limit=1`),
+    supabase(env, 'admin_actions?select=*&order=created_at.desc&limit=20'),
+  ]);
+
+  const dealers = await dealersRes.json();
+  const itemsWeek = await itemsWeekRes.json();
+  const nextMarkets = await nextMarketRes.json();
+  const actions = await actionsRes.json();
+
+  const activeDealers = Array.isArray(dealers) ? dealers.filter(d => d.role === 'dealer' && d.active !== false).length : 0;
+  const totalBuyers = Array.isArray(dealers) ? dealers.filter(d => d.role === 'buyer').length : 0;
+  const itemsThisWeek = Array.isArray(itemsWeek) ? itemsWeek.length : 0;
+  const soldThisWeek = Array.isArray(itemsWeek) ? itemsWeek.filter(i => i.status === 'sold').length : 0;
+
+  let nextMarket = null;
+  if (Array.isArray(nextMarkets) && nextMarkets.length) {
+    const m = nextMarkets[0];
+    const itemsRes2 = await supabase(env, `items?market_id=eq.${m.id}&select=id,dealer_id`);
+    const marketItems = await itemsRes2.json();
+    const dealerIds = new Set((marketItems || []).map(i => i.dealer_id));
+    nextMarket = { ...m, item_count: (marketItems || []).length, dealer_count: dealerIds.size };
+  }
+
+  return json({
+    dealer_count: activeDealers,
+    buyer_count: totalBuyers,
+    items_this_week: itemsThisWeek,
+    sold_this_week: soldThisWeek,
+    next_market: nextMarket,
+    recent_actions: Array.isArray(actions) ? actions : [],
+  });
+}
+
+async function handleAdminListMarkets(env) {
+  const [marketsRes, itemsRes] = await Promise.all([
+    supabase(env, 'markets?select=*&order=market_date.desc'),
+    supabase(env, 'items?select=id,market_id,dealer_id,status'),
+  ]);
+  const markets = await marketsRes.json();
+  const items = await itemsRes.json();
+
+  const itemsByMarket = {};
+  for (const item of (items || [])) {
+    if (!itemsByMarket[item.market_id]) itemsByMarket[item.market_id] = [];
+    itemsByMarket[item.market_id].push(item);
+  }
+
+  const result = (markets || []).map(m => {
+    const mItems = itemsByMarket[m.id] || [];
+    const dealerIds = new Set(mItems.map(i => i.dealer_id));
+    return { ...m, item_count: mItems.length, dealer_count: dealerIds.size };
+  });
+
+  return json(result);
+}
+
+async function handleAdminMarketDetail(env, id) {
+  const [marketRes, itemsRes, blastsRes, actionsRes] = await Promise.all([
+    supabase(env, `markets?id=eq.${id}&select=*`),
+    supabase(env, `items?market_id=eq.${id}&select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name)&order=created_at.desc`),
+    supabase(env, `sms_blasts?market_id=eq.${id}&select=*&order=created_at.desc`),
+    supabase(env, `admin_actions?entity_type=eq.market&entity_id=eq.${id}&select=*&order=created_at.desc`),
+  ]);
+
+  const markets = await marketRes.json();
+  if (!markets?.length) return json({ error: 'Market not found' }, 404);
+
+  const items = await itemsRes.json();
+  const blasts = await blastsRes.json();
+  const history = await actionsRes.json();
+
+  const dealerIds = new Set((items || []).map(i => i.dealer_id));
+  const stats = {
+    total_items: (items || []).length,
+    live: (items || []).filter(i => i.status === 'live').length,
+    hold: (items || []).filter(i => i.status === 'hold').length,
+    sold: (items || []).filter(i => i.status === 'sold').length,
+    dealer_count: dealerIds.size,
+  };
+
+  return json({ market: markets[0], items: items || [], blasts: blasts || [], stats, history: history || [] });
+}
+
+async function handleAdminEditMarket(request, env, id) {
+  const body = await request.json();
+  const allowed = ['name', 'market_date', 'drop_time', 'is_test'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+  if (!Object.keys(updates).length) return json({ error: 'Nothing to update' }, 400);
+
+  const res = await supabase(env, `markets?id=eq.${id}`, { method: 'PATCH', body: updates });
+  const result = await res.json();
+  await logAdminAction(env, 'edit_market', 'market', id, updates);
+  return json(result);
+}
+
+async function handleAdminDeleteMarket(env, id) {
+  const itemsRes = await supabase(env, `items?market_id=eq.${id}&select=id&limit=1`);
+  const items = await itemsRes.json();
+  if (items?.length) return json({ error: 'Cannot delete market with items. Delete or reassign items first.' }, 409);
+
+  await supabase(env, `markets?id=eq.${id}`, { method: 'DELETE' });
+  await logAdminAction(env, 'delete_market', 'market', id, {});
+  return json({ ok: true });
+}
+
+async function handleAdminDealerDetail(env, id) {
+  const [dealerRes, itemsRes, convsRes, actionsRes] = await Promise.all([
+    supabase(env, `dealers?id=eq.${id}&select=*`),
+    supabase(env, `items?dealer_id=eq.${id}&select=*,market:markets(id,name,market_date)&order=created_at.desc`),
+    supabase(env, `conversations?or=(buyer_id.eq.${id},seller_id.eq.${id})&select=*,buyer:dealers!conversations_buyer_id_fkey(name),seller:dealers!conversations_seller_id_fkey(name),item:items(price,title,photos)&order=created_at.desc&limit=20`),
+    supabase(env, `admin_actions?entity_type=eq.dealer&entity_id=eq.${id}&select=*&order=created_at.desc`),
+  ]);
+
+  const dealers = await dealerRes.json();
+  if (!dealers?.length) return json({ error: 'Dealer not found' }, 404);
+
+  const items = await itemsRes.json();
+  const conversations = await convsRes.json();
+  const history = await actionsRes.json();
+
+  return json({ dealer: dealers[0], items: items || [], conversations: conversations || [], history: history || [] });
+}
+
+async function handleAdminEditDealer(request, env, id) {
+  const body = await request.json();
+  const allowed = ['name', 'business_name', 'role', 'active', 'booth_number', 'venmo', 'zelle'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+  if (!Object.keys(updates).length) return json({ error: 'Nothing to update' }, 400);
+
+  const action = updates.active === false ? 'deactivate_dealer' : 'edit_dealer';
+  const res = await supabase(env, `dealers?id=eq.${id}`, { method: 'PATCH', body: updates });
+  const result = await res.json();
+  await logAdminAction(env, action, 'dealer', id, updates);
+  return json(result);
+}
+
+async function handleAdminListItems(url, env) {
+  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name),market:markets(id,name)&order=created_at.desc';
+
+  const marketId = url.searchParams.get('market_id');
+  const status = url.searchParams.get('status');
+  const dealerId = url.searchParams.get('dealer_id');
+  const limit = url.searchParams.get('limit') || '50';
+  const offset = url.searchParams.get('offset') || '0';
+
+  if (marketId) query += `&market_id=eq.${marketId}`;
+  if (status) query += `&status=eq.${status}`;
+  if (dealerId) query += `&dealer_id=eq.${dealerId}`;
+  query += `&limit=${limit}&offset=${offset}`;
+
+  const res = await supabase(env, query, { headers: { 'Prefer': 'return=representation,count=exact' } });
+  const items = await res.json();
+  const total = res.headers.get('content-range')?.split('/')?.[1] || items?.length || 0;
+  return json({ items: items || [], total: parseInt(total) });
+}
+
+async function handleAdminItemDetail(env, id) {
+  const [itemRes, convsRes, favsRes, actionsRes] = await Promise.all([
+    supabase(env, `items?id=eq.${id}&select=*,dealer:dealers!items_dealer_id_fkey(*),market:markets(*)`),
+    supabase(env, `conversations?item_id=eq.${id}&select=*,buyer:dealers!conversations_buyer_id_fkey(id,name,business_name),messages(body,direction,created_at)&order=created_at.desc`),
+    supabase(env, `favorites?item_id=eq.${id}&select=id`),
+    supabase(env, `admin_actions?entity_type=eq.item&entity_id=eq.${id}&select=*&order=created_at.desc`),
+  ]);
+
+  const items = await itemRes.json();
+  if (!items?.length) return json({ error: 'Item not found' }, 404);
+
+  const conversations = await convsRes.json();
+  const favorites = await favsRes.json();
+  const history = await actionsRes.json();
+
+  return json({
+    item: items[0],
+    dealer: items[0].dealer,
+    market: items[0].market,
+    conversations: conversations || [],
+    favorite_count: (favorites || []).length,
+    history: history || [],
+  });
+}
+
+async function handleAdminEditItem(request, env, id) {
+  const body = await request.json();
+  const allowed = ['price', 'title', 'status', 'notes', 'category', 'condition', 'firm', 'price_posture'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+  if (!Object.keys(updates).length) return json({ error: 'Nothing to update' }, 400);
+
+  const res = await supabase(env, `items?id=eq.${id}`, { method: 'PATCH', body: updates });
+  const result = await res.json();
+  await logAdminAction(env, 'edit_item', 'item', id, updates);
+  return json(result);
+}
+
+async function handleAdminDeleteItem(env, id) {
+  const res = await supabase(env, `items?id=eq.${id}`, { method: 'PATCH', body: { status: 'deleted' } });
+  const result = await res.json();
+  await logAdminAction(env, 'delete_item', 'item', id, {});
+  return json(result);
+}
+
+async function handleBlastPreview(url, env) {
+  const audience = url.searchParams.get('audience') || 'all';
+  let query;
+  if (audience === 'buyers') query = 'dealers?role=eq.buyer&select=id';
+  else if (audience === 'sellers') query = 'dealers?role=eq.dealer&select=id';
+  else query = 'dealers?select=id';
+  const res = await supabase(env, query);
+  const dealers = await res.json();
+  return json({ count: Array.isArray(dealers) ? dealers.length : 0 });
+}
+
 async function handleCreateDealer(request, env) {
   const body = await request.json();
   if (!body.phone) return json({ error: 'Phone required' }, 400);
@@ -771,6 +1037,9 @@ async function handleCreateDealer(request, env) {
     headers: { 'Prefer': 'return=representation,resolution=ignore-duplicates' },
   });
   const result = await res.json();
+  if (Array.isArray(result) && result[0]?.id) {
+    await logAdminAction(env, 'create_dealer', 'dealer', result[0].id, { phone, name: dealer.name, role: dealer.role });
+  }
   return json(result, 201);
 }
 
@@ -817,7 +1086,11 @@ async function handleProxyPost(request, env) {
   };
 
   const res = await supabase(env, 'items', { method: 'POST', body: item });
-  return json(await res.json(), 201);
+  const result = await res.json();
+  if (Array.isArray(result) && result[0]?.id) {
+    await logAdminAction(env, 'proxy_post', 'item', result[0].id, { dealer_id: body.dealer_id, price: body.price });
+  }
+  return json(result, 201);
 }
 
 async function handleAdminConversations(url, env) {
@@ -923,6 +1196,8 @@ async function handleSMSBlast(request, env) {
       errors: errors.length ? errors : null,
     },
   });
+
+  await logAdminAction(env, 'send_blast', 'sms_blast', null, { audience, sent, total: withPhone.length, fail_count: errors.length });
 
   return json({ sent, total: withPhone.length, fail_count: errors.length, errors: errors.length ? errors : undefined });
 }

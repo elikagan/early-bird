@@ -1328,6 +1328,34 @@
     .admin-stat + .admin-stat { border-top: 1px solid var(--input-bg); }
     .admin-stat .label { color: var(--muted); }
     .admin-stat .value { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .admin-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+    .admin-stat-card { background: var(--input-bg); border-radius: 6px; padding: 14px 16px; }
+    .admin-stat-card .value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .admin-stat-card .label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .admin-back { font-size: 12px; color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; cursor: pointer; }
+    .admin-back:hover { color: var(--text); }
+    .admin-clickable { cursor: pointer; transition: opacity 0.15s; }
+    .admin-clickable:hover { opacity: 0.7; }
+    .admin-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+    .badge-live { background: #EDF7F0; color: var(--success); }
+    .badge-hold { background: #FFF8E1; color: #F9A825; }
+    .badge-sold { background: var(--input-bg); color: var(--muted); }
+    .badge-deleted { background: #FDECEA; color: var(--error); }
+    .badge-upcoming { background: #EDF7F0; color: var(--success); }
+    .badge-past { background: var(--input-bg); color: var(--muted); }
+    .badge-inactive { background: #FDECEA; color: var(--error); }
+    .admin-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .admin-action-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; background: var(--input-bg); color: var(--muted); }
+    .admin-action-btn:hover { background: var(--dim); color: var(--text); }
+    .admin-action-btn.danger { color: var(--error); }
+    .admin-action-btn.danger:hover { background: #FDECEA; }
+    .admin-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .admin-filter-bar select { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 8px; border: none; background: var(--input-bg); border-radius: 4px; color: var(--text); }
+    .admin-timeline { margin-top: 16px; }
+    .admin-timeline-item { font-size: 12px; padding: 8px 0; color: var(--muted); }
+    .admin-timeline-item + .admin-timeline-item { border-top: 1px solid var(--input-bg); }
+    .admin-timeline-item .action { color: var(--text); font-weight: 500; }
+    .admin-thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 10px; flex-shrink: 0; }
 
     /* ── Settings ─────────────────────── */
     #settings {
@@ -1806,10 +1834,11 @@
     </div>
   </div>
   <div class="admin-tabs">
-    <button class="admin-tab active" onclick="adminTab('dealers', this)">Dealers</button>
-    <button class="admin-tab" onclick="adminTab('markets', this)">Markets</button>
-    <button class="admin-tab" onclick="adminTab('blast', this)">SMS Blast</button>
-    <button class="admin-tab" onclick="adminTab('activity', this)">Activity</button>
+    <button class="admin-tab" data-admin-tab="dashboard" onclick="location.hash='#/admin'">Dashboard</button>
+    <button class="admin-tab" data-admin-tab="markets" onclick="location.hash='#/admin/markets'">Markets</button>
+    <button class="admin-tab" data-admin-tab="dealers" onclick="location.hash='#/admin/dealers'">Dealers</button>
+    <button class="admin-tab" data-admin-tab="items" onclick="location.hash='#/admin/items'">Items</button>
+    <button class="admin-tab" data-admin-tab="sms" onclick="location.hash='#/admin/sms'">SMS</button>
   </div>
   <div id="admin-content"></div>
 </div>
@@ -2432,18 +2461,32 @@ function route() {
   const convMatch = hash.match(/^#\/c\/(.+)$/);
   if (convMatch) { loadConversation(convMatch[1]); return; }
 
-  if (hash === '#/admin') {
+  if (hash.startsWith('#/admin')) {
     const token = localStorage.getItem('eb_admin_token');
-    if (token) {
-      showScreen('admin');
-      document.getElementById('bottom-nav').classList.add('hidden');
-      loadAdminDealers(document.getElementById('admin-content'));
-    } else {
+    if (!token) {
       showScreen('admin-login');
       document.getElementById('bottom-nav').classList.add('hidden');
       const pwField = document.getElementById('admin-password');
       if (pwField) pwField.focus();
+      return;
     }
+
+    showScreen('admin');
+    document.getElementById('bottom-nav').classList.add('hidden');
+    const content = document.getElementById('admin-content');
+
+    const marketMatch = hash.match(/^#\/admin\/markets\/(.+)$/);
+    const dealerMatch = hash.match(/^#\/admin\/dealers\/(.+)$/);
+    const itemMatch = hash.match(/^#\/admin\/items\/(.+)$/);
+
+    if (marketMatch) { setAdminTab(null); loadAdminMarketDetail(content, marketMatch[1]); }
+    else if (dealerMatch) { setAdminTab(null); loadAdminDealerDetail(content, dealerMatch[1]); }
+    else if (itemMatch) { setAdminTab(null); loadAdminItemDetail(content, itemMatch[1]); }
+    else if (hash === '#/admin/markets') { setAdminTab('markets'); loadAdminMarkets(content); }
+    else if (hash === '#/admin/dealers') { setAdminTab('dealers'); loadAdminDealers(content); }
+    else if (hash === '#/admin/items') { setAdminTab('items'); loadAdminItems(content); }
+    else if (hash === '#/admin/sms') { setAdminTab('sms'); loadAdminBlast(content); }
+    else { setAdminTab('dashboard'); loadAdminDashboard(content); }
     return;
   }
 
@@ -3060,6 +3103,25 @@ function logout() {
 }
 
 // ── Admin CMS ───────────────────────────────────────────────
+
+function setAdminTab(name) {
+  document.querySelectorAll('.admin-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.adminTab === name);
+  });
+}
+
+function formatDate(d) { return new Date(d).toLocaleDateString(); }
+function formatDateTime(d) { return new Date(d).toLocaleString(); }
+function formatPrice(cents) { return '$' + (cents / 100).toLocaleString(); }
+function statusBadge(s) { return `<span class="admin-badge badge-${s}">${s}</span>`; }
+function marketStatus(m) {
+  const d = m.market_date;
+  const today = new Date().toISOString().split('T')[0];
+  if (d === today) return '<span class="admin-badge badge-live">Today</span>';
+  if (d > today) return '<span class="admin-badge badge-upcoming">Upcoming</span>';
+  return '<span class="admin-badge badge-past">Past</span>';
+}
+
 function adminLogin() {
   const pw = document.getElementById('admin-password').value.trim();
   const err = document.getElementById('admin-login-error');
@@ -3119,16 +3181,56 @@ function adminApi(path, opts = {}) {
 }
 
 function adminTab(tab, btn) {
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  const content = document.getElementById('admin-content');
-
-  if (tab === 'dealers') loadAdminDealers(content);
-  if (tab === 'markets') loadAdminMarkets(content);
-  if (tab === 'blast') loadAdminBlast(content);
-  if (tab === 'activity') loadAdminActivity(content);
+  // Legacy compat — redirect to hash navigation
+  location.hash = '#/admin/' + (tab === 'dashboard' ? '' : tab === 'blast' ? 'sms' : tab);
 }
 
+// ── Dashboard ─────────────────────────────────────────────
+async function loadAdminDashboard(el) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const data = await adminApi('/api/admin/dashboard');
+
+    let html = `<div class="admin-stats-grid">
+      <div class="admin-stat-card"><div class="value">${data.dealer_count}</div><div class="label">Active dealers</div></div>
+      <div class="admin-stat-card"><div class="value">${data.buyer_count}</div><div class="label">Buyers</div></div>
+      <div class="admin-stat-card"><div class="value">${data.items_this_week}</div><div class="label">Items this week</div></div>
+      <div class="admin-stat-card"><div class="value">${data.sold_this_week}</div><div class="label">Sold this week</div></div>
+    </div>`;
+
+    if (data.next_market) {
+      const m = data.next_market;
+      const daysUntil = Math.ceil((new Date(m.market_date) - new Date()) / (1000 * 60 * 60 * 24));
+      html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'" style="margin-bottom:24px;">
+        <div class="admin-card-row">
+          <span class="name">${m.name}</span>
+          <span class="admin-badge badge-upcoming">${daysUntil <= 0 ? 'Today' : daysUntil + 'd away'}</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count} items · ${m.dealer_count} dealers</div>
+      </div>`;
+    }
+
+    if (data.recent_actions?.length) {
+      html += `<div class="admin-section-title">Recent actions</div>`;
+      html += `<div class="admin-timeline">`;
+      for (const a of data.recent_actions) {
+        const label = a.action.replace(/_/g, ' ');
+        const link = a.entity_id ? `onclick="location.hash='#/admin/${a.entity_type}s/${a.entity_id}'"` : '';
+        html += `<div class="admin-timeline-item ${a.entity_id ? 'admin-clickable' : ''}" ${link}>
+          <span class="action">${label}</span>
+          <span style="margin-left:6px;">${formatDateTime(a.created_at)}</span>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load dashboard.</div>';
+  }
+}
+
+// ── Dealers List ──────────────────────────────────────────
 async function loadAdminDealers(el) {
   el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
   try {
@@ -3145,24 +3247,38 @@ async function loadAdminDealers(el) {
       <div class="auth-fine" id="admin-dealer-msg"></div>
     </div>`;
 
-    html += `<div class="admin-section-title">All users (${dealers.length})</div>`;
+    html += `<div class="admin-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>All users (${dealers.length})</span>
+      <input type="text" class="form-input" id="admin-dealer-search" placeholder="Search..." style="width:140px;font-size:11px;padding:6px 8px;" oninput="filterDealerList()">
+    </div>`;
+
+    html += `<div id="admin-dealer-list">`;
     for (const d of dealers) {
       const roleClass = d.role === 'dealer' ? 'role-dealer' : 'role-buyer';
-      html += `<div class="admin-card">
+      const inactive = d.active === false ? ' <span class="admin-badge badge-inactive">inactive</span>' : '';
+      html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/dealers/${d.id}'" data-name="${(d.name||'').toLowerCase()} ${(d.business_name||'').toLowerCase()} ${d.phone}">
         <div class="admin-card-row">
           <div>
             <span class="name">${d.name || 'No name'}</span>
-            ${d.business_name ? ` · ${d.business_name}` : ''}
+            ${d.business_name ? ` · ${d.business_name}` : ''}${inactive}
           </div>
           <span class="role ${roleClass}">${d.role}</span>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-top:4px;">${d.phone}</div>
       </div>`;
     }
+    html += `</div>`;
     el.innerHTML = html;
   } catch (e) {
     el.innerHTML = '<div style="color:var(--error);">Failed to load dealers.</div>';
   }
+}
+
+function filterDealerList() {
+  const q = (document.getElementById('admin-dealer-search')?.value || '').toLowerCase();
+  document.querySelectorAll('#admin-dealer-list .admin-card').forEach(card => {
+    card.style.display = !q || card.dataset.name.includes(q) ? '' : 'none';
+  });
 }
 
 async function adminCreateDealer(role) {
@@ -3194,7 +3310,7 @@ async function adminCreateDealer(role) {
 async function loadAdminMarkets(el) {
   el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
   try {
-    const markets = await adminApi('/api/markets');
+    const markets = await adminApi('/api/admin/markets');
     let html = `<div class="admin-form">
       <div class="admin-section-title">Create market</div>
       <div class="form-field"><input type="text" class="form-input" id="admin-market-name" placeholder="Market name (e.g. Rose Bowl)"></div>
@@ -3216,19 +3332,43 @@ async function loadAdminMarkets(el) {
 
     html += `<div class="admin-section-title">Markets (${markets.length})</div>`;
     for (const m of markets) {
-      const dropStr = m.drop_time ? new Date(m.drop_time).toLocaleString() : 'No drop time set';
-      html += `<div class="admin-card">
+      const dropStr = m.drop_time ? new Date(m.drop_time).toLocaleString() : 'No drop time';
+      const test = m.is_test ? ' <span class="admin-badge" style="background:#FFF8E1;color:#F9A825;">TEST</span>' : '';
+      html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'">
         <div class="admin-card-row">
-          <span class="name">${m.name}</span>
-          <span style="font-size:11px;color:var(--muted);">${m.market_date}</span>
+          <span class="name">${m.name}${test}</span>
+          <div>${marketStatus(m)}</div>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Drop: ${dropStr}${m.is_test ? ' · TEST' : ''}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">Drop: ${dropStr}</div>
+        <div class="admin-actions">
+          <button class="admin-action-btn" onclick="event.stopPropagation();adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
+          <button class="admin-action-btn danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
+        </div>
       </div>`;
     }
     el.innerHTML = html;
   } catch (e) {
     el.innerHTML = '<div style="color:var(--error);">Failed to load markets.</div>';
   }
+}
+
+async function adminEditMarketInline(id, name, date) {
+  const newName = prompt('Market name:', name);
+  if (!newName || newName === name) return;
+  try {
+    await adminApi(`/api/admin/markets/${id}`, { method: 'PATCH', body: { name: newName } });
+    loadAdminMarkets(document.getElementById('admin-content'));
+  } catch (e) { alert('Failed to update market.'); }
+}
+
+async function adminDeleteMarket(id, name) {
+  if (!confirm(`Delete "${name}"? This only works if the market has no items.`)) return;
+  try {
+    const res = await adminApi(`/api/admin/markets/${id}`, { method: 'DELETE' });
+    if (res.error) { alert(res.error); return; }
+    loadAdminMarkets(document.getElementById('admin-content'));
+  } catch (e) { alert('Failed to delete market.'); }
 }
 
 async function adminCreateMarket() {
@@ -3354,40 +3494,350 @@ async function adminSendBlast() {
   }
 }
 
-async function loadAdminActivity(el) {
+// ── Market Detail ─────────────────────────────────────────
+async function loadAdminMarketDetail(el, id) {
   el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
   try {
-    const data = await adminApi('/api/admin/activity?days=7');
-    const items = data.items || [];
-    const msgs = data.recent_messages || [];
+    const data = await adminApi(`/api/admin/markets/${id}`);
+    if (data.error) { el.innerHTML = `<div style="color:var(--error);">${data.error}</div>`; return; }
 
-    let html = `<div class="admin-section">
-      <div class="admin-section-title">Last 7 days</div>
-      <div class="admin-stat"><span class="label">Items posted</span><span class="value">${items.length}</span></div>
-      <div class="admin-stat"><span class="label">Messages sent</span><span class="value">${msgs.length}</span></div>
-      <div class="admin-stat"><span class="label">Items sold</span><span class="value">${items.filter(i => i.status === 'sold').length}</span></div>
-      <div class="admin-stat"><span class="label">Items on hold</span><span class="value">${items.filter(i => i.status === 'hold').length}</span></div>
+    const m = data.market;
+    const s = data.stats;
+    let html = `<a class="admin-back" onclick="location.hash='#/admin/markets'">← Markets</a>`;
+    html += `<div style="font-size:18px;font-weight:700;margin-bottom:4px;">${m.name} ${marketStatus(m)}</div>`;
+    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">${formatDate(m.market_date)}${m.drop_time ? ' · Drop: ' + formatDateTime(m.drop_time) : ''}${m.is_test ? ' · TEST' : ''}</div>`;
+
+    html += `<div class="admin-stats-grid">
+      <div class="admin-stat-card"><div class="value">${s.total_items}</div><div class="label">Total items</div></div>
+      <div class="admin-stat-card"><div class="value">${s.dealer_count}</div><div class="label">Dealers</div></div>
+      <div class="admin-stat-card"><div class="value">${s.live}</div><div class="label">Live</div></div>
+      <div class="admin-stat-card"><div class="value">${s.sold}</div><div class="label">Sold</div></div>
     </div>`;
 
-    if (items.length) {
-      html += `<div class="admin-section-title">Recent items</div>`;
-      for (const item of items.slice(0, 10)) {
-        const price = '$' + (item.price / 100).toLocaleString();
+    // Items
+    if (data.items.length) {
+      html += `<div class="admin-section-title">Items (${data.items.length})</div>`;
+      for (const item of data.items) {
+        const photo = item.photos?.[0];
         const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
-        html += `<div class="admin-card">
-          <div class="admin-card-row">
-            <span class="name">${price}${item.title ? ' — ' + item.title : ''}</span>
-            <span style="font-size:11px;color:var(--muted);">${item.status}</span>
+        html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
+          ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
+          <div style="flex:1;">
+            <div class="admin-card-row">
+              <span class="name">${formatPrice(item.price)}${item.title ? ' — ' + item.title : ''}</span>
+              ${statusBadge(item.status)}
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">by <a onclick="event.stopPropagation();location.hash='#/admin/dealers/${item.dealer_id}'" style="color:var(--accent);cursor:pointer;">${dealer}</a></div>
           </div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">by ${dealer}</div>
         </div>`;
       }
     }
 
+    // Blasts
+    if (data.blasts.length) {
+      html += `<div class="admin-section-title">SMS Blasts (${data.blasts.length})</div>`;
+      for (const b of data.blasts) {
+        const statusColor = b.fail_count > 0 ? 'var(--error)' : 'var(--success)';
+        html += `<div class="admin-card">
+          <div style="font-size:12px;color:var(--muted);">${formatDateTime(b.created_at)} · ${b.audience} · <span style="color:${statusColor};">${b.sent_count}/${b.total_count} sent</span></div>
+          <div style="font-size:11px;margin-top:4px;white-space:pre-wrap;background:var(--input-bg);padding:8px;border-radius:4px;">${b.message}</div>
+        </div>`;
+      }
+    }
+
+    // History
+    if (data.history.length) {
+      html += `<div class="admin-section-title">History</div><div class="admin-timeline">`;
+      for (const a of data.history) {
+        html += `<div class="admin-timeline-item"><span class="action">${a.action.replace(/_/g, ' ')}</span> · ${formatDateTime(a.created_at)}</div>`;
+      }
+      html += `</div>`;
+    }
+
     el.innerHTML = html;
   } catch (e) {
-    el.innerHTML = '<div style="color:var(--error);">Failed to load activity.</div>';
+    el.innerHTML = '<div style="color:var(--error);">Failed to load market detail.</div>';
   }
+}
+
+// ── Dealer Detail ────────────────────────────────────────
+async function loadAdminDealerDetail(el, id) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const data = await adminApi(`/api/admin/dealers/${id}`);
+    if (data.error) { el.innerHTML = `<div style="color:var(--error);">${data.error}</div>`; return; }
+
+    const d = data.dealer;
+    const roleClass = d.role === 'dealer' ? 'role-dealer' : 'role-buyer';
+    let html = `<a class="admin-back" onclick="location.hash='#/admin/dealers'">← Dealers</a>`;
+    html += `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <div style="font-size:18px;font-weight:700;">${d.name || 'No name'} <span class="role ${roleClass}" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;padding:2px 6px;border-radius:4px;">${d.role}</span></div>
+      ${d.active === false ? '<span class="admin-badge badge-inactive">inactive</span>' : ''}
+    </div>`;
+    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">`;
+    if (d.business_name) html += `${d.business_name} · `;
+    html += `${d.phone}`;
+    if (d.booth_number) html += ` · Booth ${d.booth_number}`;
+    if (d.venmo) html += ` · Venmo: ${d.venmo}`;
+    if (d.zelle) html += ` · Zelle: ${d.zelle}`;
+    html += `</div>`;
+
+    // Quick actions
+    html += `<div class="admin-actions" style="margin-bottom:16px;">
+      <button class="admin-action-btn" onclick="adminEditDealerField('${d.id}','name','${(d.name||'').replace(/'/g,"\\'")}')">Edit name</button>
+      <button class="admin-action-btn" onclick="adminEditDealerField('${d.id}','role','${d.role}')">Change role</button>
+      <button class="admin-action-btn ${d.active !== false ? 'danger' : ''}" onclick="adminToggleDealerActive('${d.id}',${d.active !== false})">${d.active !== false ? 'Deactivate' : 'Reactivate'}</button>
+    </div>`;
+
+    // Items grouped by market
+    if (data.items.length) {
+      const byMarket = {};
+      for (const item of data.items) {
+        const mName = item.market?.name || 'Unknown market';
+        if (!byMarket[mName]) byMarket[mName] = [];
+        byMarket[mName].push(item);
+      }
+      html += `<div class="admin-section-title">Items (${data.items.length})</div>`;
+      for (const [mName, items] of Object.entries(byMarket)) {
+        html += `<div style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 6px;text-transform:uppercase;letter-spacing:0.1em;">${mName}</div>`;
+        for (const item of items) {
+          const photo = item.photos?.[0];
+          html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
+            ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
+            <div style="flex:1;">
+              <div class="admin-card-row">
+                <span class="name">${formatPrice(item.price)}${item.title ? ' — ' + item.title : ''}</span>
+                ${statusBadge(item.status)}
+              </div>
+            </div>
+          </div>`;
+        }
+      }
+    }
+
+    // Conversations
+    if (data.conversations.length) {
+      html += `<div class="admin-section-title">Conversations (${data.conversations.length})</div>`;
+      for (const c of data.conversations) {
+        const other = c.buyer_id === d.id ? c.seller?.name : c.buyer?.name;
+        const price = c.item?.price ? formatPrice(c.item.price) : '';
+        html += `<div class="admin-card">
+          <div style="font-size:12px;">with ${other || 'Unknown'} · ${price}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${formatDateTime(c.created_at)}</div>
+        </div>`;
+      }
+    }
+
+    // History
+    if (data.history.length) {
+      html += `<div class="admin-section-title">History</div><div class="admin-timeline">`;
+      for (const a of data.history) {
+        html += `<div class="admin-timeline-item"><span class="action">${a.action.replace(/_/g, ' ')}</span> · ${formatDateTime(a.created_at)}</div>`;
+      }
+      html += `</div>`;
+    }
+
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load dealer detail.</div>';
+  }
+}
+
+async function adminEditDealerField(id, field, currentVal) {
+  let newVal;
+  if (field === 'role') {
+    newVal = currentVal === 'dealer' ? 'buyer' : 'dealer';
+    if (!confirm(`Change role from ${currentVal} to ${newVal}?`)) return;
+  } else {
+    newVal = prompt(`New ${field}:`, currentVal);
+    if (!newVal || newVal === currentVal) return;
+  }
+  try {
+    await adminApi(`/api/admin/dealers/${id}`, { method: 'PATCH', body: { [field]: newVal } });
+    loadAdminDealerDetail(document.getElementById('admin-content'), id);
+  } catch (e) { alert('Failed to update.'); }
+}
+
+async function adminToggleDealerActive(id, isActive) {
+  if (isActive && !confirm('Deactivate this user?')) return;
+  try {
+    await adminApi(`/api/admin/dealers/${id}`, { method: 'PATCH', body: { active: !isActive } });
+    loadAdminDealerDetail(document.getElementById('admin-content'), id);
+  } catch (e) { alert('Failed to update.'); }
+}
+
+// ── Items List ───────────────────────────────────────────
+let adminItemsCache = { markets: [], dealers: [] };
+
+async function loadAdminItems(el) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const [itemsData, markets, dealers] = await Promise.all([
+      adminApi('/api/admin/items'),
+      adminApi('/api/admin/markets'),
+      adminApi('/api/admin/dealers'),
+    ]);
+    adminItemsCache = { markets: markets || [], dealers: dealers || [] };
+
+    let marketOpts = '<option value="">All markets</option>';
+    for (const m of (markets || [])) marketOpts += `<option value="${m.id}">${m.name}</option>`;
+    let dealerOpts = '<option value="">All dealers</option>';
+    for (const d of (dealers || []).filter(d => d.role === 'dealer')) dealerOpts += `<option value="${d.id}">${d.name || d.phone}</option>`;
+
+    let html = `<div class="admin-filter-bar">
+      <select id="admin-items-market" onchange="filterAdminItems()">${marketOpts}</select>
+      <select id="admin-items-status" onchange="filterAdminItems()">
+        <option value="">All status</option>
+        <option value="live">Live</option>
+        <option value="hold">Hold</option>
+        <option value="sold">Sold</option>
+      </select>
+      <select id="admin-items-dealer" onchange="filterAdminItems()">${dealerOpts}</select>
+    </div>`;
+    html += `<div id="admin-items-list"></div>`;
+    el.innerHTML = html;
+    renderAdminItems(itemsData.items || []);
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load items.</div>';
+  }
+}
+
+function renderAdminItems(items) {
+  const list = document.getElementById('admin-items-list');
+  if (!items.length) { list.innerHTML = '<div style="color:var(--muted);font-size:12px;">No items found.</div>'; return; }
+  let html = '';
+  for (const item of items) {
+    const photo = item.photos?.[0];
+    const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
+    const market = item.market?.name || '';
+    html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/items/${item.id}'" style="display:flex;align-items:center;">
+      ${photo ? `<img class="admin-thumb" src="${photo}">` : ''}
+      <div style="flex:1;">
+        <div class="admin-card-row">
+          <span class="name">${formatPrice(item.price)}${item.title ? ' — ' + item.title : ''}</span>
+          ${statusBadge(item.status)}
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${dealer} · ${market}</div>
+      </div>
+      <div class="admin-actions" style="margin-top:0;flex-shrink:0;" onclick="event.stopPropagation();">
+        ${item.status === 'live' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','hold')">Hold</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
+        ${item.status === 'hold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
+        ${item.status === 'sold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button>` : ''}
+      </div>
+    </div>`;
+  }
+  list.innerHTML = html;
+}
+
+async function filterAdminItems() {
+  const market = document.getElementById('admin-items-market').value;
+  const status = document.getElementById('admin-items-status').value;
+  const dealer = document.getElementById('admin-items-dealer').value;
+  let query = '/api/admin/items?';
+  if (market) query += `market_id=${market}&`;
+  if (status) query += `status=${status}&`;
+  if (dealer) query += `dealer_id=${dealer}&`;
+  const data = await adminApi(query);
+  renderAdminItems(data.items || []);
+}
+
+async function adminQuickItemStatus(id, status) {
+  try {
+    await adminApi(`/api/admin/items/${id}`, { method: 'PATCH', body: { status } });
+    filterAdminItems();
+  } catch (e) { alert('Failed to update.'); }
+}
+
+// ── Item Detail ──────────────────────────────────────────
+async function loadAdminItemDetail(el, id) {
+  el.innerHTML = '<div style="color:var(--muted);font-size:12px;">Loading...</div>';
+  try {
+    const data = await adminApi(`/api/admin/items/${id}`);
+    if (data.error) { el.innerHTML = `<div style="color:var(--error);">${data.error}</div>`; return; }
+
+    const item = data.item;
+    const dealer = data.dealer;
+    const market = data.market;
+
+    let html = `<a class="admin-back" onclick="location.hash='#/admin/items'">← Items</a>`;
+
+    // Photos
+    const photos = item.photos || [];
+    if (photos.length) {
+      html += `<div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;">`;
+      for (const url of photos) {
+        html += `<img src="${url}" style="width:120px;height:120px;object-fit:cover;border-radius:6px;flex-shrink:0;">`;
+      }
+      html += `</div>`;
+    }
+
+    html += `<div style="font-size:24px;font-weight:700;margin-bottom:4px;font-variant-numeric:tabular-nums;">${formatPrice(item.price)}</div>`;
+    if (item.title) html += `<div style="font-size:14px;color:var(--muted);margin-bottom:4px;">${item.title}</div>`;
+    html += `<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">${statusBadge(item.status)}`;
+    if (item.condition) html += ` <span style="font-size:11px;color:var(--muted);">${item.condition}</span>`;
+    if (item.price_posture && item.price_posture !== 'firm') html += ` <span style="font-size:11px;color:var(--muted);">${item.price_posture}</span>`;
+    html += `</div>`;
+    if (item.notes) html += `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">${item.notes}</div>`;
+
+    // Status actions
+    html += `<div class="admin-actions" style="margin-bottom:16px;">
+      <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')" ${item.status==='live'?'disabled':''}>Live</button>
+      <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','hold')" ${item.status==='hold'?'disabled':''}>Hold</button>
+      <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','sold')" ${item.status==='sold'?'disabled':''}>Sold</button>
+      <button class="admin-action-btn danger" onclick="adminDeleteItem('${id}')">Delete</button>
+    </div>`;
+
+    // Dealer + Market links
+    html += `<div style="font-size:12px;margin-bottom:16px;">`;
+    if (dealer) html += `Dealer: <a onclick="location.hash='#/admin/dealers/${dealer.id}'" style="color:var(--accent);cursor:pointer;">${dealer.name || dealer.phone}</a>`;
+    if (market) html += ` · Market: <a onclick="location.hash='#/admin/markets/${market.id}'" style="color:var(--accent);cursor:pointer;">${market.name}</a>`;
+    html += `</div>`;
+
+    // Stats
+    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">${data.favorite_count} favorite${data.favorite_count !== 1 ? 's' : ''} · ${data.conversations.length} conversation${data.conversations.length !== 1 ? 's' : ''}</div>`;
+
+    // Conversations
+    if (data.conversations.length) {
+      html += `<div class="admin-section-title">Conversations</div>`;
+      for (const c of data.conversations) {
+        const buyer = c.buyer?.name || c.buyer?.business_name || 'Unknown';
+        const lastMsg = c.messages?.[c.messages.length - 1];
+        html += `<div class="admin-card">
+          <div style="font-size:12px;font-weight:500;">${buyer}</div>
+          ${lastMsg ? `<div style="font-size:11px;color:var(--muted);margin-top:2px;">"${lastMsg.body.substring(0, 80)}${lastMsg.body.length > 80 ? '...' : ''}"</div>` : ''}
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">${formatDateTime(c.created_at)}</div>
+        </div>`;
+      }
+    }
+
+    // History
+    if (data.history.length) {
+      html += `<div class="admin-section-title">History</div><div class="admin-timeline">`;
+      for (const a of data.history) {
+        html += `<div class="admin-timeline-item"><span class="action">${a.action.replace(/_/g, ' ')}</span> · ${formatDateTime(a.created_at)}</div>`;
+      }
+      html += `</div>`;
+    }
+
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--error);">Failed to load item detail.</div>';
+  }
+}
+
+async function adminSetItemStatus(id, status) {
+  try {
+    await adminApi(`/api/admin/items/${id}`, { method: 'PATCH', body: { status } });
+    loadAdminItemDetail(document.getElementById('admin-content'), id);
+  } catch (e) { alert('Failed to update.'); }
+}
+
+async function adminDeleteItem(id) {
+  if (!confirm('Delete this item? (Soft delete — marks as deleted)')) return;
+  try {
+    await adminApi(`/api/admin/items/${id}`, { method: 'DELETE' });
+    location.hash = '#/admin/items';
+  } catch (e) { alert('Failed to delete.'); }
 }
 
 // ── Init ──────────────────────────────────────────────────────
