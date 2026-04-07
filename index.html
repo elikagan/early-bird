@@ -32,6 +32,10 @@
       --input-bg: #F0EFEC;
     }
 
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
     body {
       font-family: 'JetBrains Mono', monospace;
       background: var(--bg);
@@ -2684,17 +2688,15 @@ async function textSeller(itemId) {
 
   const actionsEl = document.getElementById('detail-actions');
   actionsEl.innerHTML = `
-    <div style="padding:0 24px 24px;">
-      <div style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Message seller</div>
-      <div id="msg-options" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-        <button class="msg-option-btn" onclick="sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
-        <button class="msg-option-btn" onclick="showOfferInput('${itemId}')">Make an offer</button>
-        <button class="msg-option-btn" onclick="showQuestionInput('${itemId}')">Ask a question</button>
-      </div>
-      <div id="msg-custom-input" style="display:none;">
-        <textarea class="form-input" id="seller-msg-input" rows="2" style="resize:none;margin-bottom:12px;font-size:13px;" placeholder="Type your message..."></textarea>
-        <button class="text-seller-btn" id="send-msg-btn" onclick="sendFirstMessage('${itemId}')">Send</button>
-      </div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Message seller</div>
+    <div id="msg-options" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+      <button class="msg-option-btn" onclick="sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
+      <button class="msg-option-btn" onclick="showOfferInput('${itemId}')">Make an offer</button>
+      <button class="msg-option-btn" onclick="showQuestionInput('${itemId}')">Ask a question</button>
+    </div>
+    <div id="msg-custom-input" style="display:none;">
+      <textarea class="form-input" id="seller-msg-input" rows="2" style="resize:none;margin-bottom:12px;font-size:13px;width:100%;" placeholder="Type your message..."></textarea>
+      <button class="text-seller-btn" id="send-msg-btn" onclick="sendFirstMessage('${itemId}')">Send</button>
     </div>`;
 }
 
