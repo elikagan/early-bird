@@ -84,6 +84,9 @@ export default {
         const dealer = await getDealer(request, env);
         if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
         res = await handleCreateItem(request, env, dealer);
+      } else if (path.match(/^\/api\/items\/[^/]+$/) && method === 'GET') {
+        const itemId = path.split('/api/items/')[1];
+        res = await handleGetItem(itemId, env);
       } else if (path.match(/^\/api\/items\/[^/]+$/) && method === 'PATCH') {
         const dealer = await getDealer(request, env);
         if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
@@ -354,7 +357,11 @@ async function handleCreateMarket(request, env) {
 // ── Items ────────────────────────────────────────────────────
 
 async function handleGetItems(url, env) {
-  let query = 'items?select=*,dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number)&order=created_at.desc';
+  // Join buyer info directly — no N+1 queries
+  let query = 'items?select=*,' +
+    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number),' +
+    'buyer:dealers!items_buyer_id_fkey(id,name,business_name,show_name_on_sold)' +
+    '&order=created_at.desc';
 
   const marketId = url.searchParams.get('market_id');
   if (marketId) query += `&market_id=eq.${marketId}`;
@@ -365,40 +372,53 @@ async function handleGetItems(url, env) {
   const category = url.searchParams.get('category');
   if (category) query += `&category=eq.${category}`;
 
-  const res = await supabase(env, query);
-  const items = await res.json();
+  // Fetch items and market drop_time in parallel
+  const fetches = [supabase(env, query)];
+  if (marketId) {
+    fetches.push(supabase(env, `markets?id=eq.${marketId}&select=drop_time`));
+  }
+  const [itemsRes, marketRes] = await Promise.all(fetches);
+  const items = await itemsRes.json();
 
   if (!Array.isArray(items)) return json({ error: 'Failed to load items', detail: items }, 500);
 
   // Check if we need to redact photos (pre-drop)
-  // Get market drop_time if filtering by market
   let dropRedact = false;
-  if (marketId) {
-    const marketRes = await supabase(env, `markets?id=eq.${marketId}&select=drop_time`);
+  if (marketRes) {
     const markets = await marketRes.json();
     if (markets[0]?.drop_time && new Date(markets[0].drop_time) > new Date()) {
-      // Only redact for non-dealers (don't redact dealer's own items)
       dropRedact = true;
     }
   }
 
-  // Attach buyer info for sold items
   for (const item of items) {
-    // Redact photos if pre-drop (but not for the item's own dealer)
     if (dropRedact && item.dealer_id !== dealerId) {
       item.photos = (item.photos || []).map(() => '/pre-drop-placeholder.svg');
     }
-
-    if (item.status === 'sold' && item.buyer_id) {
-      const buyerRes = await supabase(env, `dealers?id=eq.${item.buyer_id}&select=id,name,business_name,show_name_on_sold`);
-      const buyers = await buyerRes.json();
-      if (buyers[0]?.show_name_on_sold) {
-        item.buyer = { name: buyers[0].name, business_name: buyers[0].business_name };
-      }
+    // Strip buyer info if they opted out
+    if (item.buyer && !item.buyer.show_name_on_sold) {
+      item.buyer = null;
+    }
+    // Clean up: only include buyer name fields
+    if (item.buyer) {
+      item.buyer = { name: item.buyer.name, business_name: item.buyer.business_name };
     }
   }
 
   return json(items);
+}
+
+async function handleGetItem(itemId, env) {
+  const query = 'items?id=eq.' + itemId + '&select=*,' +
+    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number,phone),' +
+    'buyer:dealers!items_buyer_id_fkey(id,name,business_name,show_name_on_sold)';
+  const res = await supabase(env, query);
+  const items = await res.json();
+  if (!Array.isArray(items) || !items.length) return json({ error: 'Item not found' }, 404);
+  const item = items[0];
+  if (item.buyer && !item.buyer.show_name_on_sold) item.buyer = null;
+  if (item.buyer) item.buyer = { name: item.buyer.name, business_name: item.buyer.business_name };
+  return json(item);
 }
 
 async function handleCreateItem(request, env, dealer) {
@@ -416,8 +436,6 @@ async function handleCreateItem(request, env, dealer) {
     price_posture: body.price_posture || 'firm',
     condition: body.condition || null,
     firm: body.firm || false,
-    deposit_required: body.deposit_required || false,
-    deposit_amount: body.deposit_amount || null,
     notes: body.notes || null,
     category: body.category || null,
     photos: body.photos,
@@ -521,7 +539,7 @@ async function handleGetConversation(env, dealer, token) {
     `conversations?token=eq.${token}&select=*,` +
     `buyer:dealers!conversations_buyer_id_fkey(id,name,business_name,phone,venmo,zelle,photo_url),` +
     `seller:dealers!conversations_seller_id_fkey(id,name,business_name,phone,venmo,zelle,photo_url),` +
-    `item:items(id,price,condition,firm,deposit_required,deposit_amount,notes,photos,status,category)`
+    `item:items(id,price,condition,firm,notes,photos,status,category)`
   );
   const convs = await convRes.json();
   if (!convs.length) return json({ error: 'Conversation not found' }, 404);
@@ -534,7 +552,7 @@ async function handleGetConversation(env, dealer, token) {
 
   // Get messages
   const msgRes = await supabase(env,
-    `messages?conversation_id=eq.${conv.id}&select=*,sender:dealers!messages_sender_id_fkey(id,name)&order=created_at.asc`
+    `messages?conversation_id=eq.${conv.id}&select=*,sender:dealers!messages_sender_id_fkey(id,name)&order=created_at.asc&limit=200`
   );
   const messages = await msgRes.json();
 
@@ -592,17 +610,19 @@ async function handleSendMessage(request, env, dealer, token) {
 }
 
 async function handleListConversations(env, dealer) {
-  // Get conversations where dealer is buyer or seller
-  const buyerRes = await supabase(env,
-    `conversations?buyer_id=eq.${dealer.id}&active=eq.true&select=*,` +
-    `seller:dealers!conversations_seller_id_fkey(name,business_name,photo_url),` +
-    `item:items(price,photos,status)&order=created_at.desc`
-  );
-  const sellerRes = await supabase(env,
-    `conversations?seller_id=eq.${dealer.id}&active=eq.true&select=*,` +
-    `buyer:dealers!conversations_buyer_id_fkey(name,business_name,photo_url),` +
-    `item:items(price,photos,status)&order=created_at.desc`
-  );
+  // Fetch both roles in parallel, limit 50 each
+  const [buyerRes, sellerRes] = await Promise.all([
+    supabase(env,
+      `conversations?buyer_id=eq.${dealer.id}&active=eq.true&select=*,` +
+      `seller:dealers!conversations_seller_id_fkey(name,business_name,photo_url),` +
+      `item:items(price,photos,status)&order=created_at.desc&limit=50`
+    ),
+    supabase(env,
+      `conversations?seller_id=eq.${dealer.id}&active=eq.true&select=*,` +
+      `buyer:dealers!conversations_buyer_id_fkey(name,business_name,photo_url),` +
+      `item:items(price,photos,status)&order=created_at.desc&limit=50`
+    ),
+  ]);
 
   const asBuyer = await buyerRes.json();
   const asSeller = await sellerRes.json();
@@ -750,8 +770,6 @@ async function handleProxyPost(request, env) {
     price: body.price,
     condition: body.condition || null,
     firm: body.firm || false,
-    deposit_required: body.deposit_required || false,
-    deposit_amount: body.deposit_amount || null,
     notes: body.notes || null,
     category: body.category || null,
     photos: body.photos,
@@ -839,17 +857,21 @@ async function handleSMSBlast(request, env) {
   const dealers = await res.json();
   if (!Array.isArray(dealers)) return json({ error: 'Failed to fetch dealers' }, 500);
 
+  // Send in parallel chunks of 20 to avoid hitting Worker CPU limits
+  const withPhone = dealers.filter(d => d.phone);
+  const CHUNK_SIZE = 20;
   let sent = 0;
   const errors = [];
 
-  for (const dealer of dealers) {
-    if (!dealer.phone) continue;
-    try {
-      await sendSMS(env, dealer.phone, body.message);
-      sent++;
-    } catch (e) {
-      errors.push({ dealer_id: dealer.id, error: e.message });
-    }
+  for (let i = 0; i < withPhone.length; i += CHUNK_SIZE) {
+    const chunk = withPhone.slice(i, i + CHUNK_SIZE);
+    const results = await Promise.allSettled(
+      chunk.map(d => sendSMS(env, d.phone, body.message))
+    );
+    results.forEach((r, idx) => {
+      if (r.status === 'fulfilled') sent++;
+      else errors.push({ dealer_id: chunk[idx].id, error: r.reason?.message });
+    });
   }
 
   return json({ sent, total: dealers.length, errors: errors.length ? errors : undefined });

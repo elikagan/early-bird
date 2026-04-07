@@ -566,11 +566,6 @@
     }
 
     /* ── Messages list ── */
-    #messages {
-      min-height: 100vh;
-      min-height: 100dvh;
-      padding-bottom: max(70px, calc(56px + env(safe-area-inset-bottom)));
-    }
     .conv-item {
       display: flex;
       align-items: center;
@@ -2294,15 +2289,16 @@ async function loadMessages() {
   }
 }
 
-function getTimeAgo(dateStr) {
+function getTimeAgo(dateStr, short = false) {
+  if (!dateStr) return '';
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return mins + 'm ago';
+  if (mins < 1) return short ? 'now' : 'just now';
+  if (mins < 60) return short ? `${mins}m` : `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return hrs + 'h ago';
+  if (hrs < 24) return short ? `${hrs}h` : `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
-  return days + 'd ago';
+  return short ? `${days}d` : `${days}d ago`;
 }
 
 async function loadDealerHome() {
@@ -2487,11 +2483,8 @@ async function loadItemDetail(itemId) {
   const actionsEl = document.getElementById('detail-actions');
 
   try {
-    // Fetch all items and find this one (no single-item endpoint yet)
-    const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
-    const items = await api(`/api/items${q}`);
-    const item = items.find(i => i.id === itemId);
-    if (!item) {
+    const item = await api(`/api/items/${itemId}`);
+    if (item.error) {
       infoEl.innerHTML = '<p style="color:var(--muted);padding:20px 0;">Item not found.</p>';
       return;
     }
@@ -2574,7 +2567,7 @@ async function loadSellerInquiries(itemId, actionsEl) {
       const phoneDisplay = phone.replace('+1', '').replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
       const msg = inq.latest_message || '';
       const msgDir = inq.latest_message_direction === 'seller_to_buyer' ? 'You: ' : '';
-      const timeAgo = formatTimeAgo(inq.latest_message_at);
+      const timeAgo = getTimeAgo(inq.latest_message_at, true);
       const avatarHtml = buyer.photo_url
         ? `<img src="${buyer.photo_url}" alt="${name}" class="inquiry-avatar">`
         : `<div class="inquiry-avatar inquiry-avatar-placeholder">${initial}</div>`;
@@ -2603,17 +2596,6 @@ async function loadSellerInquiries(itemId, actionsEl) {
   }
 }
 
-function formatTimeAgo(dateStr) {
-  if (!dateStr) return '';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'now';
-  if (mins < 60) return `${mins}m`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d`;
-}
 
 async function sellerAction(itemId, buyerId, status, buyerName) {
   if (!confirm(`${status === 'hold' ? 'Hold' : 'Mark sold'} for ${buyerName}?`)) return;
@@ -2859,7 +2841,7 @@ function removeItemPhoto(idx) {
 function renderPhotoSlots() {
   const container = document.getElementById('photo-slots');
   let html = itemPhotos.map((p, i) =>
-    `<div class="photo-slot">
+    `<div class="photo-slot" draggable="true" ondragstart="photoDragStart(event, ${i})" ondragover="photoDragOver(event)" ondrop="photoDrop(event, ${i})" ondragend="photoDragEnd(event)" ondragleave="photoDragLeave(event)">
       <img src="${p.dataUrl}" alt="">
       <button class="remove-photo" onclick="removeItemPhoto(${i})">×</button>
     </div>`
@@ -2982,20 +2964,6 @@ function goToSlide(idx) {
 // ── Photo Drag-to-Reorder ───────────────────────────────────
 let dragIdx = null;
 
-function renderPhotoSlotsWithDrag() {
-  const container = document.getElementById('photo-slots');
-  let html = itemPhotos.map((p, i) =>
-    `<div class="photo-slot" draggable="true" ondragstart="photoDragStart(event, ${i})" ondragover="photoDragOver(event)" ondrop="photoDrop(event, ${i})" ondragend="photoDragEnd(event)" ondragleave="photoDragLeave(event)">
-      <img src="${p.dataUrl}" alt="">
-      <button class="remove-photo" onclick="removeItemPhoto(${i})">×</button>
-    </div>`
-  ).join('');
-  if (itemPhotos.length < 5) {
-    html += `<div class="photo-slot" onclick="document.getElementById('photo-file').click()"><span class="add-icon">+</span></div>`;
-  }
-  container.innerHTML = html;
-}
-
 function photoDragStart(e, idx) {
   dragIdx = idx;
   e.target.closest('.photo-slot').classList.add('dragging');
@@ -3019,12 +2987,6 @@ function photoDrop(e, targetIdx) {
   dragIdx = null;
   renderPhotoSlots();
 }
-
-// Override renderPhotoSlots to include drag
-const _origRenderPhotoSlots = renderPhotoSlots;
-renderPhotoSlots = function() {
-  renderPhotoSlotsWithDrag();
-};
 
 // ── Settings ────────────────────────────────────────────────
 function loadSettings() {
@@ -3067,14 +3029,23 @@ function logout() {
 }
 
 // ── Admin CMS ───────────────────────────────────────────────
-const ADMIN_TOKEN = 'early-bird-admin-2026';
+function getAdminToken() {
+  let token = sessionStorage.getItem('eb_admin_token');
+  if (!token) {
+    token = prompt('Admin token:');
+    if (token) sessionStorage.setItem('eb_admin_token', token);
+  }
+  return token;
+}
 
 function adminApi(path, opts = {}) {
+  const token = getAdminToken();
+  if (!token) return Promise.resolve({ error: 'No admin token' });
   return fetch(`${API}${path}`, {
     method: opts.method || 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${ADMIN_TOKEN}`,
+      'Authorization': `Bearer ${token}`,
     },
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   }).then(r => r.json());
