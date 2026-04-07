@@ -73,6 +73,7 @@
     .cursor {
       animation: blink 1s step-end infinite;
     }
+    .in-app .cursor { animation: none; opacity: 1; }
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
@@ -1637,10 +1638,6 @@
       <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
       <div class="feed-event" id="feed-event-name"></div>
     </div>
-    <div class="mode-toggle hidden" id="mode-toggle">
-      <button class="mode-btn mode-active" id="mode-shop" onclick="switchMode('shop')">Shop</button>
-      <button class="mode-btn" id="mode-sell" onclick="switchMode('sell')">Sell</button>
-    </div>
     <div id="feed-filters" style="display:flex;gap:8px;padding-bottom:10px;align-items:center;">
       <select id="filter-category" onchange="applyFeedFilters()" style="flex:1;font-size:13px;padding:6px 8px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-bg);border-radius:6px;outline:none;">
         <option value="">All Categories</option>
@@ -1661,19 +1658,14 @@
       <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
       <div class="feed-event" id="booth-event-name"></div>
     </div>
-    <div class="mode-toggle" id="mode-toggle-sell">
-      <button class="mode-btn" id="mode-shop-2" onclick="switchMode('shop')">Shop</button>
-      <button class="mode-btn mode-active" id="mode-sell-2" onclick="switchMode('sell')">Sell</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;">
+      <div>
+        <div id="dealer-event-date" style="font-size:13px;color:var(--muted);"></div>
+        <div id="booth-number-row" style="font-size:12px;margin-top:4px;"></div>
+      </div>
+      <button class="add-item-btn" onclick="showAddItem()" style="margin:0;padding:10px 20px;font-size:13px;">+ Add Item</button>
     </div>
   </div>
-  <div class="dealer-event-header">
-    <div class="dealer-event-name" id="dealer-event-name"></div>
-    <div class="dealer-event-date" id="dealer-event-date"></div>
-    <div class="dealer-countdown" id="dealer-countdown"></div>
-  </div>
-  <div class="booth-number-row" id="booth-number-row" style="padding:0 24px;margin-bottom:12px;font-size:12px;"></div>
-  <div class="free-notice">Selling on Early Bird is 100% free. Handle all payments directly with your buyers.</div>
-  <button class="add-item-btn" onclick="showAddItem()">+ Add item</button>
   <ul class="my-items-list" id="my-items-list"></ul>
   <div class="empty-state" id="dealer-empty">
     <h2>Your booth is empty</h2>
@@ -1853,28 +1845,25 @@
 
 <!-- BOTTOM NAV — single nav, reconfigured by mode -->
 <nav class="bottom-nav hidden" id="bottom-nav">
-  <!-- Shop mode tabs -->
-  <button class="nav-tab active nav-shop" data-tab="feed" onclick="switchTab('feed')">
+  <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
       <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
     </svg>
     Shop
   </button>
-  <button class="nav-tab nav-shop" data-tab="favorites" onclick="switchTab('favorites')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-    </svg>
-    Saved
-  </button>
-  <!-- Sell mode tabs -->
-  <button class="nav-tab nav-sell" data-tab="dealer-home" onclick="switchTab('dealer-home')" style="display:none">
+  <button class="nav-tab nav-dealer-only hidden" data-tab="dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
     My Items
   </button>
-  <!-- Always visible -->
+  <button class="nav-tab" data-tab="favorites" onclick="switchTab('favorites')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+    </svg>
+    Saved
+  </button>
   <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
@@ -2047,6 +2036,7 @@ async function verifyToken(token) {
     const res = await api(`/api/auth/verify/${token}`);
     if (res.ok && res.dealer_id) {
       setDealerId(res.dealer_id);
+      window.location.hash = '';
       status.textContent = "You're in.";
       const me = await api('/api/auth/me');
       currentUser = me;
@@ -2153,75 +2143,20 @@ async function enterApp() {
   } catch (e) {}
 
   // Configure UI based on role
+  document.body.classList.add('in-app');
   const isDealer = currentUser?.role === 'dealer';
 
-  if (isDealer) {
-    document.getElementById('mode-toggle').classList.remove('hidden');
-  } else {
-    document.getElementById('mode-toggle').classList.add('hidden');
-  }
+  // Show My Items tab for dealers, hide mode toggles (no longer needed)
+  document.querySelectorAll('.nav-dealer-only').forEach(el => {
+    el.classList.toggle('hidden', !isDealer);
+  });
+  document.querySelectorAll('.mode-toggle').forEach(el => el.classList.add('hidden'));
 
   document.getElementById('bottom-nav').classList.remove('hidden');
-  switchMode('shop');
+  switchTab('feed');
 }
 
-let currentMode = 'shop'; // 'shop' or 'sell'
-
-function switchMode(mode) {
-  currentMode = mode;
-
-  // Sync both toggle instances
-  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('mode-active'));
-
-  // Show/hide the right nav tabs
-  const shopTabs = document.querySelectorAll('.nav-shop');
-  const sellTabs = document.querySelectorAll('.nav-sell');
-
-  if (mode === 'shop') {
-    document.getElementById('mode-shop')?.classList.add('mode-active');
-    document.getElementById('mode-shop-2')?.classList.add('mode-active');
-    shopTabs.forEach(t => t.style.display = 'flex');
-    sellTabs.forEach(t => t.style.display = 'none');
-    // Reset active tab
-    document.querySelectorAll('#bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('#bottom-nav [data-tab="feed"]').classList.add('active');
-    showScreen('feed');
-    loadFeed();
-  } else {
-    document.getElementById('mode-sell')?.classList.add('mode-active');
-    document.getElementById('mode-sell-2')?.classList.add('mode-active');
-    shopTabs.forEach(t => t.style.display = 'none');
-    sellTabs.forEach(t => t.style.display = 'flex');
-    // Reset active tab
-    document.querySelectorAll('#bottom-nav .nav-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('#bottom-nav [data-tab="dealer-home"]').classList.add('active');
-    showScreen('dealer-home');
-    loadDealerHome();
-  }
-}
-
-function renderMarketSelector() {
-  const sel = document.getElementById('market-selector');
-  if (allMarkets.length <= 1) { sel.style.display = 'none'; return; }
-  sel.style.display = 'block';
-  if (allMarkets.length === 2) {
-    // Tappable text that cycles
-    sel.innerHTML = `<a href="#" onclick="cycleMarket(); return false;" style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;">${currentMarket ? displayName(currentMarket.name) : ''} ▾</a>`;
-  } else {
-    // Dropdown for 3+
-    sel.innerHTML = `<select id="market-dropdown" onchange="selectMarket(this.value)" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:transparent;border:1px solid var(--input-bg);border-radius:4px;padding:6px 8px;outline:none;cursor:pointer;">
-      ${allMarkets.map(m => `<option value="${m.id}" ${m.id === currentMarket?.id ? 'selected' : ''}>${displayName(m.name)}</option>`).join('')}
-    </select>`;
-  }
-}
-
-function cycleMarket() {
-  if (allMarkets.length < 2) return;
-  const idx = allMarkets.findIndex(m => m.id === currentMarket?.id);
-  const next = (idx + 1) % allMarkets.length;
-  currentMarket = allMarkets[next];
-  loadFeed();
-}
+// switchMode removed — replaced by unified bottom nav with switchTab
 
 function selectMarket(marketId) {
   const m = allMarkets.find(m => m.id === marketId);
@@ -2401,11 +2336,10 @@ function getTimeAgo(dateStr, short = false) {
 
 async function loadDealerHome() {
   if (currentMarket) {
-    document.getElementById('dealer-event-name').textContent = currentMarket.name.toUpperCase();
-    document.getElementById('booth-event-name').textContent = currentMarket.name;
-    const date = new Date(currentMarket.market_date + 'T00:00:00');
-    document.getElementById('dealer-event-date').textContent =
-      date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
+    const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
+    document.getElementById('booth-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
+    document.getElementById('dealer-event-date').textContent = '';
   }
 
   // Booth number
@@ -2503,7 +2437,15 @@ function route() {
   const hash = window.location.hash;
 
   const verifyMatch = hash.match(/^#\/verify\/(.+)$/);
-  if (verifyMatch) { verifyToken(verifyMatch[1]); return; }
+  if (verifyMatch) {
+    // If already logged in, skip re-verification (token is single-use)
+    if (getDealerId()) {
+      window.location.hash = '';
+      api('/api/auth/me').then(me => { currentUser = me; enterApp(); });
+      return;
+    }
+    verifyToken(verifyMatch[1]); return;
+  }
 
   const convMatch = hash.match(/^#\/c\/(.+)$/);
   if (convMatch) { loadConversation(convMatch[1]); return; }
@@ -3144,6 +3086,7 @@ function logout() {
   if (!confirm('Log out?')) return;
   localStorage.removeItem('eb_dealer_id');
   currentUser = null;
+  document.body.classList.remove('in-app');
   document.getElementById('bottom-nav').classList.add('hidden');
   showScreen('landing');
   window.location.hash = '';
