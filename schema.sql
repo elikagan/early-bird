@@ -24,6 +24,7 @@ CREATE TABLE markets (
   market_date DATE NOT NULL,
   drop_time TIMESTAMPTZ,       -- when inventory becomes visible
   is_test BOOLEAN DEFAULT false,
+  archived BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now()
 );
 

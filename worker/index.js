@@ -880,16 +880,17 @@ async function handleAdminMarketDetail(env, id) {
 
 async function handleAdminEditMarket(request, env, id) {
   const body = await request.json();
-  const allowed = ['name', 'market_date', 'drop_time', 'is_test'];
+  const allowed = ['name', 'market_date', 'drop_time', 'is_test', 'archived'];
   const updates = {};
   for (const key of allowed) {
     if (body[key] !== undefined) updates[key] = body[key];
   }
   if (!Object.keys(updates).length) return json({ error: 'Nothing to update' }, 400);
 
+  const action = updates.archived === true ? 'archive_market' : updates.archived === false ? 'unarchive_market' : 'edit_market';
   const res = await supabase(env, `markets?id=eq.${id}`, { method: 'PATCH', body: updates });
   const result = await res.json();
-  await logAdminAction(env, 'edit_market', 'market', id, updates);
+  await logAdminAction(env, action, 'market', id, updates);
   return json(result);
 }
 

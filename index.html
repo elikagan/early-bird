@@ -3335,9 +3335,8 @@ async function loadAdminMarkets(el) {
       <div class="auth-fine" id="admin-market-msg"></div>
     </div>`;
 
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const active = markets.filter(m => m.market_date >= weekAgo);
-    const archived = markets.filter(m => m.market_date < weekAgo);
+    const active = markets.filter(m => !m.archived);
+    const archived = markets.filter(m => m.archived);
 
     html += `<div class="admin-section-title">Markets (${active.length})</div>`;
     for (const m of active) {
@@ -3352,6 +3351,7 @@ async function loadAdminMarkets(el) {
         <div style="font-size:11px;color:var(--muted);margin-top:2px;">Drop: ${dropStr}</div>
         <div class="admin-actions">
           <button class="admin-action-btn" onclick="event.stopPropagation();adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
+          <button class="admin-action-btn" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',true)">Archive</button>
           <button class="admin-action-btn danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
         </div>
       </div>`;
@@ -3359,7 +3359,7 @@ async function loadAdminMarkets(el) {
 
     if (archived.length) {
       html += `<div class="admin-section-title" style="margin-top:24px;cursor:pointer;" onclick="document.getElementById('archived-markets').style.display=document.getElementById('archived-markets').style.display==='none'?'':'none';">
-        Archived (${archived.length}) ▸
+        📦 Archive (${archived.length}) ▸
       </div>`;
       html += `<div id="archived-markets" style="display:none;">`;
       for (const m of archived) {
@@ -3370,6 +3370,10 @@ async function loadAdminMarkets(el) {
             <div>${marketStatus(m)}</div>
           </div>
           <div style="font-size:11px;color:var(--muted);margin-top:4px;">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
+          <div class="admin-actions">
+            <button class="admin-action-btn" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',false)">Unarchive</button>
+            <button class="admin-action-btn danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
+          </div>
         </div>`;
       }
       html += `</div>`;
@@ -3386,6 +3390,13 @@ async function adminEditMarketInline(id, name, date) {
   if (!newName || newName === name) return;
   try {
     await adminApi(`/api/admin/markets/${id}`, { method: 'PATCH', body: { name: newName } });
+    loadAdminMarkets(document.getElementById('admin-content'));
+  } catch (e) { alert('Failed to update market.'); }
+}
+
+async function adminArchiveMarket(id, archive) {
+  try {
+    await adminApi(`/api/admin/markets/${id}`, { method: 'PATCH', body: { archived: archive } });
     loadAdminMarkets(document.getElementById('admin-content'));
   } catch (e) { alert('Failed to update market.'); }
 }
@@ -3532,8 +3543,14 @@ async function loadAdminMarketDetail(el, id) {
     const m = data.market;
     const s = data.stats;
     let html = `<a class="admin-back" onclick="location.hash='#/admin/markets'">← Markets</a>`;
-    html += `<div style="font-size:18px;font-weight:700;margin-bottom:4px;">${m.name} ${marketStatus(m)}</div>`;
-    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:16px;">${formatDate(m.market_date)}${m.drop_time ? ' · Drop: ' + formatDateTime(m.drop_time) : ''}${m.is_test ? ' · TEST' : ''}</div>`;
+    const archivedBadge = m.archived ? ' <span class="admin-badge badge-inactive">archived</span>' : '';
+    html += `<div style="font-size:18px;font-weight:700;margin-bottom:4px;">${m.name} ${marketStatus(m)}${archivedBadge}</div>`;
+    html += `<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${formatDate(m.market_date)}${m.drop_time ? ' · Drop: ' + formatDateTime(m.drop_time) : ''}${m.is_test ? ' · TEST' : ''}</div>`;
+    html += `<div class="admin-actions" style="margin-bottom:16px;">
+      <button class="admin-action-btn" onclick="adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
+      <button class="admin-action-btn" onclick="adminArchiveMarket('${m.id}',${!m.archived})">${m.archived ? 'Unarchive' : 'Archive'}</button>
+      <button class="admin-action-btn danger" onclick="adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
+    </div>`;
 
     html += `<div class="admin-stats-grid">
       <div class="admin-stat-card"><div class="value">${s.total_items}</div><div class="label">Total items</div></div>
@@ -3719,6 +3736,7 @@ async function loadAdminItems(el) {
         <option value="live">Live</option>
         <option value="hold">Hold</option>
         <option value="sold">Sold</option>
+        <option value="deleted">Trash</option>
       </select>
       <select id="admin-items-dealer" onchange="filterAdminItems()">${dealerOpts}</select>
     </div>`;
@@ -3751,6 +3769,7 @@ function renderAdminItems(items) {
         ${item.status === 'live' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','hold')">Hold</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
         ${item.status === 'hold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
         ${item.status === 'sold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button>` : ''}
+        ${item.status === 'deleted' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Restore</button>` : ''}
       </div>
     </div>`;
   }
@@ -3808,12 +3827,16 @@ async function loadAdminItemDetail(el, id) {
     if (item.notes) html += `<div style="font-size:12px;color:var(--muted);margin-bottom:12px;">${item.notes}</div>`;
 
     // Status actions
-    html += `<div class="admin-actions" style="margin-bottom:16px;">
-      <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')" ${item.status==='live'?'disabled':''}>Live</button>
+    html += `<div class="admin-actions" style="margin-bottom:16px;">`;
+    if (item.status === 'deleted') {
+      html += `<button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')">Restore</button>`;
+    } else {
+      html += `<button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')" ${item.status==='live'?'disabled':''}>Live</button>
       <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','hold')" ${item.status==='hold'?'disabled':''}>Hold</button>
       <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','sold')" ${item.status==='sold'?'disabled':''}>Sold</button>
-      <button class="admin-action-btn danger" onclick="adminDeleteItem('${id}')">Delete</button>
-    </div>`;
+      <button class="admin-action-btn danger" onclick="adminDeleteItem('${id}')">Delete</button>`;
+    }
+    html += `</div>`;
 
     // Dealer + Market links
     html += `<div style="font-size:12px;margin-bottom:16px;">`;
