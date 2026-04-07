@@ -1785,11 +1785,25 @@
   <button class="logout-btn" onclick="logout()">Log out</button>
 </div>
 
+<!-- ADMIN LOGIN -->
+<div id="admin-login" class="screen">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:24px;">
+    <div style="font-size:20px;font-weight:700;letter-spacing:-0.5px;">EARLY BIRD<span style="animation:blink 1s step-end infinite;">_</span></div>
+    <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Admin</div>
+    <input type="password" class="form-input" id="admin-password" placeholder="Password" style="width:280px;text-align:center;" autofocus>
+    <button class="auth-btn" id="admin-login-btn" style="width:280px;" onclick="adminLogin()">Log in</button>
+    <div id="admin-login-error" style="font-size:12px;color:var(--error);min-height:16px;"></div>
+  </div>
+</div>
+
 <!-- ADMIN CMS -->
 <div id="admin" class="screen">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
     <div class="admin-title">Admin</div>
-    <a href="#" style="font-size:12px;color:var(--accent);text-decoration:none;" onclick="enterApp(); return false;">← App</a>
+    <div style="display:flex;gap:16px;align-items:center;">
+      <a href="#" style="font-size:12px;color:var(--accent);text-decoration:none;" onclick="enterApp(); return false;">← App</a>
+      <a href="#" style="font-size:12px;color:var(--muted);text-decoration:none;" onclick="adminLogout(); return false;">Log out</a>
+    </div>
   </div>
   <div class="admin-tabs">
     <button class="admin-tab active" onclick="adminTab('dealers', this)">Dealers</button>
@@ -2419,8 +2433,17 @@ function route() {
   if (convMatch) { loadConversation(convMatch[1]); return; }
 
   if (hash === '#/admin') {
-    showScreen('admin');
-    loadAdminDealers(document.getElementById('admin-content'));
+    const token = sessionStorage.getItem('eb_admin_token');
+    if (token) {
+      showScreen('admin');
+      document.getElementById('bottom-nav').classList.add('hidden');
+      loadAdminDealers(document.getElementById('admin-content'));
+    } else {
+      showScreen('admin-login');
+      document.getElementById('bottom-nav').classList.add('hidden');
+      const pwField = document.getElementById('admin-password');
+      if (pwField) pwField.focus();
+    }
     return;
   }
 
@@ -3037,13 +3060,49 @@ function logout() {
 }
 
 // ── Admin CMS ───────────────────────────────────────────────
-function getAdminToken() {
-  let token = sessionStorage.getItem('eb_admin_token');
-  if (!token) {
-    token = prompt('Admin token:');
-    if (token) sessionStorage.setItem('eb_admin_token', token);
+function adminLogin() {
+  const pw = document.getElementById('admin-password').value.trim();
+  const err = document.getElementById('admin-login-error');
+  const btn = document.getElementById('admin-login-btn');
+  if (!pw) { err.textContent = 'Enter password.'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  err.textContent = '';
+
+  fetch(`${API}/api/admin/dealers`, {
+    headers: { 'Authorization': `Bearer ${pw}` }
+  }).then(r => {
+    if (r.ok) {
+      sessionStorage.setItem('eb_admin_token', pw);
+      showScreen('admin');
+      document.getElementById('bottom-nav').classList.add('hidden');
+      loadAdminDealers(document.getElementById('admin-content'));
+    } else {
+      err.textContent = 'Wrong password.';
+    }
+  }).catch(() => {
+    err.textContent = 'Connection error.';
+  }).finally(() => {
+    btn.disabled = false;
+    btn.textContent = 'Log in';
+  });
+}
+
+function adminLogout() {
+  sessionStorage.removeItem('eb_admin_token');
+  document.getElementById('admin-password').value = '';
+  showScreen('admin-login');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('admin-login').classList.contains('active')) {
+    adminLogin();
   }
-  return token;
+});
+
+function getAdminToken() {
+  return sessionStorage.getItem('eb_admin_token');
 }
 
 function adminApi(path, opts = {}) {
