@@ -1641,7 +1641,15 @@
       <button class="mode-btn mode-active" id="mode-shop" onclick="switchMode('shop')">Shop</button>
       <button class="mode-btn" id="mode-sell" onclick="switchMode('sell')">Sell</button>
     </div>
-    <div id="market-selector" style="display:none;padding-bottom:10px;"></div>
+    <div id="feed-filters" style="display:flex;gap:8px;padding-bottom:10px;align-items:center;">
+      <select id="filter-category" onchange="applyFeedFilters()" style="flex:1;font-size:13px;padding:6px 8px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-bg);border-radius:6px;outline:none;">
+        <option value="">All Categories</option>
+      </select>
+      <select id="filter-dealer" onchange="applyFeedFilters()" style="flex:1;font-size:13px;padding:6px 8px;background:var(--input-bg);color:var(--text);border:1px solid var(--input-bg);border-radius:6px;outline:none;">
+        <option value="">All Dealers</option>
+      </select>
+      <span id="feed-item-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;"></span>
+    </div>
   </div>
   <div id="feed-content"></div>
 </div>
@@ -2131,9 +2139,10 @@ async function enterApp() {
   if (!currentMarket) {
     try {
       const markets = await api('/api/markets');
+      allMarkets = markets || [];
       const real = markets.filter(m => !m.name.toLowerCase().includes('test'));
-      if (real.length) currentMarket = real[0];
-      else if (markets.length) currentMarket = markets[0];
+      // Pick the next upcoming market automatically
+      currentMarket = real[0] || markets[0] || null;
     } catch (e) {}
   }
 
@@ -2219,46 +2228,84 @@ function selectMarket(marketId) {
   if (m) { currentMarket = m; loadFeed(); }
 }
 
+let feedItems = []; // cached for client-side filtering
+
 async function loadFeed() {
+  // Auto-select next upcoming market (no dropdown for buyers)
   if (currentMarket) {
-    document.getElementById('feed-event-name').textContent = currentMarket.name;
+    const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
+    const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
+    document.getElementById('feed-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
   }
-  renderMarketSelector();
   const content = document.getElementById('feed-content');
   try {
     const q = currentMarket ? `?market_id=${currentMarket.id}` : '';
-    const items = await api(`/api/items${q}`);
-    if (!items.length) {
-      content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
-      return;
-    }
-    content.innerHTML = '<div class="item-grid">' + items.map(item => {
-      const price = '$' + (item.price / 100).toLocaleString();
-      let photo = item.photos?.[0] || '';
-      if (photo === '/pre-drop-placeholder.svg') photo = PRE_DROP_SVG;
-      const dealer = item.dealer?.name || item.dealer?.business_name || '';
-      let badge = '';
-      if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
-      if (item.status === 'sold') badge = '<span class="item-card-badge badge-sold">Sold</span>';
-      const isFav = userFavorites.has(item.id);
-      return `<div class="item-card" onclick="openItem('${item.id}')">
-        <div class="item-card-img">
-          ${photo ? `<img src="${photo}" loading="lazy">` : ''}
-          <button class="fav-btn ${isFav ? 'fav-active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${item.id}', this)" aria-label="Favorite">
-            <svg viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          </button>
-        </div>
-        <div class="item-card-info">
-          <div class="item-card-price">${price}</div>
-          ${item.title ? `<div class="item-card-meta" style="color:var(--text);font-weight:500;">${item.title}</div>` : ''}
-          <div class="item-card-meta">${dealer}${item.dealer?.booth_number ? ' · Booth ' + item.dealer.booth_number : ''}${item.price_posture === 'firm' || item.firm ? ' · Firm' : ''}</div>
-          ${badge}
-        </div>
-      </div>`;
-    }).join('') + '</div>';
+    feedItems = await api(`/api/items${q}`);
+
+    // Populate filter dropdowns from loaded items
+    const categories = [...new Set(feedItems.map(i => i.category).filter(Boolean))].sort();
+    const dealers = [...new Set(feedItems.map(i => {
+      const d = i.dealer;
+      return d ? JSON.stringify({ id: d.id, name: d.name || d.business_name || 'Unknown' }) : null;
+    }).filter(Boolean))].map(s => JSON.parse(s));
+    // Dedupe dealers by id
+    const uniqueDealers = [];
+    const seenIds = new Set();
+    for (const d of dealers) { if (!seenIds.has(d.id)) { seenIds.add(d.id); uniqueDealers.push(d); } }
+    uniqueDealers.sort((a, b) => a.name.localeCompare(b.name));
+
+    const catSel = document.getElementById('filter-category');
+    const curCat = catSel.value;
+    catSel.innerHTML = '<option value="">All Categories</option>' + categories.map(c => `<option value="${c}" ${c === curCat ? 'selected' : ''}>${c}</option>`).join('');
+
+    const dealerSel = document.getElementById('filter-dealer');
+    const curDealer = dealerSel.value;
+    dealerSel.innerHTML = '<option value="">All Dealers</option>' + uniqueDealers.map(d => `<option value="${d.id}" ${d.id === curDealer ? 'selected' : ''}>${d.name}</option>`).join('');
+
+    applyFeedFilters();
   } catch (e) {
     content.innerHTML = '<div class="empty-state"><p>Failed to load items.</p></div>';
   }
+}
+
+function applyFeedFilters() {
+  const category = document.getElementById('filter-category').value;
+  const dealerId = document.getElementById('filter-dealer').value;
+  let filtered = feedItems;
+  if (category) filtered = filtered.filter(i => i.category === category);
+  if (dealerId) filtered = filtered.filter(i => i.dealer?.id === dealerId);
+
+  document.getElementById('feed-item-count').textContent = filtered.length + ' item' + (filtered.length !== 1 ? 's' : '');
+
+  const content = document.getElementById('feed-content');
+  if (!filtered.length) {
+    content.innerHTML = '<div class="empty-state"><h2>Nothing yet</h2><p>Dealers are still posting their inventory. Check back soon.</p></div>';
+    return;
+  }
+  content.innerHTML = '<div class="item-grid">' + filtered.map(item => {
+    const price = '$' + (item.price / 100).toLocaleString();
+    let photo = item.photos?.[0] || '';
+    if (photo === '/pre-drop-placeholder.svg') photo = PRE_DROP_SVG;
+    const dealer = item.dealer?.name || item.dealer?.business_name || '';
+    let badge = '';
+    if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
+    if (item.status === 'sold') badge = '<span class="item-card-badge badge-sold">Sold</span>';
+    const isFav = userFavorites.has(item.id);
+    return `<div class="item-card" onclick="openItem('${item.id}')">
+      <div class="item-card-img">
+        ${photo ? `<img src="${photo}" loading="lazy">` : ''}
+        <button class="fav-btn ${isFav ? 'fav-active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${item.id}', this)" aria-label="Favorite">
+          <svg viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="item-card-info">
+        <div class="item-card-price">${price}</div>
+        ${item.title ? `<div class="item-card-meta" style="color:var(--text);font-weight:500;">${item.title}</div>` : ''}
+        <div class="item-card-meta">${dealer}${item.dealer?.booth_number ? ' · Booth ' + item.dealer.booth_number : ''}${item.price_posture === 'firm' || item.firm ? ' · Firm' : ''}</div>
+        ${badge}
+      </div>
+    </div>`;
+  }).join('') + '</div>';
 }
 
 async function toggleFavorite(itemId, btn) {

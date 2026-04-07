@@ -414,7 +414,7 @@ async function handleUpdateDealer(request, env, dealer) {
 
 async function handleGetMarkets(env) {
   const today = new Date().toISOString().split('T')[0];
-  const res = await supabase(env, `markets?market_date=gte.${today}&order=market_date.asc&select=*`);
+  const res = await supabase(env, `markets?market_date=gte.${today}&archived=eq.false&order=market_date.asc&select=*`);
   return json(await res.json());
 }
 
