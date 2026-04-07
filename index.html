@@ -103,6 +103,17 @@
 
     .market-item {
       margin-bottom: 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .market-item::after {
+      content: '›';
+      font-size: 20px;
+      color: var(--dim);
+      flex-shrink: 0;
+      line-height: 1;
     }
     .market-name {
       font-size: 24px;
@@ -383,8 +394,8 @@
 
     .selfie-area { margin-bottom: 24px; }
     .selfie-preview {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       background: var(--input-bg);
       margin: 0 auto 10px;
@@ -401,12 +412,11 @@
       text-align: center;
       line-height: 1.5;
     }
-    .selfie-label {
+    .selfie-context {
       text-align: center;
       font-size: 11px;
-      color: var(--accent);
-      cursor: pointer;
-      font-weight: 500;
+      color: var(--dim);
+      margin-top: 8px;
     }
 
     /* ── Feed Screen ─────────────────────── */
@@ -414,7 +424,7 @@
       height: 100vh;
       height: 100dvh;
       overflow-y: auto;
-      scroll-snap-type: y mandatory;
+      scroll-snap-type: y proximity;
       -webkit-overflow-scrolling: touch;
     }
     .feed-header {
@@ -589,6 +599,8 @@
       gap: 14px;
       padding: 14px var(--side);
       cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
     .conv-item + .conv-item {
       border-top: 1px solid var(--input-bg);
@@ -636,6 +648,15 @@
       color: #fff;
       text-decoration: none;
       pointer-events: auto;
+    }
+    .conv-mode .detail-back {
+      background: rgba(250,250,248,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .conv-mode .detail-back a {
+      color: var(--text);
+      font-weight: 500;
     }
     .detail-photos {
       /* No padding — photo goes edge to edge from top */
@@ -891,10 +912,7 @@
       padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(40px, env(safe-area-inset-bottom));
     }
-    .add-item-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+    #add-item .feed-header {
       margin-bottom: 24px;
     }
     .photo-upload-area {
@@ -919,6 +937,11 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    .photo-slot-empty {
+      background: transparent;
+      border: 2px dashed var(--input-bg);
+      cursor: default;
     }
     .photo-slot .add-icon {
       font-size: 24px;
@@ -1130,7 +1153,7 @@
       bottom: 0; left: 0; right: 0;
       z-index: 201;
       background: #fff;
-      border-radius: 16px 16px 0 0;
+      border-radius: 12px 12px 0 0;
       padding: 20px 24px;
       padding-bottom: max(24px, env(safe-area-inset-bottom));
       transform: translateY(100%);
@@ -1273,15 +1296,15 @@
     .my-item-actions {
       display: flex;
       gap: 6px;
-      flex-shrink: 0;
+      margin-top: 8px;
     }
     .my-item-action {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 4px;
       border: 1px solid var(--input-bg);
       background: #fff;
       cursor: pointer;
@@ -1404,7 +1427,7 @@
     .badge-hold { background: #FFF8E1; color: #F9A825; }
     .badge-sold { background: var(--input-bg); color: var(--muted); }
     .badge-deleted { background: #FDECEA; color: var(--error); }
-    .badge-upcoming { background: #E8F0FE; color: var(--accent); }
+    .badge-upcoming { background: var(--input-bg); color: var(--muted); }
     .badge-past { background: var(--input-bg); color: var(--muted); }
     .badge-inactive { background: #FDECEA; color: var(--error); }
     .admin-actions { display: flex; gap: 6px; margin-top: 8px; }
@@ -1815,20 +1838,27 @@
 
     /* ── Feed Header (restructured) ──────────────────────── */
 
-    .feed-header-left {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-    .feed-header-right {
+    .feed-header-row2 {
       display: flex;
       align-items: center;
       gap: 8px;
+      padding-bottom: 8px;
+    }
+    .feed-header-row2 .feed-market-link {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .feed-header-row2 .seg-ctrl {
+      flex-shrink: 0;
     }
     .feed-item-count {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       color: var(--muted);
+      flex-shrink: 0;
     }
     .feed-filter-btn {
       background: none;
@@ -1843,10 +1873,8 @@
       .feed-filter-btn:hover { background: var(--input-bg); color: var(--text); }
     }
     .feed-market-link {
-      display: block;
       font-size: 11px;
       color: var(--muted);
-      padding-bottom: 8px;
       text-decoration: none;
       transition: color 0.15s;
     }
@@ -2229,9 +2257,9 @@
     /* ── Item Detail (additions) ──────────────────────────── */
 
     .detail-title {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--muted);
-      margin-bottom: 4px;
+      margin-top: 2px;
     }
     .detail-loading {
       text-align: center;
@@ -2765,11 +2793,11 @@
 
   <div class="selfie-area">
     <div class="selfie-preview" id="selfie-preview" onclick="document.getElementById('selfie-input').click()">
-      <div class="placeholder">Tap to<br>take selfie</div>
+      <div class="placeholder">Tap to add<br>a photo</div>
     </div>
-    <div class="selfie-label" onclick="document.getElementById('selfie-input').click()">Add a photo</div>
     <input type="file" id="selfie-input" accept="image/*" capture="user" class="hidden"
            onchange="handleSelfie(this)">
+    <div class="selfie-context">Shown to dealers and buyers you message</div>
   </div>
 
   <div class="field">
@@ -2784,23 +2812,21 @@
 <div id="feed" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-header-left">
-        <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-        <span id="feed-item-count" class="feed-item-count"></span>
-      </div>
-      <div class="feed-header-right">
-        <div class="browse-toggle seg-ctrl" id="browse-toggle">
-          <button class="seg-btn active" onclick="setBrowseMode('all', this)">All</button>
-          <button class="seg-btn" onclick="setBrowseMode('saved', this)">Saved</button>
-        </div>
-        <button class="feed-filter-btn" onclick="openFilterSheet()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
-          </svg>
-        </button>
+      <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
+      <button class="feed-filter-btn" onclick="openFilterSheet()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="feed-header-row2">
+      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;">Markets</a>
+      <span id="feed-item-count" class="feed-item-count"></span>
+      <div class="browse-toggle seg-ctrl" id="browse-toggle">
+        <button class="seg-btn active" onclick="setBrowseMode('all', this)">All</button>
+        <button class="seg-btn" onclick="setBrowseMode('saved', this)">Saved</button>
       </div>
     </div>
-    <a href="#" id="feed-event-name" class="feed-market-link back-link" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;">Markets</a>
   </div>
   <!-- Filter bottom sheet -->
   <div class="sheet-overlay" id="filter-sheet" onclick="closeFilterSheet()">
@@ -2892,14 +2918,21 @@
 
 <!-- ADD ITEM -->
 <div id="add-item" class="screen">
-  <a href="#" class="back-link" onclick="showScreen('dealer-home'); switchTab('dealer-home'); return false;">Back</a>
-  <div class="add-item-title">Add item</div>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo"><a href="#" class="back-link" onclick="showScreen('dealer-home'); switchTab('dealer-home'); return false;">Back</a> Add item</div>
+    </div>
+  </div>
 
   <label class="form-label">Photos <span class="required">*</span></label>
   <div class="photo-upload-area" id="photo-slots">
     <div class="photo-slot" onclick="document.getElementById('photo-file').click()">
       <span class="add-icon">+</span>
     </div>
+    <div class="photo-slot photo-slot-empty"></div>
+    <div class="photo-slot photo-slot-empty"></div>
+    <div class="photo-slot photo-slot-empty"></div>
+    <div class="photo-slot photo-slot-empty"></div>
   </div>
   <input type="file" id="photo-file" accept="image/*" multiple class="hidden" onchange="handleItemPhotos(this)">
 
@@ -2952,7 +2985,7 @@
 <div id="settings" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo">Settings</div>
+      <div class="feed-logo">Account</div>
     </div>
   </div>
   <div class="settings-content">
@@ -3750,8 +3783,8 @@ async function loadDealerHome() {
           <div class="my-item-price">${price}</div>
           ${titleText}
           <div class="my-item-meta">${pill} ${inquiryText}</div>
+          ${actions}
         </div>
-        ${actions}
       </li>`;
     }).join('');
   } catch (e) {
@@ -3897,6 +3930,7 @@ function openItem(itemId) {
 }
 
 async function loadItemDetail(itemId) {
+  document.getElementById('item-detail').classList.remove('conv-mode');
   const photosEl = document.getElementById('detail-photos');
   const infoEl = document.getElementById('detail-info');
   const actionsEl = document.getElementById('detail-actions');
@@ -3933,8 +3967,8 @@ async function loadItemDetail(itemId) {
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
     const biz = item.dealer?.business_name && item.dealer?.name ? item.dealer.business_name : '';
     let html = '';
-    if (item.title) html += `<div class="detail-title">${item.title}</div>`;
     html += `<div class="detail-price">${price}</div>`;
+    if (item.title) html += `<div class="detail-title">${item.title}</div>`;
     if (item.price_posture === 'make_offer') html += `<span class="posture-pill">Make me an offer</span>`;
     else if (item.price_posture === 'flexible') html += `<span class="posture-pill">Flexible</span>`;
     else if (item.firm) html += `<span class="posture-pill">Firm</span>`;
@@ -4102,6 +4136,7 @@ async function sendFirstMessage(itemId, directMsg) {
 // ── Conversation View ────────────────────────────────────────
 async function loadConversation(token) {
   showScreen('item-detail');
+  document.getElementById('item-detail').classList.add('conv-mode');
   document.getElementById('bottom-nav').classList.remove('hidden');
   // Override back button to go to messages
   document.querySelector('.detail-back a').onclick = function(e) {
@@ -4287,6 +4322,8 @@ function renderPhotoSlots() {
   if (itemPhotos.length < 5) {
     html += `<div class="photo-slot" onclick="document.getElementById('photo-file').click()"><span class="add-icon">+</span></div>`;
   }
+  const remaining = 5 - itemPhotos.length - (itemPhotos.length < 5 ? 1 : 0);
+  for (let i = 0; i < remaining; i++) html += '<div class="photo-slot photo-slot-empty"></div>';
   container.innerHTML = html;
 }
 
@@ -4593,7 +4630,7 @@ async function loadAdminDashboard(el) {
       html += `<div class="admin-card admin-clickable mb-24" onclick="location.hash='#/admin/markets/${m.id}'">
         <div class="admin-card-row">
           <span class="name">${m.name}</span>
-          <span class="admin-badge badge-upcoming">${daysUntil <= 0 ? 'Today' : daysUntil + 'd away'}</span>
+          <span class="admin-badge badge-upcoming">${daysUntil <= 0 ? 'Today' : 'in ' + daysUntil + (daysUntil === 1 ? ' day' : ' days')}</span>
         </div>
         <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count} items · ${m.dealer_count} dealers</div>
       </div>`;
