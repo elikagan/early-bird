@@ -88,6 +88,7 @@
       font-weight: 500;
       color: var(--muted);
       text-decoration: none;
+      padding: 8px 0;
     }
     .dealer-link:hover { color: var(--text); }
 
@@ -129,49 +130,15 @@
       font-size: 12px;
       font-weight: 400;
       color: var(--muted);
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     /* ── Auth ── */
     .auth-section {
       margin-top: 16px;
     }
-    .auth-input {
-      width: 100%;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 16px;
-      font-weight: 400;
-      color: var(--text);
-      background: var(--input-bg);
-      border: none;
-      padding: 14px 16px;
-      border-radius: 6px;
-      outline: none;
-      letter-spacing: 0.02em;
-      font-variant-numeric: tabular-nums;
-    }
-    .auth-input::placeholder { color: var(--dim); }
-    .auth-input:focus { box-shadow: 0 0 0 2px var(--accent); }
-    .auth-btn {
-      width: 100%;
-      margin-top: 10px;
-      background: var(--accent);
-      color: #FFFFFF;
-      border: none;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 16px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-    }
-    .auth-btn:hover { background: var(--accent-hover); }
-    .auth-btn:disabled { opacity: 0.5; cursor: default; }
+    /* .auth-input consolidated into .fi */
+    /* .auth-btn consolidated into .btn-primary */
     .auth-fine {
       margin-top: 12px;
       font-size: 11px;
@@ -371,26 +338,8 @@
     }
 
     .field { margin-bottom: 16px; }
-    .field label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-    .field input[type="text"] {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--input-bg);
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      color: var(--text);
-      outline: none;
-    }
-    .field input[type="text"]:focus { box-shadow: 0 0 0 2px var(--accent); }
+    /* .field label consolidated into .fl */
+    /* .field input[type="text"] consolidated into .fi */
 
     .selfie-area { margin-bottom: 24px; }
     .selfie-preview {
@@ -398,7 +347,7 @@
       height: 120px;
       border-radius: 50%;
       background: var(--input-bg);
-      margin: 0 auto 10px;
+      margin: 0 auto 12px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -441,13 +390,15 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
     }
     .feed-logo {
       font-size: 16px;
       font-weight: 700;
       letter-spacing: -0.02em;
       color: var(--text);
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .feed-event {
       font-size: 12px;
@@ -496,18 +447,7 @@
       color: var(--muted);
       margin-top: 4px;
     }
-    .item-card-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-top: 6px;
-    }
-    .badge-hold { background: #FDF6E3; color: #B8960C; }
-    .badge-sold { background: #EEE; color: var(--muted); }
+    /* .item-card-badge consolidated into .status-pill */
 
     /* Desktop: 2-column grid */
     @media (min-width: 768px) {
@@ -530,7 +470,7 @@
         aspect-ratio: 1;
         flex: none;
       }
-      .item-card-info { padding: 10px 12px; }
+      .item-card-info { padding: 12px; }
       .item-card-price { font-size: 14px; }
       .item-card-meta { font-size: 10px; margin-top: 2px; }
     }
@@ -580,7 +520,7 @@
       position: relative;
     }
     .fav-card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .fav-card-info { padding: 10px 12px; }
+    .fav-card-info { padding: 12px; }
     .fav-card-price {
       font-size: 14px;
       font-weight: 700;
@@ -601,7 +541,10 @@
       cursor: pointer;
       text-decoration: none;
       color: inherit;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.1s;
     }
+    .conv-item:active { background: var(--input-bg); }
     .conv-item + .conv-item {
       border-top: 1px solid var(--input-bg);
     }
@@ -649,15 +592,7 @@
       text-decoration: none;
       pointer-events: auto;
     }
-    .conv-mode .detail-back {
-      background: rgba(250,250,248,0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .conv-mode .detail-back a {
-      color: var(--text);
-      font-weight: 500;
-    }
+    .conv-mode .detail-back { display: none; }
     .detail-photos {
       /* No padding — photo goes edge to edge from top */
     }
@@ -691,8 +626,8 @@
     .carousel-dots {
       display: flex;
       justify-content: center;
-      gap: 6px;
-      padding: 10px 0;
+      gap: 8px;
+      padding: 12px 0;
     }
     .carousel-dot {
       width: 8px;
@@ -701,7 +636,8 @@
       background: var(--dim);
       border: none;
       cursor: pointer;
-      padding: 0;
+      padding: 8px;
+      background-clip: content-box;
     }
     .carousel-dot.active {
       background: var(--text);
@@ -761,24 +697,7 @@
     .detail-actions {
       padding: 0 var(--side) var(--side);
     }
-    .text-seller-btn {
-      width: 100%;
-      background: var(--accent);
-      color: #FFFFFF;
-      border: none;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 16px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .text-seller-btn:hover { background: var(--accent-hover); }
-    .text-seller-btn:disabled { opacity: 0.5; cursor: default; }
+    /* .text-seller-btn consolidated into .btn-primary */
     .detail-status-badge {
       width: 100%;
       text-align: center;
@@ -789,14 +708,8 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
-    .detail-badge-sold {
-      background: #EEE;
-      color: var(--muted);
-    }
-    .detail-badge-hold {
-      background: #FDF6E3;
-      color: #B8960C;
-    }
+    .detail-status-badge.sold { background: #EEE; color: var(--muted); }
+    .detail-status-badge.hold { background: #FDF6E3; color: #B8960C; }
 
     /* ── Seller Inquiry List ─────────────── */
     .inquiry-list {
@@ -860,7 +773,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-top: 6px;
+      margin-top: 8px;
     }
     .inquiry-phone {
       font-size: 11px;
@@ -877,30 +790,10 @@
     .inquiry-actions {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       flex-shrink: 0;
     }
-    .inquiry-action-btn {
-      background: var(--input-bg);
-      border: none;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 6px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .inquiry-hold-btn:hover {
-      background: #FDF6E3;
-      color: #B8960C;
-    }
-    .inquiry-sold-btn:hover {
-      background: #E8F5E9;
-      color: var(--success);
-    }
+    /* .inquiry-action-btn consolidated into .btn-secondary.btn-filled */
 
     /* ── Add Item Form ───────────────────── */
     #add-item {
@@ -967,42 +860,9 @@
     .form-field {
       margin-bottom: 20px;
     }
-    .form-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: block;
-    }
-    .form-label .required { color: var(--error); }
-    .form-input {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--input-bg);
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      color: var(--text);
-      outline: none;
-    }
-    .form-input:focus { box-shadow: 0 0 0 2px var(--accent); }
-    .form-select {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--input-bg);
-      border: none;
-      border-radius: 6px;
-      font-size: 15px;
-      color: var(--text);
-      outline: none;
-      -webkit-appearance: none;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    .form-select:focus { box-shadow: 0 0 0 2px var(--accent); }
+    /* .form-label consolidated into .fl */
+    /* .form-input consolidated into .fi */
+    /* .form-select consolidated into .fs */
     .form-row {
       display: flex;
       gap: 12px;
@@ -1011,7 +871,7 @@
     .form-toggle {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       cursor: pointer;
       font-size: 13px;
       color: var(--text);
@@ -1052,7 +912,7 @@
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 7px 12px;
+      padding: 8px 14px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
@@ -1104,7 +964,7 @@
       min-width: 16px; height: 16px;
       background: var(--error);
       color: #fff;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       border-radius: 8px;
       display: flex;
@@ -1172,7 +1032,7 @@
       margin-bottom: 16px;
     }
     .sheet-field { margin-bottom: 14px; }
-    .sheet-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    /* .sheet-label consolidated into .fl */
 
     /* Messages filter — positioned with side margins */
     .msg-toggle {
@@ -1281,36 +1141,13 @@
       align-items: center;
       gap: 8px;
     }
-    .my-item-status-pill {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .pill-live { background: #EDF7F0; color: var(--success); }
-    .pill-hold { background: #FDF6E3; color: #B8960C; }
-    .pill-sold { background: #EEE; color: var(--muted); }
+    /* .my-item-status-pill consolidated into .status-pill */
     .my-item-actions {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       margin-top: 8px;
     }
-    .my-item-action {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 6px 12px;
-      border-radius: 4px;
-      border: 1px solid var(--input-bg);
-      background: #fff;
-      cursor: pointer;
-      color: var(--text);
-    }
-    .my-item-action:active { background: var(--input-bg); }
+    /* .my-item-action consolidated into .btn-secondary */
 
     /* ── Messages ────────────────────────── */
     #messages {
@@ -1380,7 +1217,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      padding: 2px 6px;
+      padding: 4px 8px;
       border-radius: 4px;
     }
     .admin-card .role-dealer { background: #EDF7F0; color: var(--success); }
@@ -1422,26 +1259,16 @@
     .admin-back:hover { color: var(--text); }
     .admin-clickable { cursor: pointer; transition: opacity 0.15s; }
     .admin-clickable:hover { opacity: 0.7; }
-    .admin-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-    .badge-live { background: #EDF7F0; color: var(--success); }
-    .badge-hold { background: #FFF8E1; color: #F9A825; }
-    .badge-sold { background: var(--input-bg); color: var(--muted); }
-    .badge-deleted { background: #FDECEA; color: var(--error); }
-    .badge-upcoming { background: var(--input-bg); color: var(--muted); }
-    .badge-past { background: var(--input-bg); color: var(--muted); }
-    .badge-inactive { background: #FDECEA; color: var(--error); }
-    .admin-actions { display: flex; gap: 6px; margin-top: 8px; }
-    .admin-action-btn { font-size: 10px; font-weight: 600; padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer; background: var(--input-bg); color: var(--muted); }
-    .admin-action-btn:hover { background: var(--dim); color: var(--text); }
-    .admin-action-btn.danger { color: var(--error); }
-    .admin-action-btn.danger:hover { background: #FDECEA; }
+    /* .admin-badge consolidated into .status-pill */
+    .admin-actions { display: flex; gap: 8px; margin-top: 8px; }
+    /* .admin-action-btn consolidated into .btn-secondary.btn-filled.btn-sm */
     .admin-filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-    .admin-filter-bar select { font-size: 11px; padding: 6px 8px; border: none; background: var(--input-bg); border-radius: 4px; color: var(--text); }
+    .admin-filter-bar select { font-size: 11px; padding: 8px 12px; border: none; background: var(--input-bg); border-radius: 4px; color: var(--text); }
     .admin-timeline { margin-top: 16px; }
     .admin-timeline-item { font-size: 12px; padding: 8px 0; color: var(--muted); }
     .admin-timeline-item + .admin-timeline-item { border-top: 1px solid var(--input-bg); }
     .admin-timeline-item .action { color: var(--text); font-weight: 500; }
-    .admin-thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 10px; flex-shrink: 0; }
+    .admin-thumb { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; margin-right: 12px; flex-shrink: 0; }
 
     /* ── Settings ─────────────────────── */
     #settings {
@@ -1511,18 +1338,7 @@
     .settings-toggle input:checked + .slider::before {
       transform: translateX(20px);
     }
-    .logout-btn {
-      width: 100%;
-      padding: 14px;
-      background: none;
-      border: 1px solid var(--error);
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--error);
-      cursor: pointer;
-      margin-top: 24px;
-    }
+    /* .logout-btn consolidated into .btn-danger */
 
     /* ══════════════════════════════════════════════════════════
        DESIGN SYSTEM v2 — Consolidated Components
@@ -1579,6 +1395,11 @@
     .btn-secondary:active { transform: scale(0.97); }
     .btn-secondary.danger { color: var(--error); border-color: var(--error); }
     .btn-secondary.danger:hover { background: #FDECEA; }
+    .btn-secondary.btn-filled { background: var(--input-bg); border-color: transparent; color: var(--muted); }
+    .btn-secondary.btn-filled:hover { background: var(--dim); color: var(--text); }
+    .btn-secondary.btn-sm { padding: 4px 8px; font-size: 10px; }
+    .btn-secondary.hold-action:hover { background: #FDF6E3; color: #B8960C; border-color: transparent; }
+    .btn-secondary.sold-action:hover { background: #E8F5E9; color: var(--success); border-color: transparent; }
 
     .btn-chip {
       font-family: 'JetBrains Mono', monospace;
@@ -1623,7 +1444,7 @@
     .fi {
       width: 100%;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
+      font-size: 16px;
       color: var(--text);
       background: var(--input-bg);
       border: none;
@@ -1639,7 +1460,7 @@
     .fs {
       width: 100%;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
+      font-size: 16px;
       color: var(--text);
       background: var(--input-bg);
       border: none;
@@ -1663,9 +1484,10 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       display: block;
     }
+    .fl .required { color: var(--error); }
 
     /* ── Status Pills (consolidated) ─────────────────────── */
 
@@ -1685,6 +1507,9 @@
     .status-pill.upcoming { background: #E8F0FE; color: var(--accent); }
     .status-pill.past { background: var(--input-bg); color: var(--muted); }
     .status-pill.deleted { background: #FDECEA; color: var(--error); }
+    .status-pill.inactive { background: #FDECEA; color: var(--error); }
+    .status-pill.today { background: #EDF7F0; color: var(--success); }
+    .status-pill.test { background: #FFF8E1; color: #F9A825; }
 
     .posture-pill {
       display: inline-block;
@@ -1844,15 +1669,19 @@
       gap: 8px;
       padding-bottom: 8px;
     }
-    .feed-header-row2 .feed-market-link {
-      flex: 1;
-      min-width: 0;
+    .feed-header-top .feed-market-link {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      min-width: 0;
+      text-align: right;
     }
     .feed-header-row2 .seg-ctrl {
       flex-shrink: 0;
+      margin-left: auto;
     }
     .feed-item-count {
       font-family: 'JetBrains Mono', monospace;
@@ -1892,12 +1721,26 @@
       top: 0;
       z-index: 100;
     }
+    .conv-back-link {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 0 4px;
+    }
+    @media (hover: hover) {
+      .conv-back-link:hover { color: var(--text); }
+    }
     .conv-item-row {
       display: flex;
       gap: 12px;
       align-items: center;
       padding: 12px 0;
       border-bottom: 1px solid var(--input-bg);
+    }
+    .conv-item-meta {
+      flex: 1;
+      min-width: 0;
     }
     .conv-item-thumb {
       width: 48px;
@@ -1920,22 +1763,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .conv-party-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 0;
-    }
     .conv-party-avatar {
       width: 32px;
       height: 32px;
       border-radius: 50%;
       object-fit: cover;
       flex-shrink: 0;
-    }
-    .conv-party-name {
-      font-size: 14px;
-      font-weight: 600;
     }
     .conv-party-phone {
       font-size: 11px;
@@ -1962,14 +1795,14 @@
     .msg-row {
       display: flex;
       align-items: flex-end;
-      gap: 6px;
+      gap: 8px;
       margin-bottom: 8px;
     }
     .msg-row.sent { justify-content: flex-end; }
     .msg-row.received { justify-content: flex-start; }
     .msg-bubble {
       max-width: 75%;
-      padding: 10px 14px;
+      padding: 12px 16px;
       border-radius: 12px;
       font-size: 13px;
       line-height: 1.4;
@@ -2015,7 +1848,7 @@
       gap: 8px;
       z-index: 100;
     }
-    .conv-reply-bar .fi { flex: 1; font-size: 13px; padding: 12px 14px; }
+    .conv-reply-bar .fi { flex: 1; font-size: 16px; padding: 12px 14px; }
 
     /* ── Messages List — Composite Thumbnail ─────────────── */
 
@@ -2057,14 +1890,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       color: var(--muted);
     }
     .conv-name-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       margin-bottom: 2px;
     }
     .conv-name-row .name {
@@ -2101,7 +1934,7 @@
     .teaser-date {
       font-size: 14px;
       color: var(--muted);
-      margin-top: 6px;
+      margin-top: 8px;
     }
     .teaser-countdown {
       font-size: 13px;
@@ -2132,7 +1965,7 @@
     .teaser-preview-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      gap: 8px;
       margin-top: 16px;
     }
     .teaser-preview-cell {
@@ -2147,12 +1980,37 @@
 
     .booth-number {
       font-size: 12px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     .booth-event-name {
       font-size: 12px;
       color: var(--muted);
       padding-bottom: 4px;
+      text-decoration: none;
+      display: block;
     }
+    .booth-event-name::after {
+      content: ' ▾';
+      font-size: 10px;
+    }
+    .market-picker-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      cursor: pointer;
+      border-bottom: 1px solid var(--input-bg);
+    }
+    .market-picker-row:last-child { border-bottom: none; }
+    .market-picker-row:active { background: var(--input-bg); }
+    .market-picker-row.selected { font-weight: 700; }
+    .market-picker-name { font-size: 14px; }
+    .market-picker-meta { font-size: 11px; color: var(--muted); }
+    .market-picker-count { font-size: 11px; color: var(--muted); }
     .booth-countdown {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
@@ -2173,7 +2031,7 @@
     .booth-stat-value {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 20px;
       font-variant-numeric: tabular-nums;
     }
     .booth-stat-label {
@@ -2195,15 +2053,17 @@
     }
     .booth-input {
       width: 80px;
-      padding: 8px 10px;
+      padding: 8px 12px;
       background: var(--input-bg);
       border: none;
       border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 16px;
       color: var(--text);
       outline: none;
+      transition: box-shadow 0.15s;
     }
+    .booth-input:focus { box-shadow: 0 0 0 2px var(--accent); }
     .booth-setup-card {
       background: var(--input-bg);
       border-radius: 6px;
@@ -2211,6 +2071,7 @@
       margin: 0 var(--side) 16px;
     }
     .booth-setup-card .fl { margin-bottom: 4px; }
+    .booth-setup-title { font-size: 15px; font-weight: 700; }
 
     /* ── Compose Flow (item detail) ──────────────────────── */
 
@@ -2235,7 +2096,7 @@
     .compose-textarea {
       width: 100%;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
+      font-size: 16px;
       color: var(--text);
       background: var(--input-bg);
       border: none;
@@ -2401,19 +2262,18 @@
     }
     .admin-search-input {
       width: 140px;
-      font-size: 11px;
-      padding: 6px 8px;
+      font-size: 16px;
+      padding: 8px 12px;
       background: var(--input-bg);
       border: none;
       border-radius: 4px;
       font-family: 'JetBrains Mono', monospace;
       color: var(--text);
       outline: none;
+      transition: box-shadow 0.15s;
     }
-    .admin-badge--test {
-      background: #FFF8E1;
-      color: #F9A825;
-    }
+    .admin-search-input:focus { box-shadow: 0 0 0 2px var(--accent); }
+    /* .admin-badge--test consolidated into .status-pill.test */
     .admin-card--dimmed { opacity: 0.6; }
     .admin-archived-toggle {
       cursor: pointer;
@@ -2444,7 +2304,7 @@
     }
     .admin-item-info-row {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
       margin-bottom: 8px;
     }
@@ -2493,7 +2353,7 @@
     .blast-history-body {
       font-size: 11px;
       color: var(--text);
-      margin-top: 6px;
+      margin-top: 8px;
       white-space: pre-wrap;
       background: var(--input-bg);
       padding: 8px;
@@ -2516,7 +2376,7 @@
     .toast {
       background: var(--text);
       color: #fff;
-      padding: 10px 20px;
+      padding: 12px 20px;
       border-radius: 8px;
       font-size: 13px;
       font-weight: 500;
@@ -2560,7 +2420,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       color: var(--muted);
       margin: 8px auto 8px;
@@ -2596,21 +2456,7 @@
 
     /* ── Filter sheet button ──────────────────────────────── */
 
-    .filter-done-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--text);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.15s;
-    }
-    .filter-done-btn:hover { background: #333; }
+    /* .filter-done-btn consolidated into .btn-primary.btn-dark */
 
     /* ── Nav tab label (for relative positioning of badge) ── */
 
@@ -2623,7 +2469,7 @@
 <body>
 
 <!-- LANDING PAGE -->
-<div id="landing" class="screen active">
+<div id="landing" class="screen">
   <div class="header">
     <div class="logo">EARLY BIRD<span class="cursor">_</span></div>
     <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">Dealer? Click here</a>
@@ -2650,12 +2496,12 @@
     </div>
 
     <div class="auth-section">
-      <input type="tel" class="auth-input" id="phone-input" placeholder="(310) 555-1234"
+      <input type="tel" class="fi" id="phone-input" placeholder="(310) 555-1234"
              inputmode="tel" autocomplete="tel">
-      <button class="auth-btn" id="auth-btn" onclick="requestMagicLink()">
-        Register for early access
+      <button class="btn-primary" id="auth-btn" onclick="requestMagicLink()" style="margin-top:12px">
+        Get early access
       </button>
-      <div class="auth-fine" id="auth-msg">We'll text you when inventory goes live.</div>
+      <div class="auth-fine" id="auth-msg">We'll text you when items drop.</div>
     </div>
   </div>
 
@@ -2718,14 +2564,14 @@
     <span class="accent">before the gates open</span>
   </div>
   <div class="dealer-sub">
-    Post what you're bringing to the market. Buyers buy it before the crowd shows up. You show up with sales already made.
+    Post what you're bringing. Buyers see it when items drop.
   </div>
   <div class="dealer-free-badge">100% free for dealers</div>
 
   <div class="auth-section">
-    <input type="tel" class="auth-input" id="dealer-phone-input" placeholder="(310) 555-1234"
+    <input type="tel" class="fi" id="dealer-phone-input" placeholder="(310) 555-1234"
            inputmode="tel" autocomplete="tel">
-    <button class="auth-btn" id="dealer-auth-btn" onclick="requestDealerMagicLink()">
+    <button class="btn-primary" id="dealer-auth-btn" onclick="requestDealerMagicLink()" style="margin-top:12px">
       Get started
     </button>
     <div class="auth-fine" id="dealer-auth-msg">We'll text you a link to set up your booth.</div>
@@ -2801,8 +2647,8 @@
   </div>
 
   <div class="field">
-    <label>Your name</label>
-    <input type="text" id="onboard-name" placeholder="How dealers/buyers will know you">
+    <label class="fl">Your name</label>
+    <input type="text" id="onboard-name" class="fi" placeholder="Your display name">
   </div>
 
   <button class="auth-btn mt-8" onclick="completeOnboarding()">Let's go</button>
@@ -2813,14 +2659,14 @@
   <div class="feed-header">
     <div class="feed-header-top">
       <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
+      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;">Markets</a>
+    </div>
+    <div class="feed-header-row2">
       <button class="feed-filter-btn" onclick="openFilterSheet()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
         </svg>
       </button>
-    </div>
-    <div class="feed-header-row2">
-      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;">Markets</a>
       <span id="feed-item-count" class="feed-item-count"></span>
       <div class="browse-toggle seg-ctrl" id="browse-toggle">
         <button class="seg-btn active" onclick="setBrowseMode('all', this)">All</button>
@@ -2834,18 +2680,18 @@
       <div class="sheet-handle"></div>
       <div class="sheet-title">Filters</div>
       <div class="sheet-field">
-        <div class="sheet-label">Category</div>
+        <div class="fl">Category</div>
         <select id="filter-category" onchange="applyFeedFilters()" class="fs">
           <option value="">All Categories</option>
         </select>
       </div>
       <div class="sheet-field">
-        <div class="sheet-label">Dealer</div>
+        <div class="fl">Dealer</div>
         <select id="filter-dealer" onchange="applyFeedFilters()" class="fs">
           <option value="">All Dealers</option>
         </select>
       </div>
-      <button class="filter-done-btn" onclick="closeFilterSheet()">Done</button>
+      <button class="btn-primary btn-dark" onclick="closeFilterSheet()" style="margin-top:8px">Done</button>
     </div>
   </div>
   <div id="feed-content"></div>
@@ -2858,9 +2704,10 @@
       <div class="feed-logo">My Booth</div>
       <div id="booth-number-row" class="booth-number"></div>
     </div>
-    <div id="booth-event-name" class="booth-event-name"></div>
+    <a href="#" id="booth-event-name" class="booth-event-name" onclick="event.preventDefault(); openMarketPicker();"></a>
     <div id="booth-countdown" class="booth-countdown"></div>
   </div>
+  <div id="booth-setup-card" class="booth-setup-card hidden" style="margin:0 var(--side) 16px"></div>
   <div id="booth-stats" class="booth-stats"></div>
   <ul class="my-items-list" id="my-items-list"></ul>
   <div class="empty-state" id="dealer-empty">
@@ -2868,6 +2715,14 @@
     <p>Post items you&#39;re bringing to the market.</p>
   </div>
   <button class="fab" onclick="showAddItem()" aria-label="Add item">+</button>
+  <!-- Market picker bottom sheet -->
+  <div class="sheet-overlay" id="market-picker-sheet" onclick="closeMarketPicker()">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">Select Market</div>
+      <div id="market-picker-list"></div>
+    </div>
+  </div>
 </div>
 
 <!-- MESSAGES -->
@@ -2924,7 +2779,7 @@
     </div>
   </div>
 
-  <label class="form-label">Photos <span class="required">*</span></label>
+  <label class="fl">Photos <span class="required">*</span></label>
   <div class="photo-upload-area" id="photo-slots">
     <div class="photo-slot" onclick="document.getElementById('photo-file').click()">
       <span class="add-icon">+</span>
@@ -2937,19 +2792,19 @@
   <input type="file" id="photo-file" accept="image/*" multiple class="hidden" onchange="handleItemPhotos(this)">
 
   <div class="form-field">
-    <label class="form-label">Title (optional)</label>
-    <input type="text" class="form-input" id="item-title" placeholder="What is it?">
+    <label class="fl">Title (optional)</label>
+    <input type="text" class="fi" id="item-title" placeholder="What is it?">
   </div>
 
   <div class="form-field">
-    <label class="form-label">Price <span class="required">*</span></label>
-    <input type="text" class="form-input" id="item-price" placeholder="$" inputmode="decimal">
+    <label class="fl">Price <span class="required">*</span></label>
+    <input type="text" class="fi" id="item-price" placeholder="$" inputmode="decimal">
   </div>
 
   <div class="form-row">
     <div class="form-field">
-      <label class="form-label">Condition</label>
-      <select class="form-select" id="item-condition">
+      <label class="fl">Condition</label>
+      <select class="fs" id="item-condition">
         <option value="">—</option>
         <option value="mint">Mint</option>
         <option value="good">Good</option>
@@ -2958,13 +2813,13 @@
       </select>
     </div>
     <div class="form-field">
-      <label class="form-label">Market</label>
-      <select class="form-select" id="item-market"></select>
+      <label class="fl">Market</label>
+      <select class="fs" id="item-market"></select>
     </div>
   </div>
 
   <div class="form-field">
-    <label class="form-label">Price posture</label>
+    <label class="fl">Price posture</label>
     <div class="seg-ctrl" id="price-posture-ctrl">
       <button type="button" class="seg-btn active" onclick="selectPricePosture(this, 'firm')">Firm</button>
       <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'flexible')">Flexible</button>
@@ -2973,11 +2828,11 @@
   </div>
 
   <div class="form-field">
-    <label class="form-label">Notes (optional)</label>
-    <input type="text" class="form-input" id="item-notes" placeholder="Condition details, dimensions, etc.">
+    <label class="fl">Notes (optional)</label>
+    <input type="text" class="fi" id="item-notes" placeholder="Details, dimensions, etc.">
   </div>
 
-  <button class="auth-btn" id="post-item-btn" onclick="postItem()">Post item</button>
+  <button class="btn-primary" id="post-item-btn" onclick="postItem()" style="margin-top:12px">Post item</button>
   <div class="auth-fine" id="post-item-msg"></div>
 </div>
 
@@ -2994,31 +2849,31 @@
 
     <div class="settings-section">
       <div class="field">
-        <label>Name</label>
-        <input type="text" id="settings-name" placeholder="Your name" onblur="saveSettings()">
+        <label class="fl">Name</label>
+        <input type="text" id="settings-name" class="fi" placeholder="Your name" onblur="saveSettings()">
       </div>
       <div class="field">
-        <label>Business name</label>
-        <input type="text" id="settings-biz" placeholder="Optional" onblur="saveSettings()">
+        <label class="fl">Business name</label>
+        <input type="text" id="settings-biz" class="fi" placeholder="Optional" onblur="saveSettings()">
       </div>
     </div>
 
     <div class="settings-section nav-dealer-only hidden">
       <div class="section-title">Payment</div>
       <div class="field">
-        <label>Venmo</label>
-        <input type="text" id="settings-venmo" placeholder="@username" onblur="saveSettings()">
+        <label class="fl">Venmo</label>
+        <input type="text" id="settings-venmo" class="fi" placeholder="@username" onblur="saveSettings()">
       </div>
       <div class="field">
-        <label>Zelle</label>
-        <input type="text" id="settings-zelle" placeholder="Phone or email" onblur="saveSettings()">
+        <label class="fl">Zelle</label>
+        <input type="text" id="settings-zelle" class="fi" placeholder="Phone or email" onblur="saveSettings()">
       </div>
     </div>
 
     <div class="settings-section">
       <div class="section-title">Preferences</div>
       <div class="settings-row">
-        <span class="settings-label">Show name on sold items</span>
+        <span class="settings-label">Show my name on purchases</span>
         <label class="settings-toggle">
           <input type="checkbox" id="settings-show-sold" checked onchange="saveSettings()">
           <span class="slider"></span>
@@ -3028,7 +2883,7 @@
 
     <div class="auth-fine" id="settings-msg"></div>
 
-    <button class="logout-btn" onclick="logout()">Log out</button>
+    <button class="btn-danger" onclick="logout()">Log out</button>
   </div>
 </div>
 
@@ -3135,11 +2990,16 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
+const TAB_HASH_MAP = { feed: '#/shop', 'dealer-home': '#/booth', messages: '#/messages', settings: '#/account' };
+const HASH_TAB_MAP = { '#/shop': 'feed', '#/booth': 'dealer-home', '#/messages': 'messages', '#/account': 'settings' };
+
 function switchTab(tab) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   const tabEl = document.querySelector(`[data-tab="${tab}"]`);
   if (tabEl) tabEl.classList.add('active');
   showScreen(tab);
+  localStorage.setItem('eb_active_tab', tab);
+  if (TAB_HASH_MAP[tab]) history.replaceState(null, '', TAB_HASH_MAP[tab]);
   if (tab === 'feed') loadFeed();
   if (tab === 'dealer-home') loadDealerHome();
   if (tab === 'messages') loadMessages();
@@ -3152,6 +3012,65 @@ function openFilterSheet() {
 }
 function closeFilterSheet() {
   document.getElementById('filter-sheet').classList.remove('open');
+}
+
+// ── Market Picker ────────────────────────────────────────────
+async function openMarketPicker() {
+  const sheet = document.getElementById('market-picker-sheet');
+  const list = document.getElementById('market-picker-list');
+  list.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
+  sheet.classList.add('open');
+  try {
+    const markets = await api('/api/markets');
+    const upcoming = markets.filter(m => {
+      const d = new Date(m.market_date + 'T23:59:59');
+      return d >= new Date();
+    });
+    if (!upcoming.length) {
+      list.innerHTML = '<div style="padding:16px 0;color:var(--muted);font-size:13px">No upcoming markets</div>';
+      return;
+    }
+    // Get dealer's item counts per market
+    let itemCounts = {};
+    try {
+      const items = await api(`/api/items?dealer_id=${currentUser.id}`);
+      items.forEach(i => { itemCounts[i.market_id] = (itemCounts[i.market_id] || 0) + 1; });
+    } catch (e) {}
+    list.innerHTML = upcoming.map(m => {
+      const d = new Date(m.market_date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const count = itemCounts[m.id] || 0;
+      const selected = currentMarket?.id === m.id ? ' selected' : '';
+      return `<div class="market-picker-row${selected}" onclick="selectMarket('${m.id}')">
+        <div>
+          <div class="market-picker-name">${m.name}</div>
+          <div class="market-picker-meta">${dateStr}</div>
+        </div>
+        <div class="market-picker-count">${count} item${count !== 1 ? 's' : ''}</div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<div style="padding:16px 0;color:var(--error);font-size:13px">Failed to load markets</div>';
+  }
+}
+
+function closeMarketPicker() {
+  document.getElementById('market-picker-sheet').classList.remove('open');
+}
+
+async function selectMarket(marketId) {
+  closeMarketPicker();
+  try {
+    const markets = await api('/api/markets');
+    const market = markets.find(m => m.id === marketId);
+    if (market) {
+      currentMarket = market;
+      localStorage.setItem('eb_current_market', JSON.stringify(market));
+      loadDealerHome();
+    }
+  } catch (e) {
+    console.error('Failed to select market:', e);
+  }
 }
 
 // ── Browse mode (All / Saved) ────────────────────────────────
@@ -3301,13 +3220,13 @@ async function requestMagicLink() {
     } else {
       msg.textContent = res.error || 'Something went wrong.';
       msg.className = 'auth-error';
-      btn.textContent = 'Register for early access';
+      btn.textContent = 'Get early access';
       btn.disabled = false;
     }
   } catch (e) {
     msg.textContent = 'Connection error. Try again.';
     msg.className = 'auth-error';
-    btn.textContent = 'Register for early access';
+    btn.textContent = 'Get early access';
     btn.disabled = false;
   }
 }
@@ -3412,13 +3331,20 @@ async function completeOnboarding() {
 
 // ── App ───────────────────────────────────────────────────────
 async function enterApp() {
+  // Restore saved market from localStorage
+  if (!currentMarket) {
+    try {
+      const saved = localStorage.getItem('eb_current_market');
+      if (saved) currentMarket = JSON.parse(saved);
+    } catch (e) {}
+  }
   if (!currentMarket) {
     try {
       const markets = await api('/api/markets');
       allMarkets = markets || [];
       const real = markets.filter(m => !m.name.toLowerCase().includes('test'));
-      // Pick the next upcoming market automatically
       currentMarket = real[0] || markets[0] || null;
+      if (currentMarket) localStorage.setItem('eb_current_market', JSON.stringify(currentMarket));
     } catch (e) {}
   }
 
@@ -3438,7 +3364,14 @@ async function enterApp() {
   });
 
   document.getElementById('bottom-nav').classList.remove('hidden');
-  switchTab('feed');
+
+  // Restore saved tab from hash or localStorage
+  const hash = window.location.hash;
+  const tabFromHash = HASH_TAB_MAP[hash];
+  const savedTab = tabFromHash || localStorage.getItem('eb_active_tab') || 'feed';
+  // Validate tab — dealer-home only for dealers
+  const validTab = (savedTab === 'dealer-home' && !isDealer) ? 'feed' : savedTab;
+  switchTab(validTab);
 }
 
 // switchMode removed — replaced by unified bottom nav with switchTab
@@ -3454,7 +3387,7 @@ async function loadFeed() {
   // Auto-select next upcoming market (no dropdown for buyers)
   if (currentMarket) {
     const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
-    const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
+    const dateStr = d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
     document.getElementById('feed-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
   }
   const content = document.getElementById('feed-content');
@@ -3515,8 +3448,8 @@ function applyFeedFilters() {
     if (photo === '/pre-drop-placeholder.svg') photo = PRE_DROP_SVG;
     const dealer = item.dealer?.name || item.dealer?.business_name || '';
     let badge = '';
-    if (item.status === 'hold') badge = '<span class="item-card-badge badge-hold">Hold</span>';
-    if (item.status === 'sold') badge = '<span class="item-card-badge badge-sold">Sold</span>';
+    if (item.status === 'hold') badge = '<span class="status-pill hold" style="margin-top:8px">Hold</span>';
+    if (item.status === 'sold') badge = '<span class="status-pill sold" style="margin-top:8px">Sold</span>';
     const isFav = userFavorites.has(item.id);
     return `<div class="item-card" onclick="openItem('${item.id}')">
       <div class="item-card-img">
@@ -3701,12 +3634,50 @@ async function loadDealerHome() {
     }
   }
 
-  // Booth number
+  // Check for market booth setup
+  const setupCard = document.getElementById('booth-setup-card');
   const boothRow = document.getElementById('booth-number-row');
-  if (currentUser?.booth_number) {
-    boothRow.innerHTML = `<span class="booth-number-display">Booth <span>${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" class="booth-number-edit">edit</a>`;
+  if (currentMarket && currentUser?.id) {
+    try {
+      const booth = await api(`/api/market-booths/${currentMarket.id}`);
+      if (booth && booth.id) {
+        // Booth confirmed for this market
+        setupCard?.classList.add('hidden');
+        if (booth.booth_number) {
+          boothRow.innerHTML = `<span class="booth-number-display">Booth <span>${booth.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" class="booth-number-edit">edit</a>`;
+        } else {
+          boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" class="admin-link">+ Add booth number</a>`;
+        }
+      } else {
+        // No booth record — show setup card
+        boothRow.innerHTML = '';
+        if (setupCard) {
+          setupCard.classList.remove('hidden');
+          const paymentInfo = [currentUser.venmo ? `Venmo: ${currentUser.venmo}` : '', currentUser.zelle ? `Zelle: ${currentUser.zelle}` : ''].filter(Boolean).join(' · ') || 'None set';
+          setupCard.innerHTML = `
+            <div class="booth-setup-title">Set up your booth for ${currentMarket.name}</div>
+            <div class="fl" style="margin-top:12px">Booth location</div>
+            <input type="text" id="setup-booth-input" class="fi" placeholder="e.g. E25" value="${currentUser.booth_number || ''}">
+            <div class="fl" style="margin-top:12px">Payment info</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${paymentInfo} <a href="#" onclick="event.preventDefault(); switchTab('settings');" style="color:var(--accent);text-decoration:none">Update in Account</a></div>
+            <button class="btn-primary" onclick="confirmBoothSetup()" style="margin-top:16px">Confirm & start posting</button>`;
+        }
+      }
+    } catch (e) {
+      // Fallback to old behavior
+      if (currentUser?.booth_number) {
+        boothRow.innerHTML = `<span class="booth-number-display">Booth <span>${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" class="booth-number-edit">edit</a>`;
+      } else {
+        boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" class="admin-link">+ Add booth number</a>`;
+      }
+    }
   } else {
-    boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" class="admin-link">+ Add booth number</a>`;
+    // No market selected
+    if (currentUser?.booth_number) {
+      boothRow.innerHTML = `<span class="booth-number-display">Booth <span>${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" class="booth-number-edit">edit</a>`;
+    } else {
+      boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" class="admin-link">+ Add booth number</a>`;
+    }
   }
 
   // Load dealer's items
@@ -3756,24 +3727,24 @@ async function loadDealerHome() {
       const price = '$' + (item.price / 100).toLocaleString();
       const photo = item.photos?.[0] || '';
       const titleText = item.title ? `<div class="my-item-title">${item.title}</div>` : '';
-      const pill = `<span class="my-item-status-pill pill-${item.status}">${item.status}</span>`;
+      const pill = `<span class="status-pill ${item.status}">${item.status}</span>`;
       const inquiries = convCounts[item.id] || 0;
       const inquiryText = inquiries ? `<span>${inquiries} inquir${inquiries === 1 ? 'y' : 'ies'}</span>` : '';
 
       let actions = '';
       if (item.status === 'live') {
         actions = `<div class="my-item-actions">
-          <button class="my-item-action" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'hold')">Hold</button>
-          <button class="my-item-action" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'sold')">Sold</button>
+          <button class="btn-secondary" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'hold')">Hold</button>
+          <button class="btn-secondary" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'sold')">Sold</button>
         </div>`;
       } else if (item.status === 'hold') {
         actions = `<div class="my-item-actions">
-          <button class="my-item-action" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'live')">Live</button>
-          <button class="my-item-action" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'sold')">Sold</button>
+          <button class="btn-secondary" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'live')">Live</button>
+          <button class="btn-secondary" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'sold')">Sold</button>
         </div>`;
       } else {
         actions = `<div class="my-item-actions">
-          <button class="my-item-action" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'live')">Relist</button>
+          <button class="btn-secondary" onclick="event.stopPropagation(); updateItemStatus('${item.id}', 'live')">Relist</button>
         </div>`;
       }
 
@@ -3817,8 +3788,31 @@ async function saveBoothNumber() {
   try {
     await api('/api/auth/me', { method: 'PATCH', body: { booth_number: val || null } });
     currentUser.booth_number = val || null;
+    // Also update market booth if one exists
+    if (currentMarket) {
+      try { await api('/api/market-booths', { method: 'POST', body: { market_id: currentMarket.id, booth_number: val || null, payment_confirmed: true } }); } catch (e) {}
+    }
     loadDealerHome();
   } catch (e) { console.error('Failed to save booth number:', e); }
+}
+
+async function confirmBoothSetup() {
+  const boothNum = document.getElementById('setup-booth-input')?.value.trim() || '';
+  try {
+    await api('/api/market-booths', { method: 'POST', body: {
+      market_id: currentMarket.id,
+      booth_number: boothNum || null,
+      payment_confirmed: true,
+    }});
+    // Also update profile booth number
+    if (boothNum) {
+      await api('/api/auth/me', { method: 'PATCH', body: { booth_number: boothNum } });
+      currentUser.booth_number = boothNum;
+    }
+    loadDealerHome();
+  } catch (e) {
+    console.error('Failed to confirm booth setup:', e);
+  }
 }
 
 // ── Router ────────────────────────────────────────────────────
@@ -3865,6 +3859,13 @@ function route() {
     else if (hash === '#/admin/items') { setAdminTab('items'); loadAdminItems(content); }
     else if (hash === '#/admin/sms') { setAdminTab('sms'); loadAdminBlast(content); }
     else { setAdminTab('dashboard'); loadAdminDashboard(content); }
+    return;
+  }
+
+  // Handle tab hash navigation when already in app
+  const tabFromHash = HASH_TAB_MAP[hash];
+  if (tabFromHash && currentUser) {
+    switchTab(tabFromHash);
     return;
   }
 
@@ -3985,16 +3986,16 @@ async function loadItemDetail(itemId) {
     // Actions
     if (item.status === 'sold') {
       const buyerName = item.buyer?.name || 'a buyer';
-      actionsEl.innerHTML = `<div class="detail-status-badge detail-badge-sold">Sold to ${buyerName}</div>`;
+      actionsEl.innerHTML = `<div class="detail-status-badge sold">Sold to ${buyerName}</div>`;
     } else if (item.status === 'hold') {
       const buyerName = item.buyer?.name || 'a buyer';
-      actionsEl.innerHTML = `<div class="detail-status-badge detail-badge-hold">Held for ${buyerName}</div>`;
+      actionsEl.innerHTML = `<div class="detail-status-badge hold">Held for ${buyerName}</div>`;
     } else if (item.dealer_id === getDealerId()) {
       // Seller viewing own item — load all inquiries
       actionsEl.innerHTML = `<div class="detail-loading">Loading inquiries...</div>`;
       loadSellerInquiries(item.id, actionsEl);
     } else {
-      actionsEl.innerHTML = `<button class="text-seller-btn" id="text-seller-btn" onclick="textSeller('${item.id}')">I want this</button>`;
+      actionsEl.innerHTML = `<button class="btn-primary" id="want-this-btn" onclick="textSeller('${item.id}')">I want this</button>`;
     }
   } catch (e) {
     infoEl.innerHTML = '<p class="text-error">Failed to load item.</p>';
@@ -4037,8 +4038,8 @@ async function loadSellerInquiries(itemId, actionsEl) {
             </div>
           </div>
           <div class="inquiry-actions">
-            <button class="inquiry-action-btn inquiry-hold-btn" onclick="event.stopPropagation(); sellerAction('${itemId}', '${buyer.id}', 'hold', '${name.replace(/'/g, "\\'")}')">Hold</button>
-            <button class="inquiry-action-btn inquiry-sold-btn" onclick="event.stopPropagation(); sellerAction('${itemId}', '${buyer.id}', 'sold', '${name.replace(/'/g, "\\'")}')">Sold</button>
+            <button class="btn-secondary btn-filled hold-action" onclick="event.stopPropagation(); sellerAction('${itemId}', '${buyer.id}', 'hold', '${name.replace(/'/g, "\\'")}')">Hold</button>
+            <button class="btn-secondary btn-filled sold-action" onclick="event.stopPropagation(); sellerAction('${itemId}', '${buyer.id}', 'sold', '${name.replace(/'/g, "\\'")}')">Sold</button>
           </div>
         </div>`;
     }
@@ -4063,7 +4064,7 @@ async function sellerAction(itemId, buyerId, status, buyerName) {
   }
 }
 async function textSeller(itemId) {
-  const btn = document.getElementById('text-seller-btn');
+  const btn = document.getElementById('want-this-btn');
   if (!btn) return;
 
   const item = currentItem;
@@ -4177,20 +4178,16 @@ async function loadConversation(token) {
       : '';
 
     let html = '<div class="conv-detail-header">';
-    if (photo) {
-      html += `<div class="conv-item-row">`;
-      html += `<div class="conv-item-thumb"><img src="${photo}"></div>`;
-      html += `<div><div class="conv-item-price">${price}</div>`;
-      html += `<div class="conv-item-title">${otherName}</div>`;
-      if (otherPhone) html += `<a href="tel:${otherPhone}" class="conv-party-phone">${otherPhone}</a>`;
-      html += `</div></div>`;
-    } else {
-      html += `<div class="conv-party-row">`;
-      if (otherPhotoUrl) html += `<img src="${otherPhotoUrl}" class="conv-party-avatar">`;
-      html += `<div><div class="conv-party-name">${otherName}</div>`;
-      if (otherPhone) html += `<a href="tel:${otherPhone}" class="conv-party-phone">${otherPhone}</a>`;
-      html += `</div></div>`;
-    }
+    html += `<a href="#" class="conv-back-link" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back to messages</a>`;
+    html += `<div class="conv-item-row">`;
+    if (photo) html += `<div class="conv-item-thumb"><img src="${photo}"></div>`;
+    html += `<div class="conv-item-meta">`;
+    html += `<div class="conv-item-price">${price}</div>`;
+    html += `<div class="conv-item-title">${otherName}</div>`;
+    if (otherPhone) html += `<a href="tel:${otherPhone}" class="conv-party-phone">${otherPhone}</a>`;
+    html += `</div>`;
+    if (otherPhotoUrl) html += `<img src="${otherPhotoUrl}" class="conv-party-avatar">`;
+    html += `</div>`;
     if (otherPayment) html += `<div class="conv-payment">${otherPayment}</div>`;
     html += '</div>';
 
@@ -4523,7 +4520,7 @@ function setAdminTab(name) {
   });
 }
 
-function formatDate(d) { return new Date(d).toLocaleDateString(); }
+function formatDate(d) { const dt = new Date(d); return (dt.getMonth()+1) + '/' + dt.getDate(); }
 function formatDateTime(d) {
   const dt = new Date(d);
   const now = new Date();
@@ -4534,7 +4531,7 @@ function formatDateTime(d) {
   return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 function formatPrice(cents) { return '$' + (cents / 100).toLocaleString(); }
-function statusBadge(s) { return `<span class="admin-badge badge-${s}">${s}</span>`; }
+function statusBadge(s) { return `<span class="status-pill ${s}">${s}</span>`; }
 function marketLabel(m) {
   if (!m) return 'Unknown';
   const d = m.market_date ? new Date(m.market_date + 'T00:00:00') : null;
@@ -4544,9 +4541,9 @@ function marketLabel(m) {
 function marketStatus(m) {
   const d = m.market_date;
   const today = new Date().toISOString().split('T')[0];
-  if (d === today) return '<span class="admin-badge badge-live">Today</span>';
-  if (d > today) return '<span class="admin-badge badge-upcoming">Upcoming</span>';
-  return '<span class="admin-badge badge-past">Past</span>';
+  if (d === today) return '<span class="status-pill today">Today</span>';
+  if (d > today) return '<span class="status-pill upcoming">Upcoming</span>';
+  return '<span class="status-pill past">Past</span>';
 }
 
 function adminLogin() {
@@ -4630,7 +4627,7 @@ async function loadAdminDashboard(el) {
       html += `<div class="admin-card admin-clickable mb-24" onclick="location.hash='#/admin/markets/${m.id}'">
         <div class="admin-card-row">
           <span class="name">${m.name}</span>
-          <span class="admin-badge badge-upcoming">${daysUntil <= 0 ? 'Today' : 'in ' + daysUntil + (daysUntil === 1 ? ' day' : ' days')}</span>
+          <span class="status-pill upcoming">${daysUntil <= 0 ? 'Today' : 'in ' + daysUntil + (daysUntil === 1 ? ' day' : ' days')}</span>
         </div>
         <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count} items · ${m.dealer_count} dealers</div>
       </div>`;
@@ -4681,7 +4678,7 @@ async function loadAdminDealers(el) {
     html += `<div id="admin-dealer-list">`;
     for (const d of dealers) {
       const roleClass = d.role === 'dealer' ? 'role-dealer' : 'role-buyer';
-      const inactive = d.active === false ? ' <span class="admin-badge badge-inactive">inactive</span>' : '';
+      const inactive = d.active === false ? ' <span class="status-pill inactive">inactive</span>' : '';
       html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/dealers/${d.id}'" data-name="${(d.name||'').toLowerCase()} ${(d.business_name||'').toLowerCase()} ${d.phone}">
         <div class="admin-card-row">
           <div>
@@ -4752,7 +4749,7 @@ async function loadAdminMarkets(el) {
           <span class="slider"></span>
         </label>
       </div>
-      <button class="auth-btn" onclick="adminCreateMarket()">Create market</button>
+      <button class="btn-primary" onclick="adminCreateMarket()" style="margin-top:12px">Create market</button>
       <div class="auth-fine" id="admin-market-msg"></div>
     </div>`;
 
@@ -4761,8 +4758,9 @@ async function loadAdminMarkets(el) {
 
     html += `<div class="admin-section-title">Markets (${active.length})</div>`;
     for (const m of active) {
-      const dropStr = m.drop_time ? new Date(m.drop_time).toLocaleString() : 'No drop time';
-      const test = m.is_test ? ' <span class="admin-badge admin-badge--test">TEST</span>' : '';
+      const dropDt = m.drop_time ? new Date(m.drop_time) : null;
+      const dropStr = dropDt ? (dropDt.getMonth()+1) + '/' + dropDt.getDate() + ' ' + dropDt.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}) : 'No drop time';
+      const test = m.is_test ? ' <span class="status-pill test">TEST</span>' : '';
       html += `<div class="admin-card admin-clickable" onclick="location.hash='#/admin/markets/${m.id}'">
         <div class="admin-card-row">
           <span class="name">${m.name}${test}</span>
@@ -4771,9 +4769,9 @@ async function loadAdminMarkets(el) {
         <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
         <div class="admin-row-card-meta">Drop: ${dropStr}</div>
         <div class="admin-actions">
-          <button class="admin-action-btn" onclick="event.stopPropagation();adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
-          <button class="admin-action-btn" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',true)">Archive</button>
-          <button class="admin-action-btn danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
+          <button class="btn-secondary btn-filled btn-sm" onclick="event.stopPropagation();adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
+          <button class="btn-secondary btn-filled btn-sm" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',true)">Archive</button>
+          <button class="btn-secondary btn-filled btn-sm danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
         </div>
       </div>`;
     }
@@ -4784,7 +4782,7 @@ async function loadAdminMarkets(el) {
       </div>`;
       html += `<div id="archived-markets" class="admin-archived-section">`;
       for (const m of archived) {
-        const test = m.is_test ? ' <span class="admin-badge admin-badge--test">TEST</span>' : '';
+        const test = m.is_test ? ' <span class="status-pill test">TEST</span>' : '';
         html += `<div class="admin-card admin-clickable admin-card--dimmed" onclick="location.hash='#/admin/markets/${m.id}'">
           <div class="admin-card-row">
             <span class="name">${m.name}${test}</span>
@@ -4792,8 +4790,8 @@ async function loadAdminMarkets(el) {
           </div>
           <div class="admin-detail-meta">${formatDate(m.market_date)} · ${m.item_count || 0} items · ${m.dealer_count || 0} dealers</div>
           <div class="admin-actions">
-            <button class="admin-action-btn" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',false)">Unarchive</button>
-            <button class="admin-action-btn danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
+            <button class="btn-secondary btn-filled btn-sm" onclick="event.stopPropagation();adminArchiveMarket('${m.id}',false)">Unarchive</button>
+            <button class="btn-secondary btn-filled btn-sm danger" onclick="event.stopPropagation();adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
           </div>
         </div>`;
       }
@@ -4896,7 +4894,7 @@ async function loadAdminBlast(el) {
   if (Array.isArray(blasts) && blasts.length) {
     html += `<div class="admin-section-title">Blast history (${blasts.length})</div>`;
     for (const b of blasts) {
-      const date = new Date(b.created_at).toLocaleString();
+      const date = formatDateTime(b.created_at);
       const marketName = b.markets ? marketLabel(b.markets) : 'General';
       const failed = b.fail_count > 0;
       const statusColor = failed ? 'var(--error)' : 'var(--success)';
@@ -4964,13 +4962,13 @@ async function loadAdminMarketDetail(el, id) {
     const m = data.market;
     const s = data.stats;
     let html = `<a class="admin-back" onclick="location.hash='#/admin/markets'">Markets</a>`;
-    const archivedBadge = m.archived ? ' <span class="admin-badge badge-inactive">archived</span>' : '';
+    const archivedBadge = m.archived ? ' <span class="status-pill inactive">archived</span>' : '';
     html += `<div class="admin-detail-title">${m.name} ${marketStatus(m)}${archivedBadge}</div>`;
     html += `<div class="admin-detail-meta mb-8">${formatDate(m.market_date)}${m.drop_time ? ' · Drop: ' + formatDateTime(m.drop_time) : ''}${m.is_test ? ' · TEST' : ''}</div>`;
     html += `<div class="admin-actions mb-16">
-      <button class="admin-action-btn" onclick="adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
-      <button class="admin-action-btn" onclick="adminArchiveMarket('${m.id}',${!m.archived})">${m.archived ? 'Unarchive' : 'Archive'}</button>
-      <button class="admin-action-btn danger" onclick="adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
+      <button class="btn-secondary btn-filled btn-sm" onclick="adminEditMarketInline('${m.id}','${m.name}','${m.market_date}')">Edit</button>
+      <button class="btn-secondary btn-filled btn-sm" onclick="adminArchiveMarket('${m.id}',${!m.archived})">${m.archived ? 'Unarchive' : 'Archive'}</button>
+      <button class="btn-secondary btn-filled btn-sm danger" onclick="adminDeleteMarket('${m.id}','${m.name}')">Delete</button>
     </div>`;
 
     html += `<div class="admin-stats-grid">
@@ -5038,7 +5036,7 @@ async function loadAdminDealerDetail(el, id) {
     let html = `<a class="admin-back" onclick="location.hash='#/admin/dealers'">Dealers</a>`;
     html += `<div class="admin-header mb-4">
       <div class="admin-detail-title">${d.name || 'No name'} <span class="role ${roleClass}">${d.role}</span></div>
-      ${d.active === false ? '<span class="admin-badge badge-inactive">inactive</span>' : ''}
+      ${d.active === false ? '<span class="status-pill inactive">inactive</span>' : ''}
     </div>`;
     html += `<div class="admin-detail-meta mb-16">`;
     if (d.business_name) html += `${d.business_name} · `;
@@ -5050,9 +5048,9 @@ async function loadAdminDealerDetail(el, id) {
 
     // Quick actions
     html += `<div class="admin-actions mb-16">
-      <button class="admin-action-btn" onclick="adminEditDealerField('${d.id}','name','${(d.name||'').replace(/'/g,"\\'")}')">Edit name</button>
-      <button class="admin-action-btn" onclick="adminEditDealerField('${d.id}','role','${d.role}')">Change role</button>
-      <button class="admin-action-btn ${d.active !== false ? 'danger' : ''}" onclick="adminToggleDealerActive('${d.id}',${d.active !== false})">${d.active !== false ? 'Deactivate' : 'Reactivate'}</button>
+      <button class="btn-secondary btn-filled btn-sm" onclick="adminEditDealerField('${d.id}','name','${(d.name||'').replace(/'/g,"\\'")}')">Edit name</button>
+      <button class="btn-secondary btn-filled btn-sm" onclick="adminEditDealerField('${d.id}','role','${d.role}')">Change role</button>
+      <button class="btn-secondary btn-filled btn-sm ${d.active !== false ? 'danger' : ''}" onclick="adminToggleDealerActive('${d.id}',${d.active !== false})">${d.active !== false ? 'Deactivate' : 'Reactivate'}</button>
     </div>`;
 
     // Items grouped by market
@@ -5187,10 +5185,10 @@ function renderAdminItems(items) {
         <div class="admin-row-card-meta">${dealer} · ${market}</div>
       </div>
       <div class="admin-actions shrink-0" onclick="event.stopPropagation();">
-        ${item.status === 'live' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','hold')">Hold</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
-        ${item.status === 'hold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button><button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
-        ${item.status === 'sold' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Live</button>` : ''}
-        ${item.status === 'deleted' ? `<button class="admin-action-btn" onclick="adminQuickItemStatus('${item.id}','live')">Restore</button>` : ''}
+        ${item.status === 'live' ? `<button class="btn-secondary btn-filled btn-sm" onclick="adminQuickItemStatus('${item.id}','hold')">Hold</button><button class="btn-secondary btn-filled btn-sm" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
+        ${item.status === 'hold' ? `<button class="btn-secondary btn-filled btn-sm" onclick="adminQuickItemStatus('${item.id}','live')">Live</button><button class="btn-secondary btn-filled btn-sm" onclick="adminQuickItemStatus('${item.id}','sold')">Sold</button>` : ''}
+        ${item.status === 'sold' ? `<button class="btn-secondary btn-filled btn-sm" onclick="adminQuickItemStatus('${item.id}','live')">Live</button>` : ''}
+        ${item.status === 'deleted' ? `<button class="btn-secondary btn-filled btn-sm" onclick="adminQuickItemStatus('${item.id}','live')">Restore</button>` : ''}
       </div>
     </div>`;
   }
@@ -5250,12 +5248,12 @@ async function loadAdminItemDetail(el, id) {
     // Status actions
     html += `<div class="admin-actions mb-16">`;
     if (item.status === 'deleted') {
-      html += `<button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')">Restore</button>`;
+      html += `<button class="btn-secondary btn-filled btn-sm" onclick="adminSetItemStatus('${id}','live')">Restore</button>`;
     } else {
-      html += `<button class="admin-action-btn" onclick="adminSetItemStatus('${id}','live')" ${item.status==='live'?'disabled':''}>Live</button>
-      <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','hold')" ${item.status==='hold'?'disabled':''}>Hold</button>
-      <button class="admin-action-btn" onclick="adminSetItemStatus('${id}','sold')" ${item.status==='sold'?'disabled':''}>Sold</button>
-      <button class="admin-action-btn danger" onclick="adminDeleteItem('${id}')">Delete</button>`;
+      html += `<button class="btn-secondary btn-filled btn-sm" onclick="adminSetItemStatus('${id}','live')" ${item.status==='live'?'disabled':''}>Live</button>
+      <button class="btn-secondary btn-filled btn-sm" onclick="adminSetItemStatus('${id}','hold')" ${item.status==='hold'?'disabled':''}>Hold</button>
+      <button class="btn-secondary btn-filled btn-sm" onclick="adminSetItemStatus('${id}','sold')" ${item.status==='sold'?'disabled':''}>Sold</button>
+      <button class="btn-secondary btn-filled btn-sm danger" onclick="adminDeleteItem('${id}')">Delete</button>`;
     }
     html += `</div>`;
 

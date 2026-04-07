@@ -77,6 +77,17 @@ export default {
       } else if (path === '/api/markets' && method === 'POST') {
         res = await requireAdmin(request, env) || await handleCreateMarket(request, env);
 
+      // Market Booths
+      } else if (path.match(/^\/api\/market-booths\/[^/]+$/) && method === 'GET') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        const marketId = path.split('/api/market-booths/')[1];
+        res = await handleGetMarketBooth(env, dealer, marketId);
+      } else if (path === '/api/market-booths' && method === 'POST') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        res = await handleUpsertMarketBooth(request, env, dealer);
+
       // Items
       } else if (path === '/api/items' && method === 'GET') {
         res = await handleGetItems(url, env);
@@ -423,6 +434,43 @@ async function handleCreateMarket(request, env) {
   if (!body.name || !body.market_date) return json({ error: 'Name and date required' }, 400);
   const res = await supabase(env, 'markets', { method: 'POST', body });
   return json(await res.json(), 201);
+}
+
+// ── Market Booths ───────────────────────────────────────────
+
+async function handleGetMarketBooth(env, dealer, marketId) {
+  const res = await supabase(env, `market_booths?dealer_id=eq.${dealer.id}&market_id=eq.${marketId}&select=*`);
+  const rows = await res.json();
+  return json(rows[0] || null);
+}
+
+async function handleUpsertMarketBooth(request, env, dealer) {
+  const body = await request.json();
+  if (!body.market_id) return json({ error: 'market_id required' }, 400);
+  // Upsert: try to update first, then insert
+  const existing = await supabase(env, `market_booths?dealer_id=eq.${dealer.id}&market_id=eq.${body.market_id}&select=id`);
+  const rows = await existing.json();
+  const data = {
+    dealer_id: dealer.id,
+    market_id: body.market_id,
+    booth_number: body.booth_number || null,
+    payment_confirmed: body.payment_confirmed || false,
+  };
+  if (rows.length > 0) {
+    const res = await supabase(env, `market_booths?id=eq.${rows[0].id}`, {
+      method: 'PATCH',
+      body: data,
+      headers: { 'Prefer': 'return=representation' },
+    });
+    return json((await res.json())[0]);
+  } else {
+    const res = await supabase(env, 'market_booths', {
+      method: 'POST',
+      body: data,
+      headers: { 'Prefer': 'return=representation' },
+    });
+    return json((await res.json())[0], 201);
+  }
 }
 
 // ── Items ────────────────────────────────────────────────────
