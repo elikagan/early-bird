@@ -784,7 +784,7 @@ async function handleActivity(url, env) {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
   const [itemsRes, inquiriesRes, msgsRes] = await Promise.all([
-    supabase(env, `items?created_at=gte.${since}&select=*,dealer:dealers(name,business_name)&order=created_at.desc`),
+    supabase(env, `items?created_at=gte.${since}&select=*,dealer:dealers!items_dealer_id_fkey(name,business_name)&order=created_at.desc`),
     supabase(env, `inquiries?created_at=gte.${since}&select=*,item:items(price,photos),buyer:dealers!inquiries_buyer_id_fkey(name,business_name)&order=created_at.desc`),
     supabase(env, `messages?created_at=gte.${since}&select=*,sender:dealers!messages_sender_id_fkey(name)&order=created_at.desc&limit=50`),
   ]);
