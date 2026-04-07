@@ -12,16 +12,17 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     /*
-     * DESIGN SYSTEM: "The Text Message"
-     * Font: Inter for UI text, JetBrains Mono for prices/data only
-     * Colors: #1A1A1A text, #666 muted, #AAA dim, #0066FF accent
-     * Background: #FAFAF8
-     * Spacing: 32px between groups, 48px between zones
-     * No borders, no dividers — spacing is the only structure
-     * Border-radius: 6px (inputs/buttons)
+     * DESIGN SYSTEM — see DESIGN.md for full spec
+     * UI text: system font stack
+     * Data/prices: JetBrains Mono (--font-mono)
+     * Colors: --text #1A1A1A, --muted #666, --dim #AAA, --accent #0066FF
+     * Spacing: --side 24px, elements handle their own padding
+     * Components: .seg-ctrl, .feed-header, .auth-btn, .fab
      */
 
     :root {
+      --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
       --bg: #FAFAF8;
       --text: #1A1A1A;
       --muted: #666666;
@@ -31,6 +32,7 @@
       --error: #D32F2F;
       --success: #2E7D32;
       --input-bg: #F0EFEC;
+      --side: 24px;
     }
 
     html, body {
@@ -39,11 +41,27 @@
       width: 100%;
     }
     body {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-ui);
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
+    }
+
+    /* Mono font — prices, counts, phone numbers, timestamps, data only */
+    .item-card-price,
+    .detail-price,
+    .my-item-price,
+    .fav-card-price,
+    .market-countdown,
+    .dealer-countdown,
+    .auth-input,
+    .carousel-counter,
+    .admin-stat .value,
+    .admin-stat-card .value,
+    .inquiry-phone,
+    .inquiry-time {
+      font-family: var(--font-mono);
     }
 
     /* ── Screens ─────────────────────────── */
@@ -128,7 +146,7 @@
     }
     .auth-input {
       width: 100%;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 16px;
       font-weight: 400;
       color: var(--text);
@@ -425,7 +443,7 @@
       background: rgba(250,250,248,0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      padding: 0 24px;
+      padding: 0 var(--side);
       padding-top: max(12px, env(safe-area-inset-top));
     }
     .feed-header-top {
@@ -433,9 +451,6 @@
       align-items: center;
       justify-content: space-between;
       padding-bottom: 10px;
-    }
-    .feed-header .mode-toggle {
-      margin-bottom: 10px;
     }
     .feed-logo {
       font-size: 20px;
@@ -473,7 +488,7 @@
       overflow: hidden;
     }
     .item-card-img img { width: 100%; height: 100%; object-fit: cover; }
-    .item-card-info { padding: 16px 24px 20px; }
+    .item-card-info { padding: 16px var(--side) 20px; }
     .item-card-price {
       font-size: 20px;
       font-weight: 700;
@@ -585,7 +600,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 14px 24px;
+      padding: 14px var(--side);
       cursor: pointer;
     }
     .conv-item + .conv-item {
@@ -696,7 +711,7 @@
       font-variant-numeric: tabular-nums;
     }
     .detail-info {
-      padding: 20px 24px;
+      padding: 20px var(--side);
     }
     .detail-price {
       font-size: 24px;
@@ -740,7 +755,7 @@
       color: var(--muted);
     }
     .detail-actions {
-      padding: 0 24px 24px;
+      padding: 0 var(--side) var(--side);
     }
     .text-seller-btn {
       width: 100%;
@@ -770,11 +785,6 @@
       border-radius: 6px;
       cursor: pointer;
       text-align: left;
-    }
-    .msg-option-btn.msg-option-active {
-      background: var(--text);
-      color: var(--bg);
-      font-weight: 600;
     }
     .detail-status-badge {
       width: 100%;
@@ -1013,7 +1023,7 @@
       accent-color: var(--accent);
     }
 
-    .empty-state { text-align: center; padding: 60px 24px; }
+    .empty-state { text-align: center; padding: 60px var(--side); }
     .empty-state h2 {
       font-size: 20px;
       font-weight: 700;
@@ -1027,18 +1037,18 @@
       line-height: 1.5;
     }
 
-    /* ── Bottom Nav ───────────────────────── */
-    /* ── Mode Toggle — segmented control ── */
-    .mode-toggle {
+    /* ── Segmented Control — unified toggle component ── */
+    .seg-ctrl {
       display: flex;
       background: var(--input-bg);
       border-radius: 6px;
       padding: 3px;
       gap: 2px;
     }
-    .mode-toggle.hidden { display: none; }
-    .mode-btn {
+    .seg-ctrl.hidden { display: none; }
+    .seg-btn {
       flex: 1;
+      font-family: var(--font-ui);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -1050,12 +1060,15 @@
       background: transparent;
       color: var(--muted);
       transition: all 0.15s;
+      white-space: nowrap;
     }
-    .mode-btn.mode-active {
+    .seg-btn.active {
       color: var(--text);
       background: #fff;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
+
+    /* ── Bottom Nav ───────────────────────── */
 
     .bottom-nav {
       position: fixed;
@@ -1162,52 +1175,15 @@
     .sheet-field { margin-bottom: 14px; }
     .sheet-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 
-    /* Messages filter toggle */
+    /* Messages filter — positioned with side margins */
     .msg-toggle {
-      display: flex;
-      gap: 2px;
-      background: var(--input-bg);
-      border-radius: 6px;
-      padding: 3px;
-      margin: 0 24px 12px;
-    }
-    .msg-toggle-btn {
-      flex: 1;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 7px 8px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      background: transparent;
-      color: var(--muted);
-    }
-    .msg-toggle-btn.active {
-      color: var(--text);
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      margin: 0 var(--side) 12px;
     }
 
-    /* Saved/All toggle inside Browse */
+    /* Browse toggle in header — uses .seg-ctrl */
     .browse-toggle {
-      display: flex;
-      gap: 0;
       margin-left: auto;
     }
-    .browse-toggle-btn {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border: 1px solid var(--input-bg);
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .browse-toggle-btn:first-child { border-radius: 4px 0 0 4px; }
-    .browse-toggle-btn:last-child { border-radius: 0 4px 4px 0; border-left: none; }
-    .browse-toggle-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
 
     /* ── Dealer Home ─────────────────────── */
     #dealer-home {
@@ -1215,8 +1191,6 @@
       min-height: 100dvh;
       max-width: 480px;
       margin: 0 auto;
-      padding: 0 24px;
-      padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
     }
     .dealer-event-name {
@@ -1270,7 +1244,7 @@
     .my-item {
       display: flex;
       gap: 12px;
-      padding: 12px 24px;
+      padding: 12px var(--side);
       border-bottom: 1px solid var(--input-bg);
       align-items: center;
       cursor: pointer;
@@ -1287,7 +1261,7 @@
     .my-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .my-item-info { flex: 1; min-width: 0; }
     .my-item-price {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: var(--font-mono);
       font-size: 15px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
@@ -1345,16 +1319,7 @@
       min-height: 100dvh;
       max-width: 480px;
       margin: 0 auto;
-      padding: 0 24px;
-      padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
-    }
-    .messages-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
     }
 
     /* ── Utility ──────────────────────────── */
@@ -1420,34 +1385,11 @@
     }
     .admin-card .role-dealer { background: #EDF7F0; color: var(--success); }
     .admin-card .role-buyer { background: #E8F0FE; color: var(--accent); }
+    /* Admin tabs — uses .seg-ctrl, just add overflow + margin */
     .admin-tabs {
-      display: flex;
-      gap: 2px;
-      background: var(--input-bg);
-      border-radius: 6px;
-      padding: 3px;
       margin-bottom: 20px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-    }
-    .admin-tab {
-      flex: 1;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 7px 8px;
-      white-space: nowrap;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      background: transparent;
-      color: var(--muted);
-    }
-    .admin-tab.active {
-      color: var(--text);
-      background: #fff;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
     .admin-form { margin-bottom: 16px; }
     .admin-form .form-field { margin-bottom: 12px; }
@@ -1494,8 +1436,6 @@
       min-height: 100vh;
       max-width: 480px;
       margin: 0 auto;
-      padding: 0 24px;
-      padding-top: max(60px, env(safe-area-inset-top));
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
     }
     .settings-title {
@@ -1768,12 +1708,12 @@
     <div class="feed-header-top">
       <div style="display:flex;align-items:baseline;gap:8px;">
         <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-        <span id="feed-item-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
+        <span id="feed-item-count" style="font-family:var(--font-mono);font-size:11px;color:var(--muted);"></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="browse-toggle" id="browse-toggle">
-          <button class="browse-toggle-btn active" onclick="setBrowseMode('all', this)">All</button>
-          <button class="browse-toggle-btn" onclick="setBrowseMode('saved', this)">Saved</button>
+        <div class="browse-toggle seg-ctrl" id="browse-toggle">
+          <button class="seg-btn active" onclick="setBrowseMode('all', this)">All</button>
+          <button class="seg-btn" onclick="setBrowseMode('saved', this)">Saved</button>
         </div>
         <button onclick="openFilterSheet()" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--muted);">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1816,7 +1756,7 @@
     </div>
     <div id="booth-event-name" style="font-size:12px;color:var(--muted);padding-bottom:8px;"></div>
   </div>
-  <div id="booth-stats" style="display:flex;gap:16px;padding:0 24px 12px;"></div>
+  <div id="booth-stats" style="display:flex;gap:16px;padding:0 var(--side) 12px;"></div>
   <ul class="my-items-list" id="my-items-list"></ul>
   <div class="empty-state" id="dealer-empty">
     <h2>Your booth is empty</h2>
@@ -1832,10 +1772,10 @@
       <div class="feed-logo">Messages</div>
     </div>
   </div>
-  <div class="msg-toggle nav-dealer-only hidden" id="msg-filter-toggle">
-    <button class="msg-toggle-btn active" onclick="filterMessages('all', this)">All</button>
-    <button class="msg-toggle-btn" onclick="filterMessages('buying', this)">Buying</button>
-    <button class="msg-toggle-btn" onclick="filterMessages('selling', this)">Selling</button>
+  <div class="msg-toggle seg-ctrl nav-dealer-only hidden" id="msg-filter-toggle">
+    <button class="seg-btn active" onclick="filterMessages('all', this)">All</button>
+    <button class="seg-btn" onclick="filterMessages('buying', this)">Buying</button>
+    <button class="seg-btn" onclick="filterMessages('selling', this)">Selling</button>
   </div>
   <div id="messages-content">
     <div class="empty-state">
@@ -1913,10 +1853,10 @@
 
   <div class="form-field">
     <label class="form-label">Price posture</label>
-    <div style="display:flex;gap:8px;">
-      <button type="button" class="msg-option-btn msg-option-active" onclick="selectPricePosture(this, 'firm')">Firm</button>
-      <button type="button" class="msg-option-btn" onclick="selectPricePosture(this, 'flexible')">Flexible</button>
-      <button type="button" class="msg-option-btn" onclick="selectPricePosture(this, 'make_offer')">Make me an offer</button>
+    <div class="seg-ctrl" id="price-posture-ctrl">
+      <button type="button" class="seg-btn active" onclick="selectPricePosture(this, 'firm')">Firm</button>
+      <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'flexible')">Flexible</button>
+      <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'make_offer')">Make offer</button>
     </div>
   </div>
 
@@ -1936,46 +1876,48 @@
       <div class="feed-logo">Settings</div>
     </div>
   </div>
-  <div class="settings-title">Profile</div>
+  <div style="padding:0 var(--side);">
+    <div class="settings-title">Profile</div>
 
-  <div class="settings-section">
-    <div class="field">
-      <label>Name</label>
-      <input type="text" id="settings-name" placeholder="Your name">
+    <div class="settings-section">
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="settings-name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label>Business name</label>
+        <input type="text" id="settings-biz" placeholder="Optional">
+      </div>
     </div>
-    <div class="field">
-      <label>Business name</label>
-      <input type="text" id="settings-biz" placeholder="Optional">
+
+    <div class="settings-section">
+      <div class="section-title">Payment</div>
+      <div class="field">
+        <label>Venmo</label>
+        <input type="text" id="settings-venmo" placeholder="@username">
+      </div>
+      <div class="field">
+        <label>Zelle</label>
+        <input type="text" id="settings-zelle" placeholder="Phone or email">
+      </div>
     </div>
+
+    <div class="settings-section">
+      <div class="section-title">Preferences</div>
+      <div class="settings-row">
+        <span class="settings-label">Show name on sold items</span>
+        <label class="settings-toggle">
+          <input type="checkbox" id="settings-show-sold" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button class="auth-btn" onclick="saveSettings()">Save changes</button>
+    <div class="auth-fine" id="settings-msg"></div>
+
+    <button class="logout-btn" onclick="logout()">Log out</button>
   </div>
-
-  <div class="settings-section">
-    <div class="section-title">Payment</div>
-    <div class="field">
-      <label>Venmo</label>
-      <input type="text" id="settings-venmo" placeholder="@username">
-    </div>
-    <div class="field">
-      <label>Zelle</label>
-      <input type="text" id="settings-zelle" placeholder="Phone or email">
-    </div>
-  </div>
-
-  <div class="settings-section">
-    <div class="section-title">Preferences</div>
-    <div class="settings-row">
-      <span class="settings-label">Show name on sold items</span>
-      <label class="settings-toggle">
-        <input type="checkbox" id="settings-show-sold" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-  </div>
-
-  <button class="auth-btn" onclick="saveSettings()">Save changes</button>
-  <div class="auth-fine" id="settings-msg"></div>
-
-  <button class="logout-btn" onclick="logout()">Log out</button>
 </div>
 
 <!-- ADMIN LOGIN -->
@@ -1998,12 +1940,12 @@
       <a href="#" style="font-size:12px;color:var(--muted);text-decoration:none;" onclick="adminLogout(); return false;">Log out</a>
     </div>
   </div>
-  <div class="admin-tabs">
-    <button class="admin-tab" data-admin-tab="dashboard" onclick="location.hash='#/admin'">Dashboard</button>
-    <button class="admin-tab" data-admin-tab="markets" onclick="location.hash='#/admin/markets'">Markets</button>
-    <button class="admin-tab" data-admin-tab="dealers" onclick="location.hash='#/admin/dealers'">Dealers</button>
-    <button class="admin-tab" data-admin-tab="items" onclick="location.hash='#/admin/items'">Items</button>
-    <button class="admin-tab" data-admin-tab="sms" onclick="location.hash='#/admin/sms'">SMS</button>
+  <div class="admin-tabs seg-ctrl">
+    <button class="seg-btn" data-admin-tab="dashboard" onclick="location.hash='#/admin'">Dashboard</button>
+    <button class="seg-btn" data-admin-tab="markets" onclick="location.hash='#/admin/markets'">Markets</button>
+    <button class="seg-btn" data-admin-tab="dealers" onclick="location.hash='#/admin/dealers'">Dealers</button>
+    <button class="seg-btn" data-admin-tab="items" onclick="location.hash='#/admin/items'">Items</button>
+    <button class="seg-btn" data-admin-tab="sms" onclick="location.hash='#/admin/sms'">SMS</button>
   </div>
   <div id="admin-content"></div>
 </div>
@@ -2104,7 +2046,7 @@ function closeFilterSheet() {
 let browseMode = 'all';
 function setBrowseMode(mode, el) {
   browseMode = mode;
-  document.querySelectorAll('.browse-toggle-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#browse-toggle .seg-btn').forEach(b => b.classList.remove('active'));
   if (el) el.classList.add('active');
   applyFeedFilters();
 }
@@ -2114,7 +2056,7 @@ let msgFilter = 'all';
 let allConversations = [];
 function filterMessages(filter, el) {
   msgFilter = filter;
-  document.querySelectorAll('.msg-toggle-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#msg-filter-toggle .seg-btn').forEach(b => b.classList.remove('active'));
   if (el) el.classList.add('active');
   renderConversations();
 }
@@ -2215,12 +2157,12 @@ async function openMarketTeaser(marketId) {
 
   content.innerHTML = `
     <div style="margin-top:20px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);letter-spacing:0.5px;">${displayName(m.name)}</div>
+      <div style="font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em;">${displayName(m.name)}</div>
       <div style="font-size:14px;color:var(--muted);margin-top:6px;">${dateStr}</div>
-      ${countdown ? `<div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${isLive ? 'var(--accent)' : 'var(--muted)'};margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;">${isLive ? '&#9679; Live now' : countdown}</div>` : ''}
+      ${countdown ? `<div style="font-size:13px;color:${isLive ? 'var(--accent)' : 'var(--muted)'};margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;">${isLive ? '&#9679; Live now' : countdown}</div>` : ''}
       <div style="display:flex;gap:16px;margin-top:16px;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1;">${itemCount}<span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;">items</span></div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text);line-height:1;">${dealerCount}<span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;">dealers</span></div>
+        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:var(--font-mono);">${itemCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">items</span></div>
+        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:var(--font-mono);">${dealerCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">dealers</span></div>
       </div>
       ${previewHtml}
       ${isLive ? `<button onclick="selectMarket('${m.id}'); enterApp();" style="width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:20px;">Browse inventory</button>` : ''}
@@ -2382,7 +2324,6 @@ async function enterApp() {
   document.querySelectorAll('.nav-dealer-only').forEach(el => {
     el.classList.toggle('hidden', !isDealer);
   });
-  document.querySelectorAll('.mode-toggle').forEach(el => el.classList.add('hidden'));
 
   document.getElementById('bottom-nav').classList.remove('hidden');
   switchTab('feed');
@@ -2631,7 +2572,7 @@ async function loadDealerHome() {
   // Booth number
   const boothRow = document.getElementById('booth-number-row');
   if (currentUser?.booth_number) {
-    boothRow.innerHTML = `<span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);">Booth ${currentUser.booth_number}</span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:11px;margin-left:4px;">edit</a>`;
+    boothRow.innerHTML = `<span style="font-weight:600;color:var(--text);">Booth <span style="font-family:var(--font-mono);">${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:11px;margin-left:4px;">edit</a>`;
   } else {
     boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:12px;">+ Add booth number</a>`;
   }
@@ -2652,9 +2593,9 @@ async function loadDealerHome() {
     const sold = items.filter(i => i.status === 'sold').length;
     if (items.length) {
       statsRow.innerHTML = `
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;"><span style="font-weight:700;font-size:18px;">${live}</span> <span style="color:var(--muted);">live</span></div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;"><span style="font-weight:700;font-size:18px;">${hold}</span> <span style="color:#B8960C;">hold</span></div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;"><span style="font-weight:700;font-size:18px;">${sold}</span> <span style="color:var(--muted);">sold</span></div>`;
+        <div style="font-size:13px;"><span style="font-family:var(--font-mono);font-weight:700;font-size:18px;">${live}</span> <span style="color:var(--muted);">live</span></div>
+        <div style="font-size:13px;"><span style="font-family:var(--font-mono);font-weight:700;font-size:18px;">${hold}</span> <span style="color:#B8960C;">hold</span></div>
+        <div style="font-size:13px;"><span style="font-family:var(--font-mono);font-weight:700;font-size:18px;">${sold}</span> <span style="color:var(--muted);">sold</span></div>`;
     } else {
       statsRow.innerHTML = '';
     }
@@ -2732,7 +2673,7 @@ function editBoothNumber() {
   const boothRow = document.getElementById('booth-number-row');
   const current = currentUser?.booth_number || '';
   boothRow.innerHTML = `<div style="display:flex;gap:8px;align-items:center;">
-    <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);outline:none;">
+    <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;">
     <button onclick="saveBoothNumber()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
   </div>`;
   document.getElementById('booth-input').focus();
@@ -3178,8 +3119,8 @@ let selectedPricePosture = 'firm';
 
 function selectPricePosture(btn, posture) {
   selectedPricePosture = posture;
-  btn.parentElement.querySelectorAll('.msg-option-btn').forEach(b => b.classList.remove('msg-option-active'));
-  btn.classList.add('msg-option-active');
+  btn.parentElement.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
 function showAddItem() {
@@ -3192,9 +3133,9 @@ function showAddItem() {
   document.getElementById('post-item-msg').textContent = '';
   selectedPricePosture = 'firm';
   // Reset price posture buttons
-  const postureButtons = document.querySelectorAll('#add-item [onclick^="selectPricePosture"]');
-  postureButtons.forEach(b => b.classList.remove('msg-option-active'));
-  if (postureButtons[0]) postureButtons[0].classList.add('msg-option-active');
+  const postureButtons = document.querySelectorAll('#price-posture-ctrl .seg-btn');
+  postureButtons.forEach(b => b.classList.remove('active'));
+  if (postureButtons[0]) postureButtons[0].classList.add('active');
 
   // Populate market dropdown
   const sel = document.getElementById('item-market');
@@ -3415,7 +3356,7 @@ function logout() {
 // ── Admin CMS ───────────────────────────────────────────────
 
 function setAdminTab(name) {
-  document.querySelectorAll('.admin-tab').forEach(t => {
+  document.querySelectorAll('[data-admin-tab]').forEach(t => {
     t.classList.toggle('active', t.dataset.adminTab === name);
   });
 }

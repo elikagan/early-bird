@@ -54,33 +54,73 @@ Pre-market marketplace where flea market dealers post what they're bringing so b
 ## Design System: "The Text Message"
 
 ### Typography
-- **One font:** JetBrains Mono — everything. Headlines, body, buttons, labels, prices.
-- Hierarchy through size and weight only, not font changes.
-- Scale: Logo 20px/700, Market names 24px/700, Section titles 11px/600 uppercase 0.15em, Body 13px/400, Labels 11px, CTA 13px/600 uppercase 0.15em
-- Prices: Weight 700, font-variant-numeric: tabular-nums
+- **UI text:** System font stack (`--font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif`)
+- **Data/prices:** JetBrains Mono (`--font-mono`) — ONLY for prices, counts, phone numbers, timestamps, countdowns, stat values. Never on labels, body text, or buttons.
+- **Scale:** 10px caption, 11px label/uppercase, 12px small body, 13px body, 14px large body, 15px input, 20px heading, 24px hero
+- **Prices:** Weight 700, font-variant-numeric: tabular-nums, always `--font-mono`
 
-### Color
-- Background: `#FAFAF8`
-- Text: `#1A1A1A` / Muted: `#888888` / Dim: `#CCCCCC`
-- Input bg: `#F0EFEC`
-- Accent: `#0066FF` (like a link in a text message)
-- Error: `#D32F2F` / Success: `#2E7D32` / Hold/Pending: `#B8960C`
+### Color Tokens
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--bg` | `#FAFAF8` | Page background |
+| `--text` | `#1A1A1A` | Primary text |
+| `--muted` | `#666666` | Secondary text, labels |
+| `--dim` | `#AAAAAA` | Tertiary text, placeholders |
+| `--accent` | `#0066FF` | Links, buttons, active states |
+| `--accent-hover` | `#0052CC` | Button hover |
+| `--error` | `#D32F2F` | Error states |
+| `--success` | `#2E7D32` | Success states, live pill |
+| `--input-bg` | `#F0EFEC` | Input backgrounds, dividers, card backgrounds |
 
 ### Spacing
-- Spacing is the ONLY structural element. No borders, no dividers, no rules.
-- Between items: 32px. Between groups: 48px. Between zones: 64px. Screen padding: 24px.
+- `--side: 24px` — horizontal padding for all content.
+- Spacing is the primary structural element. Minimal borders (1px `--input-bg` dividers on list rows only).
+- Between items: 32px. Between groups: 48px. Between zones: 64px.
 
-### Layout
-- Single column, mobile-first. Max 480px on mobile.
-- Border radius: 6px on inputs/buttons.
-- Desktop 768+: White card on #F0F0EC, max 720-900px, two-column grid for hero/info.
+### Layout — Tab Screens
+Tab screens: feed, dealer-home, messages, favorites, settings.
+1. **No screen-level side padding.** Each content element handles its own horizontal padding via `--side`.
+2. **No screen-level top padding.** `.feed-header` (sticky) handles safe-area + top space.
+3. **Bottom padding:** `max(80px, calc(56px + env(safe-area-inset-bottom)))` for bottom nav clearance.
+4. **Max width:** 480px centered (except feed, full-width for photo grid).
+
+### Components
+
+**Page Header (`.feed-header`)** — ALL tab screens. Sticky, blurred, safe-area aware.
+- `position: sticky; top: 0; z-index: 100`
+- `background: rgba(250,250,248,0.95); backdrop-filter: blur(12px)`
+- `padding: 0 var(--side); padding-top: max(12px, env(safe-area-inset-top))`
+
+**Segmented Control (`.seg-ctrl` + `.seg-btn`)** — ONE component for all toggles.
+- Used for: browse all/saved, messages all/buying/selling, admin tabs, price posture.
+- `seg-ctrl`: flex, `--input-bg` background, 6px radius, 3px padding, 2px gap.
+- `seg-btn`: 11px/600/uppercase, 7px 12px padding, 4px radius. Active: white bg + shadow.
+
+**Status Pill (`.pill-live/hold/sold`)** — Inline status badge.
+- 10px/600/uppercase, 2px 8px padding, 10px radius.
+- Live: green bg. Hold: amber bg. Sold: gray bg.
+
+**Primary Button (`.auth-btn`)** — Full-width accent button.
+- 13px/600/uppercase, 16px 20px padding, 6px radius.
+
+**Form Input (`.form-input`)** — Full-width input field.
+- 15px, `--input-bg`, 14px 16px padding, 6px radius. Accent ring on focus.
+
+**FAB (`.fab`)** — Fixed bottom-right add button.
+- 52px circle, accent bg, shadow. Above bottom nav.
 
 ### Logo
-- "EARLY BIRD_" — one line, JetBrains Mono 700, 20px. Underscore blinks like a cursor (1s step-end infinite).
+- "EARLY BIRD_" — one line, system font 700, 20px. Underscore blinks like a cursor (1s step-end infinite).
 - No icon. No mascot. No stacked wordmark.
 
 ### Motion
 - Minimal-functional. Blinking cursor is the only animation. Countdown is live-updating text, no transition effects.
+
+### Rules
+1. Mono font ONLY on prices, counts, phone numbers, timestamps. Never on labels or body text.
+2. No screen-level side padding on tab screens. Content elements handle their own via `--side`.
+3. One segmented control style everywhere. No bespoke toggle variants.
+4. All tab screens use `.feed-header` as first child. No inline header styles.
 
 ---
 
@@ -292,7 +332,10 @@ The current UI is functionally complete but visually rough. Next session should:
 ## Decisions Log
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-04-06 | JetBrains Mono only | One font. Monospaced = insider/back-channel feel. |
+| 2026-04-06 | JetBrains Mono only | Original decision: one font. Monospaced = insider feel. |
+| 2026-04-07 | System font for UI, mono for data | Mono on body text hurts readability. System font for UI, JetBrains Mono reserved for prices/counts/data. |
+| 2026-04-07 | Unified segmented control | One `.seg-ctrl` component replaces 5 different toggle styles. |
+| 2026-04-07 | No screen-level side padding | Tab screens have no side padding. Content elements handle their own. Fixes double-padding bugs. |
 | 2026-04-06 | Single accent color (#0066FF) | Like a link in a text. When it appears, it means something. |
 | 2026-04-06 | No borders or dividers | Spacing does all structural work. |
 | 2026-04-06 | Multi-market landing page | Shows breadth of what's coming. |
