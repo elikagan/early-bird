@@ -913,7 +913,7 @@ async function handleSMSBlast(request, env) {
   // Log blast to database
   await supabase(env, 'sms_blasts', {
     method: 'POST',
-    body: JSON.stringify({
+    body: {
       market_id: body.market_id || null,
       audience,
       message: body.message,
@@ -921,7 +921,7 @@ async function handleSMSBlast(request, env) {
       fail_count: errors.length,
       total_count: withPhone.length,
       errors: errors.length ? errors : null,
-    }),
+    },
   });
 
   return json({ sent, total: withPhone.length, fail_count: errors.length, errors: errors.length ? errors : undefined });
