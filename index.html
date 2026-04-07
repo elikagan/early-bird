@@ -12,17 +12,14 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     /*
-     * DESIGN SYSTEM — see DESIGN.md for full spec
-     * UI text: system font stack
-     * Data/prices: JetBrains Mono (--font-mono)
+     * DESIGN SYSTEM: "The Text Message"
+     * Font: JetBrains Mono — everything
      * Colors: --text #1A1A1A, --muted #666, --dim #AAA, --accent #0066FF
      * Spacing: --side 24px, elements handle their own padding
      * Components: .seg-ctrl, .feed-header, .auth-btn, .fab
      */
 
     :root {
-      --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
       --bg: #FAFAF8;
       --text: #1A1A1A;
       --muted: #666666;
@@ -41,27 +38,11 @@
       width: 100%;
     }
     body {
-      font-family: var(--font-ui);
+      font-family: 'JetBrains Mono', monospace;
       background: var(--bg);
       color: var(--text);
       -webkit-font-smoothing: antialiased;
       overscroll-behavior: none;
-    }
-
-    /* Mono font — prices, counts, phone numbers, timestamps, data only */
-    .item-card-price,
-    .detail-price,
-    .my-item-price,
-    .fav-card-price,
-    .market-countdown,
-    .dealer-countdown,
-    .auth-input,
-    .carousel-counter,
-    .admin-stat .value,
-    .admin-stat-card .value,
-    .inquiry-phone,
-    .inquiry-time {
-      font-family: var(--font-mono);
     }
 
     /* ── Screens ─────────────────────────── */
@@ -146,7 +127,7 @@
     }
     .auth-input {
       width: 100%;
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 16px;
       font-weight: 400;
       color: var(--text);
@@ -1048,7 +1029,7 @@
     .seg-ctrl.hidden { display: none; }
     .seg-btn {
       flex: 1;
-      font-family: var(--font-ui);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
@@ -1261,7 +1242,7 @@
     .my-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .my-item-info { flex: 1; min-width: 0; }
     .my-item-price {
-      font-family: var(--font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
@@ -1320,6 +1301,7 @@
       max-width: 480px;
       margin: 0 auto;
       padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom)));
+      overflow-x: hidden;
     }
 
     /* ── Utility ──────────────────────────── */
@@ -1708,7 +1690,7 @@
     <div class="feed-header-top">
       <div style="display:flex;align-items:baseline;gap:8px;">
         <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-        <span id="feed-item-count" style="font-family:var(--font-mono);font-size:11px;color:var(--muted);"></span>
+        <span id="feed-item-count" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);"></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <div class="browse-toggle seg-ctrl" id="browse-toggle">
@@ -1722,7 +1704,7 @@
         </button>
       </div>
     </div>
-    <div class="feed-event" id="feed-event-name" style="font-size:12px;color:var(--muted);padding-bottom:8px;"></div>
+    <a href="#" id="feed-event-name" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;" style="display:block;font-size:12px;color:var(--accent);padding-bottom:8px;text-decoration:none;">← Markets</a>
   </div>
   <!-- Filter bottom sheet -->
   <div class="sheet-overlay" id="filter-sheet" onclick="closeFilterSheet()">
@@ -1779,7 +1761,6 @@
   </div>
   <div id="messages-content">
     <div class="empty-state">
-      <div style="font-size:32px;margin-bottom:12px;">&#128172;</div>
       <h2>No messages yet</h2>
       <p>When you message a seller about an item, your conversation will appear here.</p>
     </div>
@@ -2161,8 +2142,8 @@ async function openMarketTeaser(marketId) {
       <div style="font-size:14px;color:var(--muted);margin-top:6px;">${dateStr}</div>
       ${countdown ? `<div style="font-size:13px;color:${isLive ? 'var(--accent)' : 'var(--muted)'};margin-top:8px;text-transform:uppercase;letter-spacing:0.5px;">${isLive ? '&#9679; Live now' : countdown}</div>` : ''}
       <div style="display:flex;gap:16px;margin-top:16px;">
-        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:var(--font-mono);">${itemCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">items</span></div>
-        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:var(--font-mono);">${dealerCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">dealers</span></div>
+        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:'JetBrains Mono',monospace;">${itemCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">items</span></div>
+        <div style="font-size:20px;font-weight:700;color:var(--text);line-height:1;"><span style="font-family:'JetBrains Mono',monospace;">${dealerCount}</span> <span style="font-size:11px;color:var(--muted);font-weight:400;">dealers</span></div>
       </div>
       ${previewHtml}
       ${isLive ? `<button onclick="selectMarket('${m.id}'); enterApp();" style="width:100%;padding:14px;background:var(--text);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;margin-top:20px;">Browse inventory</button>` : ''}
@@ -2343,7 +2324,7 @@ async function loadFeed() {
   if (currentMarket) {
     const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
     const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
-    document.getElementById('feed-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
+    document.getElementById('feed-event-name').textContent = '← ' + currentMarket.name + (dateStr ? ' · ' + dateStr : '');
   }
   const content = document.getElementById('feed-content');
   try {
@@ -2494,7 +2475,7 @@ function renderConversations() {
       : msgFilter === 'buying'
         ? 'No conversations as a buyer yet.'
         : 'No conversations as a seller yet.';
-    content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#128172;</div><h2>No messages</h2><p>' + msg + '</p></div>';
+    content.innerHTML = '<div class="empty-state"><h2>No messages</h2><p>' + msg + '</p></div>';
     return;
   }
 
@@ -2572,7 +2553,7 @@ async function loadDealerHome() {
   // Booth number
   const boothRow = document.getElementById('booth-number-row');
   if (currentUser?.booth_number) {
-    boothRow.innerHTML = `<span style="font-weight:600;color:var(--text);">Booth <span style="font-family:var(--font-mono);">${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:11px;margin-left:4px;">edit</a>`;
+    boothRow.innerHTML = `<span style="font-weight:600;color:var(--text);">Booth <span style="font-family:'JetBrains Mono',monospace;">${currentUser.booth_number}</span></span> <a href="#" onclick="event.preventDefault(); event.stopPropagation(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:11px;margin-left:4px;">edit</a>`;
   } else {
     boothRow.innerHTML = `<a href="#" onclick="event.preventDefault(); editBoothNumber();" style="color:var(--accent);text-decoration:none;font-size:12px;">+ Add booth number</a>`;
   }
@@ -2593,9 +2574,9 @@ async function loadDealerHome() {
     const sold = items.filter(i => i.status === 'sold').length;
     if (items.length) {
       statsRow.innerHTML = `
-        <div style="font-size:13px;"><span style="font-family:var(--font-mono);font-weight:700;font-size:18px;">${live}</span> <span style="color:var(--muted);">live</span></div>
-        <div style="font-size:13px;"><span style="font-family:var(--font-mono);font-weight:700;font-size:18px;">${hold}</span> <span style="color:#B8960C;">hold</span></div>
-        <div style="font-size:13px;"><span style="font-family:var(--font-mono);font-weight:700;font-size:18px;">${sold}</span> <span style="color:var(--muted);">sold</span></div>`;
+        <div style="font-size:13px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;">${live}</span> <span style="color:var(--muted);">live</span></div>
+        <div style="font-size:13px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;">${hold}</span> <span style="color:#B8960C;">hold</span></div>
+        <div style="font-size:13px;"><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;">${sold}</span> <span style="color:var(--muted);">sold</span></div>`;
     } else {
       statsRow.innerHTML = '';
     }
@@ -2673,7 +2654,7 @@ function editBoothNumber() {
   const boothRow = document.getElementById('booth-number-row');
   const current = currentUser?.booth_number || '';
   boothRow.innerHTML = `<div style="display:flex;gap:8px;align-items:center;">
-    <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:var(--font-mono);font-size:13px;color:var(--text);outline:none;">
+    <input type="text" id="booth-input" value="${current}" placeholder="e.g. E25" style="width:80px;padding:8px 10px;background:var(--input-bg);border:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);outline:none;">
     <button onclick="saveBoothNumber()" style="padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">Save</button>
   </div>`;
   document.getElementById('booth-input').focus();
