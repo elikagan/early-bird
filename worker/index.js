@@ -478,7 +478,7 @@ async function handleUpsertMarketBooth(request, env, dealer) {
 async function handleGetItems(url, env) {
   // Join buyer info directly — no N+1 queries
   let query = 'items?select=*,' +
-    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number),' +
+    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number,photo_url),' +
     'buyer:dealers!items_buyer_id_fkey(id,name,business_name,show_name_on_sold)' +
     '&order=created_at.desc';
 
