@@ -2264,7 +2264,7 @@ async function loadFavorites() {
   try {
     const favs = await api('/api/favorites');
     if (!favs?.length) {
-      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#9825;</div><h2>No favorites yet</h2><p>Tap the heart on items you love and they'll show up here.</p></div>';
+      content.innerHTML = '<div class="empty-state"><div style="font-size:32px;margin-bottom:12px;">&#9825;</div><h2>No favorites yet</h2><p>Tap the heart on items you love and they&#39;ll show up here.</p></div>';
       return;
     }
     content.innerHTML = '<div class="fav-grid">' + favs.map(fav => {
