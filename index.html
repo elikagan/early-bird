@@ -716,6 +716,7 @@
       padding: 0 var(--side) var(--side);
     }
     /* .text-seller-btn consolidated into .btn-primary */
+    /* .detail-status-badge - legacy, use .status-pill for new code */
     .detail-status-badge {
       width: 100%;
       text-align: center;
@@ -1889,7 +1890,7 @@
 
     .conv-reply-bar {
       position: fixed;
-      bottom: 0;
+      bottom: calc(56px + env(safe-area-inset-bottom, 0px));
       left: 0;
       right: 0;
       max-width: 480px;
@@ -1897,7 +1898,6 @@
       background: var(--bg);
       border-top: 1px solid var(--input-bg);
       padding: 12px var(--side);
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
       display: flex;
       gap: 8px;
       z-index: 100;
