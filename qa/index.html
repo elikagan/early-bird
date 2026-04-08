@@ -262,7 +262,13 @@ let notes = {}; // { screenId: "note text" }
 let saveTimer;
 
 // Load notes from localStorage
-try { notes = JSON.parse(localStorage.getItem('eb_qa_notes') || '{}'); } catch(e) {}
+// Seed notes from previous session (localhost) — only used if no notes exist yet
+const SEED_NOTES = {"landing-buyer":"","landing-dealer":"","feed-populated":"","messages-populated":"Messages look good - previews and timestamps showing. Check if unread indicator works.","booth-active":""};
+try {
+  const saved = localStorage.getItem('eb_qa_notes');
+  if (saved) { notes = JSON.parse(saved); }
+  else { notes = SEED_NOTES; localStorage.setItem('eb_qa_notes', JSON.stringify(notes)); }
+} catch(e) { notes = SEED_NOTES; }
 
 // Init
 function init() {
