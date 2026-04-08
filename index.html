@@ -25,8 +25,8 @@
     :root {
       --bg: #FAFAF8;
       --text: #1A1A1A;
-      --muted: #555555;
-      --dim: #888888;
+      --muted: #666666;
+      --dim: #AAAAAA;
       --accent: #0066FF;
       --accent-hover: #0052CC;
       --error: #D32F2F;
@@ -51,54 +51,6 @@
     /* ── Screens ─────────────────────────── */
     .screen { display: none; }
     .screen.active { display: block; }
-
-    /* ── App Header ─────────────────────── */
-    /* One header component for every screen */
-    .app-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(250,250,248,0.95);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 0 var(--side);
-      padding-top: max(12px, env(safe-area-inset-top));
-    }
-    .app-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 40px;
-    }
-    .app-header-row + .app-header-row {
-      padding-bottom: 8px;
-    }
-    .app-header-title {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .app-header-back {
-      font-size: 12px;
-      color: var(--muted);
-      text-decoration: none;
-    }
-    @media (hover: hover) {
-      .app-header-back:hover { color: var(--text); }
-    }
-    .app-header-action {
-      font-size: 12px;
-      color: var(--muted);
-      text-decoration: none;
-      text-align: right;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
 
     /* ── Landing Page ────────────────────── */
     #landing {
@@ -160,7 +112,13 @@
       justify-content: space-between;
       gap: 12px;
     }
-    /* chevron removed per QA feedback */
+    .market-item::after {
+      content: '›';
+      font-size: 20px;
+      color: var(--dim);
+      flex-shrink: 0;
+      line-height: 1;
+    }
     .market-name {
       font-size: 24px;
       font-weight: 700;
@@ -172,12 +130,10 @@
       color: var(--dim);
     }
     .market-countdown {
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 400;
       color: var(--muted);
-      white-space: nowrap;
-      flex-shrink: 0;
-      text-align: right;
+      margin-top: 8px;
     }
 
     /* ── Auth ── */
@@ -390,11 +346,11 @@
 
     .selfie-area { margin-bottom: 24px; }
     .selfie-preview {
-      width: 100px;
-      height: 100px;
-      border-radius: 12px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
       background: var(--input-bg);
-      margin: 0 0 12px;
+      margin: 0 auto 12px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -409,6 +365,7 @@
       line-height: 1.5;
     }
     .selfie-context {
+      text-align: center;
       font-size: 11px;
       color: var(--dim);
       margin-top: 8px;
@@ -480,8 +437,8 @@
       position: absolute;
       bottom: 12px;
       left: 12px;
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid rgba(255,255,255,0.9);
@@ -1018,16 +975,6 @@
     }
     .nav-tab.active { color: var(--accent); }
     .nav-tab svg { width: 22px; height: 22px; }
-    .nav-group {
-      display: flex;
-      flex: 2;
-    }
-    .nav-group .nav-tab { flex: 1; }
-    .nav-divider {
-      width: 1px;
-      background: var(--input-bg);
-      margin: 8px 0;
-    }
 
     /* Unread badge */
     .unread-badge {
@@ -1171,19 +1118,17 @@
     }
     .fab:active { transform: scale(0.92); }
 
-    .my-items-list { list-style: none; padding: 0 var(--side); display: flex; flex-direction: column; gap: 8px; }
+    .my-items-list { list-style: none; }
     .my-item {
       display: flex;
       gap: 12px;
-      padding: 12px;
-      background: var(--input-bg);
-      border-radius: 8px;
-      align-items: flex-start;
+      padding: 12px var(--side);
+      border-bottom: 1px solid var(--input-bg);
+      align-items: center;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s;
     }
-    .my-item:active { opacity: 0.7; }
+    .my-item:active { background: var(--input-bg); }
     .my-item-thumb {
       width: 64px; height: 64px;
       border-radius: 6px;
@@ -1443,7 +1388,7 @@
     }
     .btn-primary:hover { background: var(--accent-hover); }
     .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:disabled { background: var(--dim); cursor: default; transform: none; pointer-events: none; }
+    .btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; }
     .btn-primary.btn-dark { background: var(--text); }
     .btn-primary.btn-dark:hover { background: #333; }
     .btn-primary.btn-compact { width: auto; padding: 10px 16px; font-size: 11px; }
@@ -1951,17 +1896,13 @@
       max-width: 480px;
       margin: 0 auto;
       background: var(--bg);
-      border-top: 2px solid #ddd;
+      border-top: 1px solid var(--input-bg);
       padding: 12px var(--side);
       display: flex;
       gap: 8px;
       z-index: 100;
     }
-    .conv-reply-bar .fi {
-      flex: 1; font-size: 16px; padding: 12px 14px;
-      resize: none; overflow: hidden; min-height: 42px; max-height: 120px;
-      line-height: 1.4;
-    }
+    .conv-reply-bar .fi { flex: 1; font-size: 16px; padding: 12px 14px; }
 
     /* ── Messages List — Composite Thumbnail ─────────────── */
 
@@ -2146,9 +2087,7 @@
       font-variant-numeric: tabular-nums;
       color: var(--accent);
       letter-spacing: 0.02em;
-      white-space: nowrap;
-      margin-left: auto;
-      flex-shrink: 0;
+      padding-bottom: 8px;
     }
     .booth-stats {
       display: flex;
@@ -2579,7 +2518,7 @@
 <div id="landing" class="screen">
   <div class="header">
     <div class="logo">EARLY BIRD<span class="cursor">_</span></div>
-    <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">Dealer? Click Here</a>
+    <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">Dealer? Click here</a>
   </div>
 
   <div class="landing-columns">
@@ -2664,19 +2603,14 @@
 
 <!-- DEALER LANDING PAGE -->
 <div id="dealer-landing" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <a href="#" class="app-header-back" onclick="event.preventDefault(); showScreen('landing');">&#8592; Back</a>
-      <div class="app-header-title">EARLY BIRD<span class="cursor">_</span></div>
-    </div>
-  </div>
-  <div style="padding:0 var(--side)">
+  <a href="#" class="back-link" onclick="showScreen('landing'); return false;">Back</a>
+
   <div class="dealer-headline">
     Sell to serious buyers<br>
     <span class="accent">before the gates open</span>
   </div>
   <div class="dealer-sub">
-    Post what you're bringing. Buyers see it when items drop the evening before the show.
+    Post what you're bringing. Buyers see it when items drop.
   </div>
   <div class="dealer-free-badge">100% free for dealers</div>
 
@@ -2736,7 +2670,6 @@
   <div class="disclaimer">
     Early Bird is not affiliated with or endorsed by any market listed here.
   </div>
-  </div>
 </div>
 
 <!-- VERIFY -->
@@ -2747,14 +2680,8 @@
 
 <!-- ONBOARDING -->
 <div id="onboarding" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <div class="app-header-title">EARLY BIRD<span class="cursor">_</span></div>
-    </div>
-  </div>
-  <div style="padding:0 var(--side)">
-  <div class="onboard-title">Get set up to pre-buy</div>
-  <div class="onboard-sub">Takes 30 seconds.</div>
+  <div class="onboard-title">Almost there</div>
+  <div class="onboard-sub">Quick setup, then you're in.</div>
 
   <div class="selfie-area">
     <div class="selfie-preview" id="selfie-preview" onclick="document.getElementById('selfie-input').click()">
@@ -2771,17 +2698,16 @@
   </div>
 
   <button class="btn-primary" onclick="completeOnboarding()" style="margin-top:12px">Let's go</button>
-  </div>
 </div>
 
 <!-- FEED -->
 <div id="feed" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <div class="app-header-title">EARLY BIRD<span class="cursor">_</span></div>
-      <a href="#" id="feed-event-name" class="app-header-action" onclick="showScreen('landing'); return false;">Markets</a>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
+      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); return false;">Markets</a>
     </div>
-    <div class="app-header-row">
+    <div class="feed-header-row2">
       <button class="feed-filter-btn" onclick="openFilterSheet()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
@@ -2819,15 +2745,13 @@
 
 <!-- DEALER HOME -->
 <div id="dealer-home" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <div class="app-header-title">Sell</div>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">My Booth</div>
       <div id="booth-number-row" class="booth-number"></div>
     </div>
-    <div class="app-header-row">
-      <a href="#" id="booth-event-name" class="booth-event-name" onclick="event.preventDefault(); openMarketPicker();"></a>
-      <div id="booth-countdown" class="booth-countdown"></div>
-    </div>
+    <a href="#" id="booth-event-name" class="booth-event-name" onclick="event.preventDefault(); openMarketPicker();"></a>
+    <div id="booth-countdown" class="booth-countdown"></div>
   </div>
   <div id="booth-setup-card" class="booth-setup-card hidden" style="margin:0 var(--side) 16px"></div>
   <div id="booth-stats" class="booth-stats"></div>
@@ -2849,9 +2773,9 @@
 
 <!-- MESSAGES -->
 <div id="messages" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <div class="app-header-title">Watching</div>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">Messages</div>
     </div>
   </div>
   <div class="msg-toggle seg-ctrl nav-dealer-only hidden" id="msg-filter-toggle">
@@ -2885,10 +2809,8 @@
 
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <a href="#" class="app-header-back" onclick="event.preventDefault(); history.back();">&#8592; Back</a>
-    </div>
+  <div class="detail-back">
+    <a href="#" onclick="event.preventDefault(); history.back();">&#8592; Back</a>
   </div>
   <div class="detail-photos" id="detail-photos"></div>
   <div class="detail-info" id="detail-info"></div>
@@ -2897,10 +2819,9 @@
 
 <!-- ADD ITEM -->
 <div id="add-item" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <a href="#" class="app-header-back" onclick="event.preventDefault(); switchTab('dealer-home');">&#8592; Back</a>
-      <div class="app-header-title">Add item</div>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo"><a href="#" onclick="event.preventDefault(); switchTab('dealer-home');" style="font-size:12px;color:var(--muted);text-decoration:none;margin-right:8px">&#8592; Back</a> Add item</div>
     </div>
   </div>
 
@@ -2926,15 +2847,31 @@
     <input type="text" class="fi" id="item-price" placeholder="$" inputmode="decimal">
   </div>
 
-  <div class="form-field" style="display:flex;align-items:center;justify-content:space-between">
-    <label class="fl" style="margin-bottom:0">Price firm</label>
-    <label class="toggle-switch">
-      <input type="checkbox" id="item-firm">
-      <span class="toggle-slider"></span>
-    </label>
+  <div class="form-row">
+    <div class="form-field">
+      <label class="fl">Condition</label>
+      <select class="fs" id="item-condition">
+        <option value="">—</option>
+        <option value="mint">Mint</option>
+        <option value="good">Good</option>
+        <option value="fair">Fair</option>
+        <option value="as-is">As-Is</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="fl">Market</label>
+      <select class="fs" id="item-market"></select>
+    </div>
   </div>
-  <!-- Market context set by JS -->
-  <select class="fs" id="item-market" style="display:none"></select>
+
+  <div class="form-field">
+    <label class="fl">Price posture</label>
+    <div class="seg-ctrl" id="price-posture-ctrl">
+      <button type="button" class="seg-btn active" onclick="selectPricePosture(this, 'firm')">Firm</button>
+      <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'flexible')">Flexible</button>
+      <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'make_offer')">Make offer</button>
+    </div>
+  </div>
 
   <div class="form-field">
     <label class="fl">Notes (optional)</label>
@@ -2947,9 +2884,9 @@
 
 <!-- SETTINGS -->
 <div id="settings" class="screen">
-  <div class="app-header">
-    <div class="app-header-row">
-      <div class="app-header-title">Account</div>
+  <div class="feed-header">
+    <div class="feed-header-top">
+      <div class="feed-logo">Account</div>
     </div>
   </div>
   <div class="settings-content">
@@ -3028,27 +2965,24 @@
 
 <!-- BOTTOM NAV — single nav, reconfigured by mode -->
 <nav class="bottom-nav hidden" id="bottom-nav">
-  <div class="nav-group nav-group-buy">
-    <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-      </svg>
-      Buy
-    </button>
-    <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-      </svg>
-      <span class="nav-tab-label">Watching<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
-    </button>
-  </div>
-  <div class="nav-divider"></div>
+  <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+    </svg>
+    Shop
+  </button>
   <button class="nav-tab nav-dealer-only hidden" data-tab="dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
-    Sell
+    Booth
+  </button>
+  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+    <span class="nav-tab-label">Messages<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
   </button>
   <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3219,7 +3153,7 @@ function formatCountdown(dropTime) {
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
-  return `${d}d ${h}h ${m}m`;
+  return `drops in ${d}d ${h}h ${m}m`;
 }
 
 const NAME_MAP = {
@@ -3638,43 +3572,61 @@ async function loadMessages() {
   const content = document.getElementById('messages-content');
   content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
   try {
-    const items = await api('/api/watching');
+    const res = await api('/api/conversations');
+    const asBuyer = res.as_buyer || [];
+    const asSeller = res.as_seller || [];
 
-    if (!items.length) {
-      content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#9825;</div><h2>Nothing yet</h2><p>Favorite items or message sellers to see them here.</p></div>';
-      return;
-    }
+    allConversations = [
+      ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller', _otherPhoto: c.seller?.photo_url })),
+      ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer', _otherPhoto: c.buyer?.photo_url })),
+    ].sort((a, b) => new Date(b.last_message_at || b.created_at) - new Date(a.last_message_at || a.created_at));
 
-    content.innerHTML = items.map(item => {
-      const photo = item.photos?.[0] || '';
-      const price = '$' + (item.price / 100).toLocaleString();
-      const title = item.title || '';
-      const dealer = item.dealer?.name || item.dealer?.business_name || '';
-      const statusPill = item.status !== 'live' ? `<span class="status-pill ${item.status}">${item.status}</span>` : '';
-      const indicator = item.conversation_token
-        ? '<span style="font-size:11px;color:var(--accent)">&#9679;</span>'  // chat dot
-        : '<span style="font-size:11px;color:var(--dim)">&#9825;</span>';   // heart
-      const preview = item.last_message
-        ? `<div class="conv-preview" style="max-height:4.2em;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical">${item.last_message}</div>`
-        : '';
-      const timeAgo = item.last_message_at ? getTimeAgo(item.last_message_at, true) : '';
-      const href = item.conversation_token ? `#/item/${item.id}` : `#/item/${item.id}`;
-
-      return `<a href="${href}" class="conv-item" onclick="event.preventDefault(); openItem('${item.id}')">
-        <div class="conv-thumb" style="width:52px;height:52px;border-radius:6px;overflow:hidden;background:var(--input-bg);flex-shrink:0">
-          ${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover">` : ''}
-        </div>
-        <div class="conv-info" style="flex:1;min-width:0">
-          <div class="conv-name-row"><span class="name">${dealer}</span>${timeAgo ? `<span class="conv-time">${timeAgo}</span>` : ''}</div>
-          <div class="conv-price-line">${title ? title + ' · ' : ''}${price} ${statusPill}</div>
-          ${preview}
-        </div>
-        <div style="flex-shrink:0;padding-left:8px">${indicator}</div>
-      </a>`;
-    }).join('');
+    renderConversations();
   } catch (e) {
-    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load items</div><button class="btn-secondary" onclick="loadMessages()">Try again</button></div>';
+    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load messages</div><button class="btn-secondary" onclick="loadMessages()">Try again</button></div>';
   }
+}
+
+function renderConversations() {
+  const content = document.getElementById('messages-content');
+  let convs = allConversations;
+  if (msgFilter === 'buying') convs = convs.filter(c => c._role === 'buyer');
+  if (msgFilter === 'selling') convs = convs.filter(c => c._role === 'seller');
+
+  if (!convs.length) {
+    const msg = msgFilter === 'all'
+      ? 'Conversations with sellers will show up here.'
+      : msgFilter === 'buying'
+        ? 'No conversations as a buyer yet.'
+        : 'No conversations as a seller yet.';
+    content.innerHTML = '<div class="empty-state"><h2>No messages</h2><p>' + msg + '</p></div>';
+    return;
+  }
+
+  content.innerHTML = convs.map(conv => {
+    const photo = conv.item?.photos?.[0] || '';
+    const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
+    const title = conv.item?.title || '';
+    const timeAgo = getTimeAgo(conv.last_message_at || conv.created_at, true);
+    const initials = conv._other.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const avatarEl = conv._otherPhoto
+      ? `<div class="conv-thumb-avatar"><img src="${conv._otherPhoto}"></div>`
+      : `<div class="conv-thumb-avatar-placeholder">${initials}</div>`;
+    const preview = conv.last_message
+      ? `<div class="conv-preview">${conv.last_message.length > 50 ? conv.last_message.slice(0, 50) + '...' : conv.last_message}</div>`
+      : '';
+    return `<a href="#/c/${conv.token}" class="conv-item">
+      <div class="conv-thumb-composite">
+        <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
+        ${avatarEl}
+      </div>
+      <div class="conv-info flex-1">
+        <div class="conv-name-row"><span class="name">${conv._other}</span><span class="conv-time">${timeAgo}</span></div>
+        <div class="conv-price-line">${title ? title + ' · ' : ''}${price}</div>
+        ${preview}
+      </div>
+    </a>`;
+  }).join('');
 }
 
 function getTimeAgo(dateStr, short = false) {
@@ -3724,21 +3676,15 @@ async function loadDealerHome() {
     const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
     const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
     document.getElementById('booth-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
-    // Countdown — to drop time, then "market is live"
+    // Countdown
     const cdEl = document.getElementById('booth-countdown');
-    const dropTime = currentMarket.drop_time ? new Date(currentMarket.drop_time) : null;
-    if (dropTime && dropTime > new Date()) {
-      const diff = dropTime - Date.now();
+    if (d && d > new Date()) {
+      const diff = d - Date.now();
       const days = Math.floor(diff / 86400000);
       const hrs = Math.floor((diff % 86400000) / 3600000);
-      const mins = Math.floor((diff % 3600000) / 60000);
-      const secs = Math.floor((diff % 60000) / 1000);
-      cdEl.textContent = days > 0 ? `Drops in ${days}d ${hrs}h ${mins}m` : `Drops in ${hrs}h ${mins}m ${secs}s`;
-    } else if (dropTime && dropTime <= new Date() && d && d >= new Date()) {
-      cdEl.textContent = 'Early Bird market is live';
-      cdEl.style.color = 'var(--success)';
+      cdEl.textContent = days > 0 ? `${days}d ${hrs}h until market` : `${hrs}h until market`;
     } else if (d && d.toDateString() === new Date().toDateString()) {
-      cdEl.textContent = 'Market day!';
+      cdEl.textContent = 'Today!';
     } else {
       cdEl.textContent = '';
     }
@@ -4085,48 +4031,28 @@ async function loadItemDetail(itemId) {
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
     const biz = item.dealer?.business_name && item.dealer?.name ? item.dealer.business_name : '';
     let html = '';
-    // Price row with inline status
-    html += `<div style="display:flex;align-items:center;justify-content:space-between">`;
     html += `<div class="detail-price">${price}</div>`;
-    if (item.status === 'hold') html += `<span class="status-pill hold">Hold</span>`;
-    else if (item.status === 'sold') html += `<span class="status-pill sold">Sold</span>`;
-    else if (item.firm) html += `<span class="status-pill" style="background:#f5f5f5;color:var(--muted)">Firm</span>`;
-    html += `</div>`;
     if (item.title) html += `<div class="detail-title">${item.title}</div>`;
+    if (item.price_posture === 'make_offer') html += `<span class="posture-pill">Make me an offer</span>`;
+    else if (item.price_posture === 'flexible') html += `<span class="posture-pill">Flexible</span>`;
+    else if (item.firm) html += `<span class="posture-pill">Firm</span>`;
+    else html += `<span class="posture-pill">Open to offers</span>`;
+    if (item.condition) html += `<div class="detail-condition">${item.condition}</div>`;
     if (item.notes) html += `<div class="detail-notes">${item.notes}</div>`;
-    html += `<div class="detail-seller" style="display:flex;align-items:center;gap:12px">`;
-    if (item.dealer?.photo_url) html += `<img src="${item.dealer.photo_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0">`;
-    html += `<div>`;
+    html += `<div class="detail-seller">`;
     html += `<div class="detail-seller-name">${dealer}</div>`;
     if (biz) html += `<div class="detail-seller-biz">${biz}</div>`;
     if (item.dealer?.booth_number) html += `<div class="detail-seller-biz">Booth ${item.dealer.booth_number}</div>`;
-    html += `</div></div>`;
+    html += `</div>`;
     infoEl.innerHTML = html;
 
-    // Actions — state-aware
-    if (item.my_conversation && item.my_conversation.messages?.length > 0 && item.dealer_id !== getDealerId()) {
-      // ACTIVE CONVERSATION: compress item, show chat inline
-      photosEl.style.display = 'none'; // hide full photos
-      // Replace info with compact header + conversation
-      const conv = item.my_conversation;
-      let chatHtml = `<div style="padding:0 var(--side)">`;
-      // Render messages
-      conv.messages.forEach(msg => {
-        const isMe = (conv.role === 'buyer' && msg.direction === 'buyer_to_seller') || (conv.role === 'seller' && msg.direction === 'seller_to_buyer');
-        chatHtml += `<div class="msg-row ${isMe ? 'sent' : 'received'}"><div class="msg-bubble ${isMe ? 'sent' : 'received'}">${msg.body}</div></div>`;
-      });
-      chatHtml += `</div>`;
-      actionsEl.innerHTML = chatHtml + `
-        <div class="conv-reply-bar">
-          <textarea class="fi reply-expand" id="reply-input" rows="1" placeholder="Reply..." oninput="autoExpand(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendReply('${conv.token}');}"></textarea>
-          <button class="btn-primary btn-compact" onclick="sendReply('${conv.token}')">Send</button>
-        </div>`;
-    } else if (item.status === 'sold') {
-      const buyerName = item.buyer?.show_name_on_sold !== false && item.buyer?.name ? item.buyer.name : '';
-      actionsEl.innerHTML = buyerName ? `<div style="padding:16px var(--side);color:var(--muted);font-size:12px">Sold to ${buyerName}</div>` : '';
+    // Actions
+    if (item.status === 'sold') {
+      const buyerName = item.buyer?.name || 'a buyer';
+      actionsEl.innerHTML = `<div class="detail-status-badge sold">Sold to ${buyerName}</div>`;
     } else if (item.status === 'hold') {
       const buyerName = item.buyer?.name || 'a buyer';
-      actionsEl.innerHTML = `<div style="padding:16px var(--side);color:var(--muted);font-size:12px">Held for ${buyerName}</div>`;
+      actionsEl.innerHTML = `<div class="detail-status-badge hold">Held for ${buyerName}</div>`;
     } else if (item.dealer_id === getDealerId()) {
       // Seller viewing own item — load all inquiries
       actionsEl.innerHTML = `<div class="detail-loading">Loading inquiries...</div>`;
@@ -4319,10 +4245,8 @@ async function loadConversation(token) {
       ? [conv.seller?.venmo ? `Venmo: ${conv.seller.venmo}` : '', conv.seller?.zelle ? `Zelle: ${conv.seller.zelle}` : ''].filter(Boolean).join(' · ')
       : '';
 
-    let html = '<div class="app-header">';
-    html += `<div class="app-header-row"><a href="#" class="app-header-back" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back</a></div>`;
-    html += `</div>`;
-    html += `<div class="conv-detail-header">`;
+    let html = '<div class="conv-detail-header">';
+    html += `<a href="#" class="conv-back-link" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back to messages</a>`;
     html += `<div class="conv-item-row">`;
     if (photo) html += `<div class="conv-item-thumb"><img src="${photo}"></div>`;
     html += `<div class="conv-item-meta">`;
@@ -4372,7 +4296,7 @@ async function loadConversation(token) {
     // Reply form
     actionsEl.innerHTML = `
       <div class="conv-reply-bar">
-        <textarea class="fi reply-expand" id="reply-input" rows="1" placeholder="Reply..." oninput="autoExpand(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendReply('${token}');}"></textarea>
+        <input type="text" class="fi" id="reply-input" placeholder="Reply..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendReply('${token}');}">
         <button class="btn-primary btn-compact" onclick="sendReply('${token}')">Send</button>
       </div>`;
 
@@ -4380,11 +4304,6 @@ async function loadConversation(token) {
     infoEl.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load conversation</div><button class="btn-secondary" onclick="switchTab(\'messages\')">Back to messages</button></div>';
     actionsEl.innerHTML = '';
   }
-}
-
-function autoExpand(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 async function sendReply(token) {
@@ -4477,8 +4396,8 @@ async function postItem() {
   const title = document.getElementById('item-title').value.trim() || null;
   const price = parseFloat(document.getElementById('item-price').value.replace(/[^0-9.]/g, ''));
   const marketId = document.getElementById('item-market').value;
-  const condition = null; // removed per QA
-  const firm = document.getElementById('item-firm')?.checked || false;
+  const condition = document.getElementById('item-condition').value || null;
+  const firm = selectedPricePosture === 'firm';
   const notes = document.getElementById('item-notes').value.trim() || null;
   const btn = document.getElementById('post-item-btn');
   const msg = document.getElementById('post-item-msg');
@@ -4511,6 +4430,7 @@ async function postItem() {
         photos: photoUrls,
         condition,
         firm,
+        price_posture: selectedPricePosture,
         notes,
       }
     });
