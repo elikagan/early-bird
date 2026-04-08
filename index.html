@@ -160,13 +160,7 @@
       justify-content: space-between;
       gap: 12px;
     }
-    .market-item::after {
-      content: '›';
-      font-size: 20px;
-      color: var(--dim);
-      flex-shrink: 0;
-      line-height: 1;
-    }
+    /* chevron removed per QA feedback */
     .market-name {
       font-size: 24px;
       font-weight: 700;
@@ -178,10 +172,12 @@
       color: var(--dim);
     }
     .market-countdown {
-      font-size: 12px;
-      font-weight: 400;
+      font-size: 11px;
+      font-weight: 500;
       color: var(--muted);
-      margin-top: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: right;
     }
 
     /* ── Auth ── */
@@ -1176,17 +1172,19 @@
     }
     .fab:active { transform: scale(0.92); }
 
-    .my-items-list { list-style: none; }
+    .my-items-list { list-style: none; padding: 0 var(--side); display: flex; flex-direction: column; gap: 8px; }
     .my-item {
       display: flex;
       gap: 12px;
-      padding: 12px var(--side);
-      border-bottom: 1px solid var(--input-bg);
-      align-items: center;
+      padding: 12px;
+      background: var(--input-bg);
+      border-radius: 8px;
+      align-items: flex-start;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s;
     }
-    .my-item:active { background: var(--input-bg); }
+    .my-item:active { opacity: 0.7; }
     .my-item-thumb {
       width: 64px; height: 64px;
       border-radius: 6px;
@@ -1446,7 +1444,7 @@
     }
     .btn-primary:hover { background: var(--accent-hover); }
     .btn-primary:active { transform: scale(0.97); }
-    .btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; }
+    .btn-primary:disabled { background: var(--dim); cursor: default; transform: none; pointer-events: none; }
     .btn-primary.btn-dark { background: var(--text); }
     .btn-primary.btn-dark:hover { background: #333; }
     .btn-primary.btn-compact { width: auto; padding: 10px 16px; font-size: 11px; }
@@ -2582,7 +2580,7 @@
 <div id="landing" class="screen">
   <div class="header">
     <div class="logo">EARLY BIRD<span class="cursor">_</span></div>
-    <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">Dealer? Click here</a>
+    <a href="#" class="dealer-link" onclick="showScreen('dealer-landing'); return false;">Dealer? Click Here</a>
   </div>
 
   <div class="landing-columns">
@@ -2667,14 +2665,19 @@
 
 <!-- DEALER LANDING PAGE -->
 <div id="dealer-landing" class="screen">
-  <a href="#" class="back-link" onclick="showScreen('landing'); return false;">Back</a>
-
+  <div class="app-header">
+    <div class="app-header-row">
+      <a href="#" class="app-header-back" onclick="event.preventDefault(); showScreen('landing');">&#8592; Back</a>
+      <div class="app-header-title">EARLY BIRD<span class="cursor">_</span></div>
+    </div>
+  </div>
+  <div style="padding:0 var(--side)">
   <div class="dealer-headline">
     Sell to serious buyers<br>
     <span class="accent">before the gates open</span>
   </div>
   <div class="dealer-sub">
-    Post what you're bringing. Buyers see it when items drop.
+    Post what you're bringing. Buyers see it when items drop the evening before the show.
   </div>
   <div class="dealer-free-badge">100% free for dealers</div>
 
@@ -2733,6 +2736,7 @@
 
   <div class="disclaimer">
     Early Bird is not affiliated with or endorsed by any market listed here.
+  </div>
   </div>
 </div>
 
@@ -2923,31 +2927,15 @@
     <input type="text" class="fi" id="item-price" placeholder="$" inputmode="decimal">
   </div>
 
-  <div class="form-row">
-    <div class="form-field">
-      <label class="fl">Condition</label>
-      <select class="fs" id="item-condition">
-        <option value="">—</option>
-        <option value="mint">Mint</option>
-        <option value="good">Good</option>
-        <option value="fair">Fair</option>
-        <option value="as-is">As-Is</option>
-      </select>
-    </div>
-    <div class="form-field">
-      <label class="fl">Market</label>
-      <select class="fs" id="item-market"></select>
-    </div>
+  <div class="form-field" style="display:flex;align-items:center;justify-content:space-between">
+    <label class="fl" style="margin-bottom:0">Price firm</label>
+    <label class="toggle-switch">
+      <input type="checkbox" id="item-firm">
+      <span class="toggle-slider"></span>
+    </label>
   </div>
-
-  <div class="form-field">
-    <label class="fl">Price posture</label>
-    <div class="seg-ctrl" id="price-posture-ctrl">
-      <button type="button" class="seg-btn active" onclick="selectPricePosture(this, 'firm')">Firm</button>
-      <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'flexible')">Flexible</button>
-      <button type="button" class="seg-btn" onclick="selectPricePosture(this, 'make_offer')">Make offer</button>
-    </div>
-  </div>
+  <!-- Market context set by JS -->
+  <select class="fs" id="item-market" style="display:none"></select>
 
   <div class="form-field">
     <label class="fl">Notes (optional)</label>
@@ -3232,7 +3220,7 @@ function formatCountdown(dropTime) {
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
-  return `drops in ${d}d ${h}h ${m}m`;
+  return `${d}d ${h}h ${m}m`;
 }
 
 const NAME_MAP = {
@@ -4482,8 +4470,8 @@ async function postItem() {
   const title = document.getElementById('item-title').value.trim() || null;
   const price = parseFloat(document.getElementById('item-price').value.replace(/[^0-9.]/g, ''));
   const marketId = document.getElementById('item-market').value;
-  const condition = document.getElementById('item-condition').value || null;
-  const firm = selectedPricePosture === 'firm';
+  const condition = null; // removed per QA
+  const firm = document.getElementById('item-firm')?.checked || false;
   const notes = document.getElementById('item-notes').value.trim() || null;
   const btn = document.getElementById('post-item-btn');
   const msg = document.getElementById('post-item-msg');
@@ -4516,7 +4504,6 @@ async function postItem() {
         photos: photoUrls,
         condition,
         firm,
-        price_posture: selectedPricePosture,
         notes,
       }
     });
