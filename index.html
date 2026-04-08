@@ -2706,7 +2706,7 @@
   <div class="feed-header">
     <div class="feed-header-top">
       <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); document.getElementById('bottom-nav').classList.add('hidden'); return false;">Markets</a>
+      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); return false;">Markets</a>
     </div>
     <div class="feed-header-row2">
       <button class="feed-filter-btn" onclick="openFilterSheet()">
@@ -2811,7 +2811,7 @@
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
   <div class="detail-back">
-    <a href="#" onclick="showScreen('feed'); document.getElementById('bottom-nav').classList.remove('hidden'); return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg> Back</a>
+    <a href="#" onclick="switchTab('feed'); return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg> Back</a>
   </div>
   <div class="detail-photos" id="detail-photos"></div>
   <div class="detail-info" id="detail-info"></div>
@@ -3032,9 +3032,14 @@ async function uploadImage(file) {
 }
 
 // ── Screens ───────────────────────────────────────────────────
+const TAB_SCREENS = new Set(['feed', 'dealer-home', 'messages', 'settings']);
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  // Centralized bottom nav: show on tab screens, hide on everything else
+  const nav = document.getElementById('bottom-nav');
+  if (nav) nav.classList.toggle('hidden', !TAB_SCREENS.has(id));
 }
 
 const TAB_HASH_MAP = { feed: '#/shop', 'dealer-home': '#/booth', messages: '#/messages', settings: '#/account' };
@@ -3045,7 +3050,6 @@ function switchTab(tab, skipPush) {
   const tabEl = document.querySelector(`[data-tab="${tab}"]`);
   if (tabEl) tabEl.classList.add('active');
   showScreen(tab);
-  document.getElementById('bottom-nav').classList.remove('hidden');
   localStorage.setItem('eb_active_tab', tab);
   if (TAB_HASH_MAP[tab]) {
     if (skipPush) history.replaceState(null, '', TAB_HASH_MAP[tab]);
@@ -3209,7 +3213,6 @@ async function openMarketTeaser(marketId) {
   const m = allMarkets.find(m => m.id === marketId);
   if (!m) return;
   showScreen('market-teaser');
-  document.getElementById('bottom-nav').classList.add('hidden');
 
   const content = document.getElementById('teaser-content');
   const date = new Date(m.market_date + 'T00:00:00');
@@ -3416,8 +3419,6 @@ async function enterApp() {
   document.querySelectorAll('.nav-dealer-only').forEach(el => {
     el.classList.toggle('hidden', !isDealer);
   });
-
-  document.getElementById('bottom-nav').classList.remove('hidden');
 
   // Restore saved tab from hash or localStorage
   const hash = window.location.hash;
@@ -3899,14 +3900,12 @@ function route() {
     const token = localStorage.getItem('eb_admin_token');
     if (!token) {
       showScreen('admin-login');
-      document.getElementById('bottom-nav').classList.add('hidden');
       const pwField = document.getElementById('admin-password');
       if (pwField) pwField.focus();
       return;
     }
 
     showScreen('admin');
-    document.getElementById('bottom-nav').classList.add('hidden');
     const content = document.getElementById('admin-content');
 
     const marketMatch = hash.match(/^#\/admin\/markets\/(.+)$/);
@@ -3990,7 +3989,6 @@ let currentItem = null;
 
 function openItem(itemId) {
   showScreen('item-detail');
-  document.getElementById('bottom-nav').classList.add('hidden');
   const target = `#/item/${itemId}`;
   if (window.location.hash !== target) history.pushState(null, '', target);
   loadItemDetail(itemId);
@@ -4208,6 +4206,7 @@ async function sendFirstMessage(itemId, directMsg) {
 async function loadConversation(token) {
   showScreen('item-detail');
   document.getElementById('item-detail').classList.add('conv-mode');
+  // Conversations show bottom nav (unlike item detail)
   document.getElementById('bottom-nav').classList.remove('hidden');
   // Override back button to go to messages
   document.querySelector('.detail-back a').onclick = function(e) {
@@ -4577,7 +4576,6 @@ function logout() {
   localStorage.removeItem('eb_dealer_id');
   currentUser = null;
   document.body.classList.remove('in-app');
-  document.getElementById('bottom-nav').classList.add('hidden');
   showScreen('landing');
   window.location.hash = '';
 }
