@@ -390,11 +390,11 @@
 
     .selfie-area { margin-bottom: 24px; }
     .selfie-preview {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
       background: var(--input-bg);
-      margin: 0 auto 12px;
+      margin: 0 0 12px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -409,7 +409,6 @@
       line-height: 1.5;
     }
     .selfie-context {
-      text-align: center;
       font-size: 11px;
       color: var(--dim);
       margin-top: 8px;
@@ -3743,15 +3742,21 @@ async function loadDealerHome() {
     const d = currentMarket.market_date ? new Date(currentMarket.market_date + 'T00:00:00') : null;
     const dateStr = d ? d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : '';
     document.getElementById('booth-event-name').textContent = currentMarket.name + (dateStr ? ' · ' + dateStr : '');
-    // Countdown
+    // Countdown — to drop time, then "market is live"
     const cdEl = document.getElementById('booth-countdown');
-    if (d && d > new Date()) {
-      const diff = d - Date.now();
+    const dropTime = currentMarket.drop_time ? new Date(currentMarket.drop_time) : null;
+    if (dropTime && dropTime > new Date()) {
+      const diff = dropTime - Date.now();
       const days = Math.floor(diff / 86400000);
       const hrs = Math.floor((diff % 86400000) / 3600000);
-      cdEl.textContent = days > 0 ? `${days}d ${hrs}h until market` : `${hrs}h until market`;
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      cdEl.textContent = days > 0 ? `Drops in ${days}d ${hrs}h ${mins}m` : `Drops in ${hrs}h ${mins}m ${secs}s`;
+    } else if (dropTime && dropTime <= new Date() && d && d >= new Date()) {
+      cdEl.textContent = 'Early Bird market is live';
+      cdEl.style.color = 'var(--success)';
     } else if (d && d.toDateString() === new Date().toDateString()) {
-      cdEl.textContent = 'Today!';
+      cdEl.textContent = 'Market day!';
     } else {
       cdEl.textContent = '';
     }
