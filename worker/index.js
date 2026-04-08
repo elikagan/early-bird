@@ -97,7 +97,8 @@ export default {
         res = await handleCreateItem(request, env, dealer);
       } else if (path.match(/^\/api\/items\/[^/]+$/) && method === 'GET') {
         const itemId = path.split('/api/items/')[1];
-        res = await handleGetItem(itemId, env);
+        const dealer = await getDealer(request, env); // optional — for conversation check
+        res = await handleGetItem(itemId, env, dealer);
       } else if (path.match(/^\/api\/items\/[^/]+$/) && method === 'PATCH') {
         const dealer = await getDealer(request, env);
         if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
@@ -145,6 +146,12 @@ export default {
       } else if (path.startsWith('/images/') && method === 'GET') {
         const key = path.replace('/images/', '');
         res = await handleServeImage(env, key);
+
+      // Watching (favorites + conversations combined)
+      } else if (path === '/api/watching' && method === 'GET') {
+        const dealer = await getDealer(request, env);
+        if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
+        res = await handleGetWatching(env, dealer);
 
       // QA Notes
       } else if (path === '/api/qa-notes' && method === 'GET') {
@@ -539,9 +546,9 @@ async function handleGetItems(url, env) {
   return json(items);
 }
 
-async function handleGetItem(itemId, env) {
+async function handleGetItem(itemId, env, dealer) {
   const query = 'items?id=eq.' + itemId + '&select=*,' +
-    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number,phone),' +
+    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number,phone,photo_url),' +
     'buyer:dealers!items_buyer_id_fkey(id,name,business_name,show_name_on_sold)';
   const res = await supabase(env, query);
   const items = await res.json();
@@ -549,6 +556,25 @@ async function handleGetItem(itemId, env) {
   const item = items[0];
   if (item.buyer && !item.buyer.show_name_on_sold) item.buyer = null;
   if (item.buyer) item.buyer = { name: item.buyer.name, business_name: item.buyer.business_name };
+
+  // If authenticated, check for existing conversation about this item
+  if (dealer) {
+    const convRes = await supabase(env,
+      `conversations?item_id=eq.${itemId}&active=eq.true` +
+      `&or=(buyer_id.eq.${dealer.id},seller_id.eq.${dealer.id})` +
+      `&select=token,buyer_id,seller_id,messages(body,created_at,direction)&order=created_at.desc&limit=1`
+    );
+    const convs = await convRes.json();
+    if (convs.length) {
+      const conv = convs[0];
+      item.my_conversation = {
+        token: conv.token,
+        role: conv.buyer_id === dealer.id ? 'buyer' : 'seller',
+        messages: (conv.messages || []).sort((a, b) => new Date(a.created_at) - new Date(b.created_at)),
+      };
+    }
+  }
+
   return json(item);
 }
 
@@ -581,7 +607,8 @@ async function handleUpdateItem(request, env, dealer, itemId) {
   const itemRes = await supabase(env, `items?id=eq.${itemId}&select=*`);
   const items = await itemRes.json();
   if (!items.length) return json({ error: 'Item not found' }, 404);
-  if (items[0].dealer_id !== dealer.id) return json({ error: 'Not your item' }, 403);
+  const item = items[0];
+  if (item.dealer_id !== dealer.id) return json({ error: 'Not your item' }, 403);
 
   const body = await request.json();
   const updates = {};
@@ -589,9 +616,52 @@ async function handleUpdateItem(request, env, dealer, itemId) {
   if (body.buyer_id) updates.buyer_id = body.buyer_id;
   if (body.price) updates.price = body.price;
   if (body.notes !== undefined) updates.notes = body.notes;
+  if (body.title !== undefined) updates.title = body.title;
+  if (body.firm !== undefined) updates.firm = body.firm;
 
-  const res = await supabase(env, `items?id=eq.${itemId}`, { method: 'PATCH', body: updates });
-  return json(await res.json());
+  // Detect price drop
+  const isPriceDrop = body.price && body.price < item.price;
+  if (isPriceDrop) {
+    updates.previous_price = item.price;
+  }
+
+  const res = await supabase(env, `items?id=eq.${itemId}`, {
+    method: 'PATCH', body: updates,
+    headers: { 'Prefer': 'return=representation' },
+  });
+  const updated = await res.json();
+
+  // If price drop + notify requested, SMS watchers
+  if (isPriceDrop && body.notify_watchers) {
+    try {
+      // Get all watchers: favorites + conversation participants
+      const [favRes, convRes] = await Promise.all([
+        supabase(env, `favorites?item_id=eq.${itemId}&select=dealer_id,dealer:dealers(phone)`),
+        supabase(env, `conversations?item_id=eq.${itemId}&active=eq.true&select=buyer_id,buyer:dealers!conversations_buyer_id_fkey(phone)`),
+      ]);
+      const favs = await favRes.json();
+      const convs = await convRes.json();
+      const phones = new Set();
+      favs.forEach(f => { if (f.dealer?.phone) phones.add(f.dealer.phone); });
+      convs.forEach(c => { if (c.buyer?.phone) phones.add(c.buyer.phone); });
+      // Remove the dealer's own phone
+      phones.delete(dealer.phone);
+
+      const oldPrice = '$' + (item.price / 100).toFixed(0);
+      const newPrice = '$' + (body.price / 100).toFixed(0);
+      const title = item.title || 'an item';
+      const msg = `Price drop! ${title} is now ${newPrice} (was ${oldPrice}). ${env.SITE_URL}/#/item/${itemId}`;
+
+      // Send SMS to all watchers (fire and forget)
+      for (const phone of phones) {
+        sendSMS(env, phone, msg).catch(() => {});
+      }
+    } catch (e) {
+      console.error('Price drop notification failed:', e);
+    }
+  }
+
+  return json({ ...(updated[0] || {}), price_dropped: isPriceDrop, watchers_notified: isPriceDrop && body.notify_watchers });
 }
 
 // ── Conversations & Messages ─────────────────────────────────
@@ -778,6 +848,71 @@ async function handleListConversations(env, dealer) {
 }
 
 // ── Favorites ────────────────────────────────────────────────
+
+async function handleGetWatching(env, dealer) {
+  // Get favorites and conversations in parallel
+  const [favRes, convBuyerRes, convSellerRes] = await Promise.all([
+    supabase(env, `favorites?dealer_id=eq.${dealer.id}&select=item_id,created_at`),
+    supabase(env, `conversations?buyer_id=eq.${dealer.id}&active=eq.true&select=item_id,token,created_at,messages(body,created_at,direction)`),
+    supabase(env, `conversations?seller_id=eq.${dealer.id}&active=eq.true&select=item_id,token,created_at,messages(body,created_at,direction)`),
+  ]);
+
+  const favs = await favRes.json();
+  const convsBuyer = await convBuyerRes.json();
+  const convsSeller = await convSellerRes.json();
+
+  // Collect unique item IDs
+  const itemIds = new Set();
+  const itemMeta = {}; // itemId -> { favorited, conversation_token, last_message, role }
+
+  favs.forEach(f => {
+    itemIds.add(f.item_id);
+    itemMeta[f.item_id] = { ...itemMeta[f.item_id], favorited: true, fav_at: f.created_at };
+  });
+
+  [...convsBuyer, ...convsSeller].forEach(c => {
+    itemIds.add(c.item_id);
+    const msgs = (c.messages || []).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const last = msgs[0];
+    const role = convsBuyer.includes(c) ? 'buyer' : 'seller';
+    itemMeta[c.item_id] = {
+      ...itemMeta[c.item_id],
+      conversation_token: c.token,
+      role,
+      last_message: last?.body || null,
+      last_message_at: last?.created_at || c.created_at,
+    };
+  });
+
+  if (itemIds.size === 0) return json([]);
+
+  // Fetch all items
+  const ids = [...itemIds].map(id => `"${id}"`).join(',');
+  const itemsRes = await supabase(env,
+    `items?id=in.(${ids})&select=id,price,title,photos,status,firm,` +
+    `dealer:dealers!items_dealer_id_fkey(id,name,business_name,photo_url)`
+  );
+  const items = await itemsRes.json();
+
+  // Merge metadata
+  const result = items.map(item => ({
+    ...item,
+    favorited: itemMeta[item.id]?.favorited || false,
+    conversation_token: itemMeta[item.id]?.conversation_token || null,
+    conversation_role: itemMeta[item.id]?.role || null,
+    last_message: itemMeta[item.id]?.last_message || null,
+    last_message_at: itemMeta[item.id]?.last_message_at || null,
+  }));
+
+  // Sort by most recent activity
+  result.sort((a, b) => {
+    const aTime = a.last_message_at || a.fav_at || '';
+    const bTime = b.last_message_at || b.fav_at || '';
+    return new Date(bTime) - new Date(aTime);
+  });
+
+  return json(result);
+}
 
 async function handleGetFavorites(env, dealer) {
   const res = await supabase(env, `favorites?dealer_id=eq.${dealer.id}&select=id,item_id,created_at,item:items!inner(id,price,photos,condition,firm,status,notes,dealer:dealers!items_dealer_id_fkey(id,name,business_name))&order=created_at.desc`);

@@ -3638,61 +3638,43 @@ async function loadMessages() {
   const content = document.getElementById('messages-content');
   content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
   try {
-    const res = await api('/api/conversations');
-    const asBuyer = res.as_buyer || [];
-    const asSeller = res.as_seller || [];
+    const items = await api('/api/watching');
 
-    allConversations = [
-      ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller', _otherPhoto: c.seller?.photo_url })),
-      ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer', _otherPhoto: c.buyer?.photo_url })),
-    ].sort((a, b) => new Date(b.last_message_at || b.created_at) - new Date(a.last_message_at || a.created_at));
+    if (!items.length) {
+      content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#9825;</div><h2>Nothing yet</h2><p>Favorite items or message sellers to see them here.</p></div>';
+      return;
+    }
 
-    renderConversations();
+    content.innerHTML = items.map(item => {
+      const photo = item.photos?.[0] || '';
+      const price = '$' + (item.price / 100).toLocaleString();
+      const title = item.title || '';
+      const dealer = item.dealer?.name || item.dealer?.business_name || '';
+      const statusPill = item.status !== 'live' ? `<span class="status-pill ${item.status}">${item.status}</span>` : '';
+      const indicator = item.conversation_token
+        ? '<span style="font-size:11px;color:var(--accent)">&#9679;</span>'  // chat dot
+        : '<span style="font-size:11px;color:var(--dim)">&#9825;</span>';   // heart
+      const preview = item.last_message
+        ? `<div class="conv-preview" style="max-height:4.2em;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical">${item.last_message}</div>`
+        : '';
+      const timeAgo = item.last_message_at ? getTimeAgo(item.last_message_at, true) : '';
+      const href = item.conversation_token ? `#/item/${item.id}` : `#/item/${item.id}`;
+
+      return `<a href="${href}" class="conv-item" onclick="event.preventDefault(); openItem('${item.id}')">
+        <div class="conv-thumb" style="width:52px;height:52px;border-radius:6px;overflow:hidden;background:var(--input-bg);flex-shrink:0">
+          ${photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover">` : ''}
+        </div>
+        <div class="conv-info" style="flex:1;min-width:0">
+          <div class="conv-name-row"><span class="name">${dealer}</span>${timeAgo ? `<span class="conv-time">${timeAgo}</span>` : ''}</div>
+          <div class="conv-price-line">${title ? title + ' · ' : ''}${price} ${statusPill}</div>
+          ${preview}
+        </div>
+        <div style="flex-shrink:0;padding-left:8px">${indicator}</div>
+      </a>`;
+    }).join('');
   } catch (e) {
-    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load messages</div><button class="btn-secondary" onclick="loadMessages()">Try again</button></div>';
+    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load items</div><button class="btn-secondary" onclick="loadMessages()">Try again</button></div>';
   }
-}
-
-function renderConversations() {
-  const content = document.getElementById('messages-content');
-  let convs = allConversations;
-  if (msgFilter === 'buying') convs = convs.filter(c => c._role === 'buyer');
-  if (msgFilter === 'selling') convs = convs.filter(c => c._role === 'seller');
-
-  if (!convs.length) {
-    const msg = msgFilter === 'all'
-      ? 'Conversations with sellers will show up here.'
-      : msgFilter === 'buying'
-        ? 'No conversations as a buyer yet.'
-        : 'No conversations as a seller yet.';
-    content.innerHTML = '<div class="empty-state"><h2>No messages</h2><p>' + msg + '</p></div>';
-    return;
-  }
-
-  content.innerHTML = convs.map(conv => {
-    const photo = conv.item?.photos?.[0] || '';
-    const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
-    const title = conv.item?.title || '';
-    const timeAgo = getTimeAgo(conv.last_message_at || conv.created_at, true);
-    const initials = conv._other.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    const avatarEl = conv._otherPhoto
-      ? `<div class="conv-thumb-avatar"><img src="${conv._otherPhoto}"></div>`
-      : `<div class="conv-thumb-avatar-placeholder">${initials}</div>`;
-    const preview = conv.last_message
-      ? `<div class="conv-preview">${conv.last_message.length > 50 ? conv.last_message.slice(0, 50) + '...' : conv.last_message}</div>`
-      : '';
-    return `<a href="#/c/${conv.token}" class="conv-item">
-      <div class="conv-thumb-composite">
-        <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
-        ${avatarEl}
-      </div>
-      <div class="conv-info flex-1">
-        <div class="conv-name-row"><span class="name">${conv._other}</span><span class="conv-time">${timeAgo}</span></div>
-        <div class="conv-price-line">${title ? title + ' · ' : ''}${price}</div>
-        ${preview}
-      </div>
-    </a>`;
-  }).join('');
 }
 
 function getTimeAgo(dateStr, short = false) {
@@ -4121,8 +4103,25 @@ async function loadItemDetail(itemId) {
     html += `</div></div>`;
     infoEl.innerHTML = html;
 
-    // Actions
-    if (item.status === 'sold') {
+    // Actions — state-aware
+    if (item.my_conversation && item.my_conversation.messages?.length > 0 && item.dealer_id !== getDealerId()) {
+      // ACTIVE CONVERSATION: compress item, show chat inline
+      photosEl.style.display = 'none'; // hide full photos
+      // Replace info with compact header + conversation
+      const conv = item.my_conversation;
+      let chatHtml = `<div style="padding:0 var(--side)">`;
+      // Render messages
+      conv.messages.forEach(msg => {
+        const isMe = (conv.role === 'buyer' && msg.direction === 'buyer_to_seller') || (conv.role === 'seller' && msg.direction === 'seller_to_buyer');
+        chatHtml += `<div class="msg-row ${isMe ? 'sent' : 'received'}"><div class="msg-bubble ${isMe ? 'sent' : 'received'}">${msg.body}</div></div>`;
+      });
+      chatHtml += `</div>`;
+      actionsEl.innerHTML = chatHtml + `
+        <div class="conv-reply-bar">
+          <textarea class="fi reply-expand" id="reply-input" rows="1" placeholder="Reply..." oninput="autoExpand(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendReply('${conv.token}');}"></textarea>
+          <button class="btn-primary btn-compact" onclick="sendReply('${conv.token}')">Send</button>
+        </div>`;
+    } else if (item.status === 'sold') {
       const buyerName = item.buyer?.show_name_on_sold !== false && item.buyer?.name ? item.buyer.name : '';
       actionsEl.innerHTML = buyerName ? `<div style="padding:16px var(--side);color:var(--muted);font-size:12px">Sold to ${buyerName}</div>` : '';
     } else if (item.status === 'hold') {
