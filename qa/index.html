@@ -173,7 +173,8 @@
 <textarea id="all-notes-data" style="display:none"></textarea>
 
 <script>
-const APP_URL = 'http://localhost:8094';
+// Use relative path — works on both localhost and GitHub Pages
+const APP_URL = '..';
 
 // Test user IDs
 const USERS = {
@@ -366,17 +367,21 @@ function loadIframe(screen) {
     localStorage.setItem('eb_token', uid);
   }
 
-  // Load the app with the right hash — it will read localStorage on init
-  const url = APP_URL + '/' + (setup.hash || '');
-  iframe.src = url;
+  // Load the app — set hash after load to avoid double-slash URL issues
+  iframe.src = APP_URL + '/';
 
   iframe.onload = () => {
-    // Run any eval setup after app has initialized
-    if (setup.eval) {
-      setTimeout(() => {
-        try { iframe.contentWindow.eval(setup.eval); } catch(e) { console.warn('eval error:', e); }
-      }, 800);
-    }
+    try {
+      const win = iframe.contentWindow;
+      // Set hash if needed (triggers the app's route() via hashchange)
+      if (setup.hash) win.location.hash = setup.hash;
+      // Run any eval setup after app has initialized
+      if (setup.eval) {
+        setTimeout(() => {
+          try { win.eval(setup.eval); } catch(e) { console.warn('eval error:', e); }
+        }, 1000);
+      }
+    } catch(e) { console.warn('iframe setup error:', e); }
   };
 }
 
