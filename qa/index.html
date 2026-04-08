@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Early Bird QA</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #1a1a1a; color: #e0e0e0; height: 100vh; overflow: hidden; }
+
+  /* ── Top Bar ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px; background: #222; border-bottom: 1px solid #333;
+    height: 52px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-title { font-weight: 700; font-size: 14px; letter-spacing: 0.05em; }
+  .topbar-title span { color: #0066FF; }
+  .version-select {
+    background: #333; color: #ccc; border: 1px solid #444; border-radius: 4px;
+    padding: 4px 8px; font-size: 12px; cursor: pointer;
+  }
+  .topbar-nav { display: flex; align-items: center; gap: 8px; }
+  .topbar-nav button {
+    background: #333; border: 1px solid #444; color: #ccc; border-radius: 4px;
+    padding: 6px 14px; font-size: 12px; cursor: pointer; transition: background 0.15s;
+  }
+  .topbar-nav button:hover { background: #444; color: #fff; }
+  .topbar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .screen-label { font-size: 13px; color: #999; }
+  .screen-label strong { color: #e0e0e0; }
+
+  /* ── Main Layout ── */
+  .main { display: flex; height: calc(100vh - 52px); }
+
+  /* ── Phone Column ── */
+  .phone-col {
+    flex: 0 0 400px; display: flex; align-items: center; justify-content: center;
+    padding: 20px 10px;
+  }
+
+  /* ── iPhone Frame ── */
+  .iphone {
+    width: 390px; height: 844px; background: #000; border-radius: 50px;
+    padding: 14px; position: relative;
+    box-shadow: 0 0 0 2px #333, 0 20px 60px rgba(0,0,0,0.5);
+    transform: scale(0.82); transform-origin: top center;
+  }
+  .iphone-screen {
+    width: 100%; height: 100%; border-radius: 38px; overflow: hidden;
+    background: #fff; position: relative;
+  }
+  /* Notch */
+  .iphone::before {
+    content: ''; position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 32px; background: #000; border-radius: 0 0 18px 18px; z-index: 10;
+  }
+  /* Home indicator */
+  .iphone::after {
+    content: ''; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 140px; height: 5px; background: #555; border-radius: 3px; z-index: 10;
+  }
+  /* Safari bar */
+  .safari-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(250,250,248,0.95); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 5; padding-top: 20px;
+  }
+  .safari-url {
+    font-size: 11px; color: #666; background: #eee; padding: 4px 12px;
+    border-radius: 8px; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; font-family: -apple-system, sans-serif;
+  }
+  .iphone iframe {
+    width: 375px; height: 812px; border: none;
+    transform-origin: top left;
+    /* Scale to fit the screen area: 362px wide (390-28 padding), 816px tall (844-28) */
+    transform: scale(0.966);
+  }
+
+  /* ── Notes Column ── */
+  .notes-col {
+    flex: 1; display: flex; flex-direction: column; padding: 24px;
+    border-left: 1px solid #333; min-width: 300px;
+  }
+  .notes-header {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; color: #888; margin-bottom: 12px;
+  }
+  .notes-screen-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  }
+  .notes-screen-desc {
+    font-size: 13px; color: #888; margin-bottom: 16px; line-height: 1.4;
+  }
+  .notes-textarea {
+    flex: 1; width: 100%; background: #2a2a2a; border: 1px solid #444;
+    border-radius: 8px; padding: 14px; color: #e0e0e0; font-size: 14px;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1.5;
+    resize: none; outline: none; transition: border-color 0.15s;
+  }
+  .notes-textarea:focus { border-color: #0066FF; }
+  .notes-textarea::placeholder { color: #555; }
+  .notes-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 12px; gap: 12px;
+  }
+  .notes-status { font-size: 11px; color: #666; }
+  .notes-status.saved { color: #4a9a65; }
+  .export-btn {
+    background: #0066FF; color: #fff; border: none; border-radius: 6px;
+    padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .export-btn:hover { background: #0052CC; }
+
+  /* ── Bottom Dots ── */
+  .dots-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 12px; background: #222; border-top: 1px solid #333;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #444;
+    cursor: pointer; transition: background 0.15s, transform 0.15s;
+  }
+  .dot:hover { background: #666; }
+  .dot.active { background: #0066FF; transform: scale(1.3); }
+  .dot.has-notes { background: #4a9a65; }
+  .dot.has-notes.active { background: #0066FF; box-shadow: 0 0 0 2px #4a9a65; }
+
+  /* ── Section Labels in Dots ── */
+  .dot-section {
+    font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 0 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-title">EARLY BIRD <span>QA</span></div>
+    <select class="version-select" id="version-select">
+      <option value="0.5.0">v0.5.0</option>
+    </select>
+    <span class="screen-label" id="screen-label"></span>
+  </div>
+  <div class="topbar-nav">
+    <button onclick="go(-1)" id="prev-btn">← Prev</button>
+    <button onclick="go(1)" id="next-btn">Next →</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="phone-col">
+    <div class="iphone">
+      <div class="iphone-screen">
+        <div class="safari-bar"><div class="safari-url" id="safari-url">earlybird.la</div></div>
+        <iframe id="app-frame" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+  <div class="notes-col">
+    <div class="notes-header">NOTES</div>
+    <div class="notes-screen-title" id="notes-title"></div>
+    <div class="notes-screen-desc" id="notes-desc"></div>
+    <textarea class="notes-textarea" id="notes-input" placeholder="Type your QA notes here...&#10;&#10;Issues, suggestions, observations..."></textarea>
+    <div class="notes-footer">
+      <span class="notes-status" id="notes-status"></span>
+      <button class="export-btn" onclick="exportNotes()">Export All Notes ↓</button>
+    </div>
+  </div>
+</div>
+
+<div class="dots-bar" id="dots-bar"></div>
+
+<!-- All notes as hidden data for Claude to read -->
+<textarea id="all-notes-data" style="display:none"></textarea>
+
+<script>
+const APP_URL = 'http://localhost:8094';
+
+// Test user IDs
+const USERS = {
+  eli: '8935f2ac-4998-4e6d-9c31-47dbbce896fd',
+  loubna: '9cc49ca0-1235-43aa-bbcb-93a0742b9aea',
+  marco: '5a021f0e-4b9b-40bb-9786-595629acfb0a',
+  freshBuyer: '99db7c21-d996-4ef0-8024-e4b2f67849bc',
+  freshDealer: 'fc1df7fa-2247-4d7a-94dd-9a84d1abd8b1',
+};
+
+// Screen definitions
+const SCREENS = [
+  // Buyer flow
+  { id: 'landing-buyer', name: 'Landing (Buyer)', section: 'Buyer Flow',
+    desc: 'Marketing page with markets, phone input, "Get Early Access" CTA',
+    setup: { clearAuth: true, hash: '' } },
+  { id: 'landing-dealer', name: 'Landing (Dealer)', section: 'Buyer Flow',
+    desc: 'Dealer entry page: "Sell to serious buyers", free badge, how-it-works',
+    setup: { clearAuth: true, eval: "showScreen('dealer-landing')" } },
+  { id: 'onboarding', name: 'Onboarding', section: 'Buyer Flow',
+    desc: 'Selfie upload + name input after first login',
+    setup: { user: 'freshBuyer', eval: "showScreen('onboarding')" } },
+  { id: 'feed-populated', name: 'Feed (Populated)', section: 'Buyer Flow',
+    desc: 'Shop tab with items, TikTok-style scroll, dealer avatars',
+    setup: { user: 'eli', hash: '#/shop' } },
+  { id: 'feed-saved-empty', name: 'Feed (Saved, Empty)', section: 'Buyer Flow',
+    desc: 'Saved tab with no favorites — should show empty state with heart icon',
+    setup: { user: 'freshDealer', hash: '#/shop', eval: "setBrowseMode('saved', document.querySelector('.seg-btn:last-child'))" } },
+  { id: 'feed-saved-populated', name: 'Feed (Saved, Populated)', section: 'Buyer Flow',
+    desc: 'Saved tab with favorited items',
+    setup: { user: 'loubna', hash: '#/shop', eval: "setBrowseMode('saved', document.querySelector('.seg-btn:last-child'))" } },
+  { id: 'item-detail', name: 'Item Detail', section: 'Buyer Flow',
+    desc: 'Photo carousel, price, title, seller info, compose area',
+    setup: { user: 'loubna', hash: '#/item/e12a7cda-23f4-4ad3-b10a-5751c4b4f970' } },
+  { id: 'compose', name: 'Compose (I Want This)', section: 'Buyer Flow',
+    desc: 'Message options: "I\'ll take it", "Make an offer", "Ask a question"',
+    setup: { user: 'marco', hash: '#/item/e12a7cda-23f4-4ad3-b10a-5751c4b4f970',
+             eval: "setTimeout(() => document.getElementById('detail-actions')?.scrollIntoView({behavior:'smooth'}), 500)" } },
+  { id: 'conversation', name: 'Conversation', section: 'Buyer Flow',
+    desc: 'Message thread with back link, item context, reply bar at bottom',
+    setup: { user: 'eli', hash: '#/c/ZjWgPaD7' } },
+  { id: 'messages-populated', name: 'Messages (Populated)', section: 'Buyer Flow',
+    desc: 'Conversation list with message previews and timestamps',
+    setup: { user: 'eli', hash: '#/messages' } },
+  { id: 'messages-empty', name: 'Messages (Empty)', section: 'Buyer Flow',
+    desc: 'Empty state: "No messages" with helper text',
+    setup: { user: 'freshDealer', hash: '#/messages' } },
+
+  // Dealer flow
+  { id: 'booth-fresh', name: 'Booth (Fresh Dealer)', section: 'Dealer Flow',
+    desc: 'Setup card for new market, empty booth state, FAB button',
+    setup: { user: 'freshDealer', hash: '#/booth' } },
+  { id: 'booth-active', name: 'Booth (Active Dealer)', section: 'Dealer Flow',
+    desc: 'Items with stats, status pills, action buttons, countdown',
+    setup: { user: 'eli', hash: '#/booth' } },
+  { id: 'booth-picker', name: 'Booth (Market Picker)', section: 'Dealer Flow',
+    desc: 'Bottom sheet showing upcoming markets to switch between',
+    setup: { user: 'eli', hash: '#/booth', eval: "setTimeout(() => openMarketPicker(), 800)" } },
+  { id: 'add-item', name: 'Add Item', section: 'Dealer Flow',
+    desc: 'Photo upload slots, price, condition, notes, post button',
+    setup: { user: 'eli', eval: "showAddItem()" } },
+
+  // Account
+  { id: 'settings', name: 'Settings / Account', section: 'Account',
+    desc: 'Avatar, name, biz name, payment, preferences, logout',
+    setup: { user: 'eli', hash: '#/account' } },
+
+  // States
+  { id: 'loading', name: 'Loading State', section: 'States',
+    desc: 'Spinner shown while data loads (any async screen)',
+    setup: { user: 'eli', hash: '#/shop', eval: "document.getElementById('feed-content').innerHTML = '<div class=\"loading-center\"><span class=\"spinner\"></span></div>'" } },
+  { id: 'error', name: 'Error State', section: 'States',
+    desc: 'Error message with retry button (simulated API failure)',
+    setup: { user: 'eli', hash: '#/shop', eval: "document.getElementById('feed-content').innerHTML = '<div class=\"state-error\"><div class=\"state-error-msg\">Couldn\\'t load items</div><button class=\"btn-secondary\" onclick=\"loadFeed()\">Try again</button></div>'" } },
+  { id: 'verify-success', name: 'Verify (Success)', section: 'States',
+    desc: 'Magic link verification — success state',
+    setup: { clearAuth: true, eval: "showScreen('verify'); document.getElementById('verify-status').textContent = \"You're in.\"" } },
+  { id: 'verify-failure', name: 'Verify (Failure)', section: 'States',
+    desc: 'Magic link verification — error with back link',
+    setup: { clearAuth: true, eval: "showScreen('verify'); document.getElementById('verify-status').innerHTML = 'Link expired.<br><a href=\"#\" onclick=\"event.preventDefault(); showScreen(\\'landing\\');\" style=\"color:var(--accent);font-size:13px;margin-top:12px;display:inline-block\">Back to home</a>'; document.getElementById('verify-status').className = 'verify-error'" } },
+];
+
+let currentIndex = 0;
+let notes = {}; // { screenId: "note text" }
+let saveTimer;
+
+// Load notes from localStorage
+try { notes = JSON.parse(localStorage.getItem('eb_qa_notes') || '{}'); } catch(e) {}
+
+// Init
+function init() {
+  // Render dots
+  const dotsBar = document.getElementById('dots-bar');
+  let lastSection = '';
+  SCREENS.forEach((s, i) => {
+    if (s.section !== lastSection) {
+      const label = document.createElement('span');
+      label.className = 'dot-section';
+      label.textContent = s.section;
+      dotsBar.appendChild(label);
+      lastSection = s.section;
+    }
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.title = s.name;
+    dot.onclick = () => goTo(i);
+    dotsBar.appendChild(dot);
+  });
+
+  // Read hash
+  const hashMatch = window.location.hash.match(/^#\/screen\/(\d+)$/);
+  if (hashMatch) currentIndex = Math.min(parseInt(hashMatch[1]), SCREENS.length - 1);
+
+  loadScreen(currentIndex);
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft') go(-1);
+    if (e.key === 'ArrowRight') go(1);
+  });
+}
+
+function goTo(i) {
+  saveCurrentNotes();
+  currentIndex = i;
+  history.pushState(null, '', `#/screen/${i}`);
+  loadScreen(i);
+}
+
+function go(delta) {
+  const next = currentIndex + delta;
+  if (next < 0 || next >= SCREENS.length) return;
+  goTo(next);
+}
+
+window.addEventListener('popstate', () => {
+  const m = window.location.hash.match(/^#\/screen\/(\d+)$/);
+  if (m) { currentIndex = parseInt(m[1]); loadScreen(currentIndex); }
+});
+
+function loadScreen(i) {
+  const s = SCREENS[i];
+
+  // Update UI
+  document.getElementById('screen-label').innerHTML = `<strong>${i + 1}</strong> of ${SCREENS.length} — ${s.name}`;
+  document.getElementById('notes-title').textContent = s.name;
+  document.getElementById('notes-desc').textContent = s.desc;
+  document.getElementById('prev-btn').disabled = i === 0;
+  document.getElementById('next-btn').disabled = i === SCREENS.length - 1;
+
+  // Update dots
+  document.querySelectorAll('.dot').forEach((d, j) => {
+    d.className = 'dot';
+    if (j === i) d.classList.add('active');
+    const sid = SCREENS[j].id;
+    if (notes[sid] && notes[sid].trim()) d.classList.add('has-notes');
+  });
+
+  // Load notes
+  document.getElementById('notes-input').value = notes[s.id] || '';
+  document.getElementById('notes-status').textContent = '';
+
+  // Update safari bar
+  const displayUrl = s.setup.hash ? `earlybird.la/${s.setup.hash}` : 'earlybird.la';
+  document.getElementById('safari-url').textContent = displayUrl;
+
+  // Load iframe
+  loadIframe(s);
+
+  // Update hidden all-notes
+  updateAllNotes();
+}
+
+function loadIframe(screen) {
+  const iframe = document.getElementById('app-frame');
+  const setup = screen.setup;
+
+  // Same-origin: set localStorage BEFORE loading the iframe
+  // This way the app reads the right auth state on first load
+  if (setup.clearAuth) {
+    localStorage.removeItem('eb_dealer_id');
+    localStorage.removeItem('eb_token');
+    localStorage.removeItem('eb_active_tab');
+    localStorage.removeItem('eb_current_market');
+  }
+  if (setup.user) {
+    const uid = USERS[setup.user];
+    localStorage.setItem('eb_dealer_id', uid);
+    localStorage.setItem('eb_token', uid);
+  }
+
+  // Load the app with the right hash — it will read localStorage on init
+  const url = APP_URL + '/' + (setup.hash || '');
+  iframe.src = url;
+
+  iframe.onload = () => {
+    // Run any eval setup after app has initialized
+    if (setup.eval) {
+      setTimeout(() => {
+        try { iframe.contentWindow.eval(setup.eval); } catch(e) { console.warn('eval error:', e); }
+      }, 800);
+    }
+  };
+}
+
+// Notes
+document.getElementById('notes-input').addEventListener('input', () => {
+  clearTimeout(saveTimer);
+  document.getElementById('notes-status').textContent = 'Typing...';
+  document.getElementById('notes-status').className = 'notes-status';
+  saveTimer = setTimeout(saveCurrentNotes, 500);
+});
+
+function saveCurrentNotes() {
+  const s = SCREENS[currentIndex];
+  const val = document.getElementById('notes-input').value;
+  notes[s.id] = val;
+  localStorage.setItem('eb_qa_notes', JSON.stringify(notes));
+  document.getElementById('notes-status').textContent = 'Saved ✓';
+  document.getElementById('notes-status').className = 'notes-status saved';
+  updateAllNotes();
+  // Update dot
+  const dots = document.querySelectorAll('.dot');
+  if (dots[currentIndex]) {
+    dots[currentIndex].classList.toggle('has-notes', val.trim().length > 0);
+  }
+}
+
+function updateAllNotes() {
+  const lines = [`# Early Bird QA Notes — v0.5.0`, `Generated: ${new Date().toISOString().slice(0, 16)}`, ''];
+  let lastSection = '';
+  SCREENS.forEach(s => {
+    if (s.section !== lastSection) {
+      lines.push(`## ${s.section}`, '');
+      lastSection = s.section;
+    }
+    const note = (notes[s.id] || '').trim();
+    if (note) {
+      lines.push(`### ${s.name}`, note, '');
+    } else {
+      lines.push(`### ${s.name}`, '_No notes_', '');
+    }
+  });
+  document.getElementById('all-notes-data').value = lines.join('\n');
+}
+
+function exportNotes() {
+  const content = document.getElementById('all-notes-data').value;
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'QA-NOTES.md';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Fetch version
+fetch(APP_URL + '/VERSION').then(r => r.text()).then(v => {
+  const ver = v.trim();
+  const sel = document.getElementById('version-select');
+  sel.innerHTML = `<option value="${ver}">v${ver}</option>`;
+}).catch(() => {});
+
+init();
+</script>
+</body>
+</html>
