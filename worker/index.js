@@ -730,23 +730,39 @@ async function handleSendMessage(request, env, dealer, token) {
 
 async function handleListConversations(env, dealer) {
   // Fetch both roles in parallel, limit 50 each
+  // Include messages to extract last message on server side
   const [buyerRes, sellerRes] = await Promise.all([
     supabase(env,
       `conversations?buyer_id=eq.${dealer.id}&active=eq.true&select=*,` +
       `seller:dealers!conversations_seller_id_fkey(name,business_name,photo_url),` +
-      `item:items(price,photos,status)&order=created_at.desc&limit=50`
+      `item:items(price,photos,status,title),` +
+      `messages(body,created_at,direction)&order=created_at.desc&limit=50`
     ),
     supabase(env,
       `conversations?seller_id=eq.${dealer.id}&active=eq.true&select=*,` +
       `buyer:dealers!conversations_buyer_id_fkey(name,business_name,photo_url),` +
-      `item:items(price,photos,status)&order=created_at.desc&limit=50`
+      `item:items(price,photos,status,title),` +
+      `messages(body,created_at,direction)&order=created_at.desc&limit=50`
     ),
   ]);
 
   const asBuyer = await buyerRes.json();
   const asSeller = await sellerRes.json();
 
-  return json({ as_buyer: asBuyer, as_seller: asSeller });
+  // Flatten last message onto each conversation for easier frontend use
+  const flatten = (convs) => convs.map(c => {
+    const msgs = (c.messages || []).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const last = msgs[0];
+    const { messages, ...rest } = c;
+    return {
+      ...rest,
+      last_message: last?.body || null,
+      last_message_at: last?.created_at || c.created_at,
+      last_message_direction: last?.direction || null,
+    };
+  });
+
+  return json({ as_buyer: flatten(asBuyer), as_seller: flatten(asSeller) });
 }
 
 // ── Favorites ────────────────────────────────────────────────

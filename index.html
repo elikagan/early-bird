@@ -16,7 +16,10 @@
      * Font: JetBrains Mono — everything
      * Colors: --text #1A1A1A, --muted #666, --dim #AAA, --accent #0066FF
      * Spacing: --side 24px, elements handle their own padding
-     * Components: .seg-ctrl, .feed-header, .auth-btn, .fab
+     * Buttons: .btn-primary, .btn-secondary, .btn-chip, .btn-danger
+     * Inputs: .fi (text/textarea), .fs (select), .fl (label)
+     * States: .loading-center, .empty-state, .state-error, .status-pill
+     * Layout: .seg-ctrl, .feed-header, .fab, .back-link
      */
 
     :root {
@@ -1630,6 +1633,42 @@
       border-top-color: var(--accent);
     }
 
+    /* ── State: Error ────────────────────────────────────── */
+    .state-error {
+      text-align: center;
+      padding: 60px var(--side);
+      color: var(--muted);
+    }
+    .state-error-msg {
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .state-error .btn-secondary { width: auto; display: inline-block; }
+
+    /* ── Button loading state ────────────────────────────── */
+    .btn-primary.loading,
+    .btn-secondary.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .btn-primary.loading::after,
+    .btn-secondary.loading::after {
+      content: '';
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .btn-secondary.loading::after {
+      border-color: rgba(0,0,0,0.15);
+      border-top-color: var(--muted);
+    }
+
     /* ── Tappable / Interactive ───────────────────────────── */
 
     .tappable {
@@ -1929,7 +1968,22 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .conv-time {
+      font-size: 11px;
+      color: var(--dim);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .conv-preview {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .conv-item.unread .conv-name-row .name { font-weight: 700; }
+    .conv-item.unread .conv-preview { color: var(--text); font-weight: 500; }
 
     /* ── Market Teaser ───────────────────────────────────── */
 
@@ -2067,19 +2121,7 @@
       font-size: 11px;
       margin-left: 4px;
     }
-    .booth-input {
-      width: 80px;
-      padding: 8px 12px;
-      background: var(--input-bg);
-      border: none;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 16px;
-      color: var(--text);
-      outline: none;
-      transition: box-shadow 0.15s;
-    }
-    .booth-input:focus { box-shadow: 0 0 0 2px var(--accent); }
+    /* .booth-input consolidated into .fi */
     .booth-setup-card {
       background: var(--input-bg);
       border-radius: 6px;
@@ -2276,18 +2318,7 @@
       justify-content: space-between;
       align-items: center;
     }
-    .admin-search-input {
-      width: 140px;
-      font-size: 16px;
-      padding: 8px 12px;
-      background: var(--input-bg);
-      border: none;
-      border-radius: 4px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text);
-      outline: none;
-      transition: box-shadow 0.15s;
-    }
+    /* .admin-search-input consolidated into .fi */
     .admin-search-input:focus { box-shadow: 0 0 0 2px var(--accent); }
     /* .admin-badge--test consolidated into .status-pill.test */
     .admin-card--dimmed { opacity: 0.6; }
@@ -2667,7 +2698,7 @@
     <input type="text" id="onboard-name" class="fi" placeholder="Your display name">
   </div>
 
-  <button class="auth-btn mt-8" onclick="completeOnboarding()">Let's go</button>
+  <button class="btn-primary" onclick="completeOnboarding()" style="margin-top:12px">Let's go</button>
 </div>
 
 <!-- FEED -->
@@ -3227,12 +3258,14 @@ async function requestMagicLink() {
   const btn = document.getElementById('auth-btn');
   const msg = document.getElementById('auth-msg');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
+  btn.classList.add('loading');
+  btn.textContent = 'Sending';
   msg.textContent = '';
   msg.className = 'auth-fine';
 
   try {
     const res = await api('/api/auth/request', { method: 'POST', body: { phone } });
+    btn.classList.remove('loading');
     if (res.ok) {
       msg.textContent = 'Check your texts for a link.';
       msg.className = 'auth-success';
@@ -3244,6 +3277,7 @@ async function requestMagicLink() {
       btn.disabled = false;
     }
   } catch (e) {
+    btn.classList.remove('loading');
     msg.textContent = 'Connection error. Try again.';
     msg.className = 'auth-error';
     btn.textContent = 'Get early access';
@@ -3545,7 +3579,7 @@ async function loadMessages() {
     allConversations = [
       ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller', _otherPhoto: c.seller?.photo_url })),
       ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer', _otherPhoto: c.buyer?.photo_url })),
-    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    ].sort((a, b) => new Date(b.last_message_at || b.created_at) - new Date(a.last_message_at || a.created_at));
 
     renderConversations();
   } catch (e) {
@@ -3573,21 +3607,23 @@ function renderConversations() {
     const photo = conv.item?.photos?.[0] || '';
     const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
     const title = conv.item?.title || '';
-    const roleLabel = conv._role === 'buyer' ? 'You inquired' : 'Inquiry from';
-    const timeAgo = getTimeAgo(conv.created_at);
+    const timeAgo = getTimeAgo(conv.last_message_at || conv.created_at, true);
     const initials = conv._other.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     const avatarEl = conv._otherPhoto
       ? `<div class="conv-thumb-avatar"><img src="${conv._otherPhoto}"></div>`
       : `<div class="conv-thumb-avatar-placeholder">${initials}</div>`;
+    const preview = conv.last_message
+      ? `<div class="conv-preview">${conv.last_message.length > 50 ? conv.last_message.slice(0, 50) + '...' : conv.last_message}</div>`
+      : '';
     return `<a href="#/c/${conv.token}" class="conv-item">
       <div class="conv-thumb-composite">
         <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
         ${avatarEl}
       </div>
       <div class="conv-info flex-1">
-        <div class="conv-name-row"><span class="name">${conv._other}</span></div>
+        <div class="conv-name-row"><span class="name">${conv._other}</span><span class="conv-time">${timeAgo}</span></div>
         <div class="conv-price-line">${title ? title + ' · ' : ''}${price}</div>
-        <div class="conv-meta">${roleLabel} · ${timeAgo}</div>
+        ${preview}
       </div>
     </a>`;
   }).join('');
@@ -3797,7 +3833,7 @@ function editBoothNumber() {
   const boothRow = document.getElementById('booth-number-row');
   const current = currentUser?.booth_number || '';
   boothRow.innerHTML = `<div class="admin-btn-row">
-    <input type="text" id="booth-input" class="booth-input" value="${current}" placeholder="e.g. E25">
+    <input type="text" id="booth-input" class="fi" style="width:80px" value="${current}" placeholder="e.g. E25">
     <button class="btn-primary btn-compact" onclick="saveBoothNumber()">Save</button>
   </div>`;
   document.getElementById('booth-input').focus();
@@ -3922,12 +3958,14 @@ async function requestDealerMagicLink() {
   const btn = document.getElementById('dealer-auth-btn');
   const msg = document.getElementById('dealer-auth-msg');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
+  btn.classList.add('loading');
+  btn.textContent = 'Sending';
   msg.textContent = '';
   msg.className = 'auth-fine';
 
   try {
     const res = await api('/api/auth/request', { method: 'POST', body: { phone } });
+    btn.classList.remove('loading');
     if (res.ok) {
       msg.textContent = 'Check your texts for a link.';
       msg.className = 'auth-success';
@@ -3939,6 +3977,7 @@ async function requestDealerMagicLink() {
       btn.disabled = false;
     }
   } catch (e) {
+    btn.classList.remove('loading');
     msg.textContent = 'Connection error. Try again.';
     msg.className = 'auth-error';
     btn.textContent = 'Get started';
@@ -4101,7 +4140,7 @@ async function textSeller(itemId) {
   actionsEl.innerHTML = `
     <div class="compose-header">Message seller</div>
     <div id="msg-options" class="compose-options">
-      <button class="btn-chip" onclick="sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
+      <button class="btn-chip" onclick="selectChip(this); sendFirstMessage('${itemId}', 'I\\'ll take it for ${price}')">I'll take it — ${price}</button>
       <button class="btn-chip" onclick="showOfferInput('${itemId}')">Make an offer</button>
       <button class="btn-chip" onclick="showQuestionInput('${itemId}')">Ask a question</button>
     </div>
@@ -4111,7 +4150,13 @@ async function textSeller(itemId) {
     </div>`;
 }
 
+function selectChip(el) {
+  document.querySelectorAll('#msg-options .btn-chip').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
 function showOfferInput(itemId) {
+  selectChip(event.currentTarget);
   const input = document.getElementById('msg-custom-input');
   const textarea = document.getElementById('seller-msg-input');
   input.classList.add('visible');
@@ -4121,6 +4166,7 @@ function showOfferInput(itemId) {
 }
 
 function showQuestionInput(itemId) {
+  selectChip(event.currentTarget);
   const input = document.getElementById('msg-custom-input');
   const textarea = document.getElementById('seller-msg-input');
   input.classList.add('visible');
@@ -4149,15 +4195,12 @@ async function sendFirstMessage(itemId, directMsg) {
       document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); });
       return;
     }
-    // Show sent state briefly, then go to conversation
-    const actionsEl = document.getElementById('detail-actions');
-    actionsEl.innerHTML = `<div class="compose-sent">Sent!</div>`;
-    setTimeout(() => {
-      window.location.hash = `#/c/${res.conversation_token}`;
-    }, 600);
+    // Navigate to conversation immediately
+    window.location.hash = `#/c/${res.conversation_token}`;
   } catch (e) {
-    document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); });
-    if (btn) { btn.textContent = 'Error. Try again.'; btn.disabled = false; }
+    document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); b.classList.remove('active'); });
+    if (btn) { btn.textContent = 'Send'; btn.disabled = false; }
+    showToast('Failed to send. Try again.');
   }
 }
 
@@ -4699,7 +4742,7 @@ async function loadAdminDealers(el) {
 
     html += `<div class="admin-section-title admin-section-header">
       <span>All users (${dealers.length})</span>
-      <input type="text" class="admin-search-input" id="admin-dealer-search" placeholder="Search..." oninput="filterDealerList()">
+      <input type="text" class="fi" style="width:140px" id="admin-dealer-search" placeholder="Search..." oninput="filterDealerList()">
     </div>`;
 
     html += `<div id="admin-dealer-list">`;
