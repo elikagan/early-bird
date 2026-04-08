@@ -12,9 +12,11 @@ QA review revealed the app needs more than a CSS cleanup. The core information a
 
 ### Nav Tabs
 - **Buy** — browse items from other dealers
-- **Sell** — dealer's booth (hidden for buyer-only users)
 - **Watching** — items you've favorited or inquired about (replaces Messages + Favorites)
+- **Sell** — dealer's booth (hidden for buyer-only users)
 - **Account** — settings
+
+Buy and Watching are visually grouped as "the buying side" with a subtle divider separating them from Sell and Account. For buyers (no Sell tab): `[ Buy · Watching | Account ]`. For dealers: `[ Buy · Watching | Sell | Account ]`.
 
 ### Item Detail: The Core Screen
 The item detail page is now the hub for ALL communication about an item. It transforms based on state:
