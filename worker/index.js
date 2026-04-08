@@ -146,6 +146,18 @@ export default {
         const key = path.replace('/images/', '');
         res = await handleServeImage(env, key);
 
+      // QA Notes
+      } else if (path === '/api/qa-notes' && method === 'GET') {
+        const r = await supabase(env, `qa_notes?id=eq.current&select=notes,updated_at`);
+        const rows = await r.json();
+        res = json(rows[0] || { notes: {}, updated_at: null });
+      } else if (path === '/api/qa-notes' && method === 'POST') {
+        const body = await request.json();
+        // Upsert
+        await supabase(env, 'qa_notes?id=eq.current', { method: 'DELETE' });
+        await supabase(env, 'qa_notes', { method: 'POST', body: { id: 'current', notes: body.notes || {}, updated_at: new Date().toISOString() } });
+        res = json({ ok: true });
+
       // Admin
       } else if (path === '/api/admin/dashboard' && method === 'GET') {
         res = await requireAdmin(request, env) || await handleAdminDashboard(env);

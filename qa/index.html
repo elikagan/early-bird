@@ -412,6 +412,20 @@ function saveCurrentNotes() {
   if (dots[currentIndex]) {
     dots[currentIndex].classList.toggle('has-notes', val.trim().length > 0);
   }
+  // Sync to API so Claude can read in real time
+  syncToApi();
+}
+
+let _syncTimer;
+function syncToApi() {
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(() => {
+    fetch('https://early-bird.objectlesson.workers.dev/api/qa-notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notes })
+    }).catch(() => {});
+  }, 1000);
 }
 
 function updateAllNotes() {

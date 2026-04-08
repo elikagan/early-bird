@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS qa_notes (
+  id TEXT PRIMARY KEY DEFAULT 'current',
+  notes JSONB NOT NULL DEFAULT '{}',
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+ALTER TABLE qa_notes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "service_role_all" ON qa_notes FOR ALL USING (true) WITH CHECK (true);
