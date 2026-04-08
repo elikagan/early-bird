@@ -35,48 +35,41 @@
 
   /* ── Phone Column ── */
   .phone-col {
-    flex: 0 0 400px; display: flex; align-items: center; justify-content: center;
-    padding: 20px 10px;
+    flex: 0 0 320px; display: flex; align-items: flex-start; justify-content: center;
+    padding: 16px 8px;
   }
 
   /* ── iPhone Frame ── */
+  .iphone-wrap {
+    transform: scale(0.7); transform-origin: top center;
+  }
   .iphone {
     width: 390px; height: 844px; background: #000; border-radius: 50px;
     padding: 14px; position: relative;
     box-shadow: 0 0 0 2px #333, 0 20px 60px rgba(0,0,0,0.5);
-    transform: scale(0.82); transform-origin: top center;
   }
   .iphone-screen {
     width: 100%; height: 100%; border-radius: 38px; overflow: hidden;
     background: #fff; position: relative;
   }
-  /* Notch */
+  /* Dynamic Island */
   .iphone::before {
-    content: ''; position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-    width: 120px; height: 32px; background: #000; border-radius: 0 0 18px 18px; z-index: 10;
+    content: ''; position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 36px; background: #000; border-radius: 20px; z-index: 10;
   }
   /* Home indicator */
   .iphone::after {
-    content: ''; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-    width: 140px; height: 5px; background: #555; border-radius: 3px; z-index: 10;
+    content: ''; position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    width: 140px; height: 5px; background: #444; border-radius: 3px; z-index: 10;
   }
-  /* Safari bar */
+  /* Safari bar - minimal, just shows URL below notch */
   .safari-bar {
-    position: absolute; top: 0; left: 0; right: 0; height: 44px;
-    background: rgba(250,250,248,0.95); backdrop-filter: blur(10px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 5; padding-top: 20px;
+    display: none;
   }
-  .safari-url {
-    font-size: 11px; color: #666; background: #eee; padding: 4px 12px;
-    border-radius: 8px; max-width: 200px; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; font-family: -apple-system, sans-serif;
-  }
+  .safari-url { display: none; }
   .iphone iframe {
-    width: 375px; height: 812px; border: none;
-    transform-origin: top left;
-    /* Scale to fit the screen area: 362px wide (390-28 padding), 816px tall (844-28) */
-    transform: scale(0.966);
+    width: 362px; height: 770px; border: none;
+    margin-top: 46px;
   }
 
   /* ── Notes Column ── */
@@ -155,12 +148,12 @@
 
 <div class="main">
   <div class="phone-col">
-    <div class="iphone">
+    <div class="iphone-wrap"><div class="iphone">
       <div class="iphone-screen">
         <div class="safari-bar"><div class="safari-url" id="safari-url">earlybird.la</div></div>
         <iframe id="app-frame" src="about:blank"></iframe>
       </div>
-    </div>
+    </div></div>
   </div>
   <div class="notes-col">
     <div class="notes-header">NOTES</div>
