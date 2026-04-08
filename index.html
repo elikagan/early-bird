@@ -4098,28 +4098,31 @@ async function loadItemDetail(itemId) {
     const dealer = item.dealer?.name || item.dealer?.business_name || 'Unknown';
     const biz = item.dealer?.business_name && item.dealer?.name ? item.dealer.business_name : '';
     let html = '';
+    // Price row with inline status
+    html += `<div style="display:flex;align-items:center;justify-content:space-between">`;
     html += `<div class="detail-price">${price}</div>`;
+    if (item.status === 'hold') html += `<span class="status-pill hold">Hold</span>`;
+    else if (item.status === 'sold') html += `<span class="status-pill sold">Sold</span>`;
+    else if (item.firm) html += `<span class="status-pill" style="background:#f5f5f5;color:var(--muted)">Firm</span>`;
+    html += `</div>`;
     if (item.title) html += `<div class="detail-title">${item.title}</div>`;
-    if (item.price_posture === 'make_offer') html += `<span class="posture-pill">Make me an offer</span>`;
-    else if (item.price_posture === 'flexible') html += `<span class="posture-pill">Flexible</span>`;
-    else if (item.firm) html += `<span class="posture-pill">Firm</span>`;
-    else html += `<span class="posture-pill">Open to offers</span>`;
-    if (item.condition) html += `<div class="detail-condition">${item.condition}</div>`;
     if (item.notes) html += `<div class="detail-notes">${item.notes}</div>`;
-    html += `<div class="detail-seller">`;
+    html += `<div class="detail-seller" style="display:flex;align-items:center;gap:12px">`;
+    if (item.dealer?.photo_url) html += `<img src="${item.dealer.photo_url}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0">`;
+    html += `<div>`;
     html += `<div class="detail-seller-name">${dealer}</div>`;
     if (biz) html += `<div class="detail-seller-biz">${biz}</div>`;
     if (item.dealer?.booth_number) html += `<div class="detail-seller-biz">Booth ${item.dealer.booth_number}</div>`;
-    html += `</div>`;
+    html += `</div></div>`;
     infoEl.innerHTML = html;
 
     // Actions
     if (item.status === 'sold') {
-      const buyerName = item.buyer?.name || 'a buyer';
-      actionsEl.innerHTML = `<div class="detail-status-badge sold">Sold to ${buyerName}</div>`;
+      const buyerName = item.buyer?.show_name_on_sold !== false && item.buyer?.name ? item.buyer.name : '';
+      actionsEl.innerHTML = buyerName ? `<div style="padding:16px var(--side);color:var(--muted);font-size:12px">Sold to ${buyerName}</div>` : '';
     } else if (item.status === 'hold') {
       const buyerName = item.buyer?.name || 'a buyer';
-      actionsEl.innerHTML = `<div class="detail-status-badge hold">Held for ${buyerName}</div>`;
+      actionsEl.innerHTML = `<div style="padding:16px var(--side);color:var(--muted);font-size:12px">Held for ${buyerName}</div>`;
     } else if (item.dealer_id === getDealerId()) {
       // Seller viewing own item — load all inquiries
       actionsEl.innerHTML = `<div class="detail-loading">Loading inquiries...</div>`;
