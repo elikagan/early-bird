@@ -3009,13 +3009,17 @@ function showScreen(id) {
 const TAB_HASH_MAP = { feed: '#/shop', 'dealer-home': '#/booth', messages: '#/messages', settings: '#/account' };
 const HASH_TAB_MAP = { '#/shop': 'feed', '#/booth': 'dealer-home', '#/messages': 'messages', '#/account': 'settings' };
 
-function switchTab(tab) {
+function switchTab(tab, skipPush) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   const tabEl = document.querySelector(`[data-tab="${tab}"]`);
   if (tabEl) tabEl.classList.add('active');
   showScreen(tab);
+  document.getElementById('bottom-nav').classList.remove('hidden');
   localStorage.setItem('eb_active_tab', tab);
-  if (TAB_HASH_MAP[tab]) history.replaceState(null, '', TAB_HASH_MAP[tab]);
+  if (TAB_HASH_MAP[tab]) {
+    if (skipPush) history.replaceState(null, '', TAB_HASH_MAP[tab]);
+    else if (window.location.hash !== TAB_HASH_MAP[tab]) history.pushState(null, '', TAB_HASH_MAP[tab]);
+  }
   if (tab === 'feed') loadFeed();
   if (tab === 'dealer-home') loadDealerHome();
   if (tab === 'messages') loadMessages();
@@ -3387,7 +3391,7 @@ async function enterApp() {
   const savedTab = tabFromHash || localStorage.getItem('eb_active_tab') || 'feed';
   // Validate tab — dealer-home only for dealers
   const validTab = (savedTab === 'dealer-home' && !isDealer) ? 'feed' : savedTab;
-  switchTab(validTab);
+  switchTab(validTab, true);
 }
 
 // switchMode removed — replaced by unified bottom nav with switchTab
@@ -3846,6 +3850,12 @@ function route() {
     verifyToken(verifyMatch[1]); return;
   }
 
+  const itemMatch = hash.match(/^#\/item\/(.+)$/);
+  if (itemMatch) {
+    if (currentUser) { openItem(itemMatch[1]); return; }
+    // If not logged in, will fall through to auth check below
+  }
+
   const convMatch = hash.match(/^#\/c\/(.+)$/);
   if (convMatch) { loadConversation(convMatch[1]); return; }
 
@@ -3881,7 +3891,7 @@ function route() {
   // Handle tab hash navigation when already in app
   const tabFromHash = HASH_TAB_MAP[hash];
   if (tabFromHash && currentUser) {
-    switchTab(tabFromHash);
+    switchTab(tabFromHash, true);
     return;
   }
 
@@ -3940,9 +3950,10 @@ async function requestDealerMagicLink() {
 let currentItem = null;
 
 function openItem(itemId) {
-  // Find item in feed data or fetch it
   showScreen('item-detail');
   document.getElementById('bottom-nav').classList.add('hidden');
+  const target = `#/item/${itemId}`;
+  if (window.location.hash !== target) history.pushState(null, '', target);
   loadItemDetail(itemId);
 }
 
