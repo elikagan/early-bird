@@ -25,8 +25,8 @@
     :root {
       --bg: #FAFAF8;
       --text: #1A1A1A;
-      --muted: #666666;
-      --dim: #AAAAAA;
+      --muted: #555555;
+      --dim: #888888;
       --accent: #0066FF;
       --accent-hover: #0052CC;
       --error: #D32F2F;
@@ -51,6 +51,54 @@
     /* ── Screens ─────────────────────────── */
     .screen { display: none; }
     .screen.active { display: block; }
+
+    /* ── App Header ─────────────────────── */
+    /* One header component for every screen */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,250,248,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 0 var(--side);
+      padding-top: max(12px, env(safe-area-inset-top));
+    }
+    .app-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 40px;
+    }
+    .app-header-row + .app-header-row {
+      padding-bottom: 8px;
+    }
+    .app-header-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .app-header-back {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    @media (hover: hover) {
+      .app-header-back:hover { color: var(--text); }
+    }
+    .app-header-action {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      text-align: right;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     /* ── Landing Page ────────────────────── */
     #landing {
@@ -975,6 +1023,16 @@
     }
     .nav-tab.active { color: var(--accent); }
     .nav-tab svg { width: 22px; height: 22px; }
+    .nav-group {
+      display: flex;
+      flex: 2;
+    }
+    .nav-group .nav-tab { flex: 1; }
+    .nav-divider {
+      width: 1px;
+      background: var(--input-bg);
+      margin: 8px 0;
+    }
 
     /* Unread badge */
     .unread-badge {
@@ -2087,7 +2145,9 @@
       font-variant-numeric: tabular-nums;
       color: var(--accent);
       letter-spacing: 0.02em;
-      padding-bottom: 8px;
+      white-space: nowrap;
+      margin-left: auto;
+      flex-shrink: 0;
     }
     .booth-stats {
       display: flex;
@@ -2680,8 +2740,14 @@
 
 <!-- ONBOARDING -->
 <div id="onboarding" class="screen">
-  <div class="onboard-title">Almost there</div>
-  <div class="onboard-sub">Quick setup, then you're in.</div>
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-header-title">EARLY BIRD<span class="cursor">_</span></div>
+    </div>
+  </div>
+  <div style="padding:0 var(--side)">
+  <div class="onboard-title">Get set up to pre-buy</div>
+  <div class="onboard-sub">Takes 30 seconds.</div>
 
   <div class="selfie-area">
     <div class="selfie-preview" id="selfie-preview" onclick="document.getElementById('selfie-input').click()">
@@ -2698,16 +2764,17 @@
   </div>
 
   <button class="btn-primary" onclick="completeOnboarding()" style="margin-top:12px">Let's go</button>
+  </div>
 </div>
 
 <!-- FEED -->
 <div id="feed" class="screen">
-  <div class="feed-header">
-    <div class="feed-header-top">
-      <div class="feed-logo">EARLY BIRD<span class="cursor">_</span></div>
-      <a href="#" id="feed-event-name" class="feed-market-link" onclick="showScreen('landing'); return false;">Markets</a>
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-header-title">EARLY BIRD<span class="cursor">_</span></div>
+      <a href="#" id="feed-event-name" class="app-header-action" onclick="showScreen('landing'); return false;">Markets</a>
     </div>
-    <div class="feed-header-row2">
+    <div class="app-header-row">
       <button class="feed-filter-btn" onclick="openFilterSheet()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
@@ -2745,13 +2812,15 @@
 
 <!-- DEALER HOME -->
 <div id="dealer-home" class="screen">
-  <div class="feed-header">
-    <div class="feed-header-top">
-      <div class="feed-logo">My Booth</div>
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-header-title">Sell</div>
       <div id="booth-number-row" class="booth-number"></div>
     </div>
-    <a href="#" id="booth-event-name" class="booth-event-name" onclick="event.preventDefault(); openMarketPicker();"></a>
-    <div id="booth-countdown" class="booth-countdown"></div>
+    <div class="app-header-row">
+      <a href="#" id="booth-event-name" class="booth-event-name" onclick="event.preventDefault(); openMarketPicker();"></a>
+      <div id="booth-countdown" class="booth-countdown"></div>
+    </div>
   </div>
   <div id="booth-setup-card" class="booth-setup-card hidden" style="margin:0 var(--side) 16px"></div>
   <div id="booth-stats" class="booth-stats"></div>
@@ -2773,9 +2842,9 @@
 
 <!-- MESSAGES -->
 <div id="messages" class="screen">
-  <div class="feed-header">
-    <div class="feed-header-top">
-      <div class="feed-logo">Messages</div>
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-header-title">Watching</div>
     </div>
   </div>
   <div class="msg-toggle seg-ctrl nav-dealer-only hidden" id="msg-filter-toggle">
@@ -2809,8 +2878,10 @@
 
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
-  <div class="detail-back">
-    <a href="#" onclick="event.preventDefault(); history.back();">&#8592; Back</a>
+  <div class="app-header">
+    <div class="app-header-row">
+      <a href="#" class="app-header-back" onclick="event.preventDefault(); history.back();">&#8592; Back</a>
+    </div>
   </div>
   <div class="detail-photos" id="detail-photos"></div>
   <div class="detail-info" id="detail-info"></div>
@@ -2819,9 +2890,10 @@
 
 <!-- ADD ITEM -->
 <div id="add-item" class="screen">
-  <div class="feed-header">
-    <div class="feed-header-top">
-      <div class="feed-logo"><a href="#" onclick="event.preventDefault(); switchTab('dealer-home');" style="font-size:12px;color:var(--muted);text-decoration:none;margin-right:8px">&#8592; Back</a> Add item</div>
+  <div class="app-header">
+    <div class="app-header-row">
+      <a href="#" class="app-header-back" onclick="event.preventDefault(); switchTab('dealer-home');">&#8592; Back</a>
+      <div class="app-header-title">Add item</div>
     </div>
   </div>
 
@@ -2884,9 +2956,9 @@
 
 <!-- SETTINGS -->
 <div id="settings" class="screen">
-  <div class="feed-header">
-    <div class="feed-header-top">
-      <div class="feed-logo">Account</div>
+  <div class="app-header">
+    <div class="app-header-row">
+      <div class="app-header-title">Account</div>
     </div>
   </div>
   <div class="settings-content">
@@ -2965,24 +3037,27 @@
 
 <!-- BOTTOM NAV — single nav, reconfigured by mode -->
 <nav class="bottom-nav hidden" id="bottom-nav">
-  <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-      <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
-    </svg>
-    Shop
-  </button>
+  <div class="nav-group nav-group-buy">
+    <button class="nav-tab active" data-tab="feed" onclick="switchTab('feed')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+      </svg>
+      Buy
+    </button>
+    <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+      <span class="nav-tab-label">Watching<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
+    </button>
+  </div>
+  <div class="nav-divider"></div>
   <button class="nav-tab nav-dealer-only hidden" data-tab="dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
-    Booth
-  </button>
-  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-    </svg>
-    <span class="nav-tab-label">Messages<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
+    Sell
   </button>
   <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -4245,8 +4320,10 @@ async function loadConversation(token) {
       ? [conv.seller?.venmo ? `Venmo: ${conv.seller.venmo}` : '', conv.seller?.zelle ? `Zelle: ${conv.seller.zelle}` : ''].filter(Boolean).join(' · ')
       : '';
 
-    let html = '<div class="conv-detail-header">';
-    html += `<a href="#" class="conv-back-link" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back to messages</a>`;
+    let html = '<div class="app-header">';
+    html += `<div class="app-header-row"><a href="#" class="app-header-back" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back</a></div>`;
+    html += `</div>`;
+    html += `<div class="conv-detail-header">`;
     html += `<div class="conv-item-row">`;
     if (photo) html += `<div class="conv-item-thumb"><img src="${photo}"></div>`;
     html += `<div class="conv-item-meta">`;
