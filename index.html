@@ -416,8 +416,8 @@
       padding-bottom: max(70px, calc(56px + env(safe-area-inset-bottom)));
     }
     .item-card {
-      height: calc(100vh - 110px);
-      height: calc(100dvh - 110px);
+      min-height: calc(100vh - 160px);
+      min-height: calc(100dvh - 160px);
       scroll-snap-align: start;
       cursor: pointer;
       display: flex;
@@ -596,20 +596,19 @@
       overflow-x: hidden;
     }
     .detail-back {
-      position: fixed;
-      top: 0; left: 0;
+      position: sticky;
+      top: 0;
       z-index: 100;
-      padding: max(10px, env(safe-area-inset-top)) 16px 16px;
-      right: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 100%);
-      pointer-events: none;
+      padding: max(8px, env(safe-area-inset-top)) var(--side) 8px;
+      background: var(--bg);
     }
     .detail-back a {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
+      font-size: 12px;
+      color: var(--muted);
       text-decoration: none;
-      pointer-events: auto;
+    }
+    @media (hover: hover) {
+      .detail-back a:hover { color: var(--text); }
     }
     .conv-mode .detail-back { display: none; }
     .detail-photos {
@@ -2804,14 +2803,14 @@
 
 <!-- MARKET TEASER -->
 <div id="market-teaser" class="screen">
-  <div class="detail-back"><a href="#" onclick="event.preventDefault(); showScreen('landing');"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg> Back</a></div>
+  <div class="detail-back"><a href="#" onclick="event.preventDefault(); showScreen('landing');">&#8592; Back</a></div>
   <div id="teaser-content" class="teaser-content"></div>
 </div>
 
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
   <div class="detail-back">
-    <a href="#" onclick="switchTab('feed'); return false;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg> Back</a>
+    <a href="#" onclick="event.preventDefault(); history.back();">&#8592; Back</a>
   </div>
   <div class="detail-photos" id="detail-photos"></div>
   <div class="detail-info" id="detail-info"></div>
@@ -2822,7 +2821,7 @@
 <div id="add-item" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo"><a href="#" class="back-link" onclick="showScreen('dealer-home'); switchTab('dealer-home'); return false;">Back</a> Add item</div>
+      <div class="feed-logo"><a href="#" onclick="event.preventDefault(); switchTab('dealer-home');" style="font-size:12px;color:var(--muted);text-decoration:none;margin-right:8px">&#8592; Back</a> Add item</div>
     </div>
   </div>
 
@@ -3307,11 +3306,11 @@ async function verifyToken(token) {
         else { enterApp(); }
       }, 800);
     } else {
-      status.textContent = res.error || 'Invalid link.';
+      status.innerHTML = (res.error || 'Invalid link.') + '<br><a href="#" onclick="event.preventDefault(); showScreen(\'landing\'); window.location.hash=\'\';" style="color:var(--accent);font-size:13px;margin-top:12px;display:inline-block">Back to home</a>';
       status.className = 'verify-error';
     }
   } catch (e) {
-    status.textContent = 'Something went wrong.';
+    status.innerHTML = 'Something went wrong.<br><a href="#" onclick="event.preventDefault(); showScreen(\'landing\'); window.location.hash=\'\';" style="color:var(--accent);font-size:13px;margin-top:12px;display:inline-block">Back to home</a>';
     status.className = 'verify-error';
   }
 }
@@ -3473,7 +3472,7 @@ async function loadFeed() {
 
     applyFeedFilters();
   } catch (e) {
-    content.innerHTML = '<div class="empty-state"><p>Failed to load items.</p></div>';
+    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load items</div><button class="btn-secondary" onclick="loadFeed()">Try again</button></div>';
   }
 }
 
@@ -3565,7 +3564,7 @@ async function loadFavorites() {
       </div>`;
     }).join('') + '</div>';
   } catch (e) {
-    content.innerHTML = '<div class="empty-state"><p>Failed to load favorites.</p></div>';
+    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load favorites</div><button class="btn-secondary" onclick="loadFavorites()">Try again</button></div>';
   }
 }
 
@@ -3584,7 +3583,7 @@ async function loadMessages() {
 
     renderConversations();
   } catch (e) {
-    content.innerHTML = '<div class="empty-state"><p>Failed to load messages.</p></div>';
+    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load messages</div><button class="btn-secondary" onclick="loadMessages()">Try again</button></div>';
   }
 }
 
@@ -3817,7 +3816,7 @@ async function loadDealerHome() {
     }).join('');
   } catch (e) {
     console.error('Failed to load dealer items:', e);
-    list.innerHTML = '<li class="list-error">Failed to load items.</li>';
+    list.innerHTML = '<li class="state-error"><div class="state-error-msg">Couldn\'t load items</div><button class="btn-secondary" onclick="loadDealerHome()">Try again</button></li>';
   }
 }
 
@@ -4062,7 +4061,7 @@ async function loadItemDetail(itemId) {
       actionsEl.innerHTML = `<button class="btn-primary" id="want-this-btn" onclick="textSeller('${item.id}')">I want this</button>`;
     }
   } catch (e) {
-    infoEl.innerHTML = '<p class="text-error">Failed to load item.</p>';
+    infoEl.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load item</div><button class="btn-secondary" onclick="history.back()">Go back</button></div>';
   }
 }
 
@@ -4302,7 +4301,7 @@ async function loadConversation(token) {
       </div>`;
 
   } catch (e) {
-    infoEl.innerHTML = '<p class="text-error">Failed to load conversation.</p>';
+    infoEl.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load conversation</div><button class="btn-secondary" onclick="switchTab(\'messages\')">Back to messages</button></div>';
     actionsEl.innerHTML = '';
   }
 }
