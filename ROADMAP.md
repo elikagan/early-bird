@@ -246,15 +246,17 @@ Complete notes in `QA-NOTES.md`. Below is the full detail, not just summaries.
 4. 6 different header implementations instead of one component
 5. Multiple "consolidated" comments in CSS for deleted classes, but replacements inconsistently applied
 
-## Preparing for EDS Onboarding
-When EDS is built, it will onboard this repo as its first project. To be ready:
+## EDS Onboarding
+This repo will be onboarded into [EDS (Eli Design Studio)](https://github.com/elikagan/eds) as its first project. **No manual prep is needed.** EDS has a built-in onboarding process that:
 
-1. **Create an empty `design-system.css`** in the repo root (EDS will bootstrap it with M3 tokens from the theme config in `eds/projects/early-bird.json`)
-2. **Add `<link rel="stylesheet" href="design-system.css">` to `index.html`** — before the inline `<style>` block so the DS file loads first and inline styles can gradually be deleted as they're migrated
-3. **Keep the inline `<style>` block intact** — EDS migrates rules out of it one component at a time via tickets. Don't delete anything preemptively.
-4. **Docs that EDS sessions will read:** `ROADMAP.md` (this file), `QA-NOTES.md`, `CLAUDE.md`, `HANDOFF.md`
+1. Reads the project config at `eds/projects/early-bird.json`
+2. Validates the repo (checks for CSS file, link tag, local server)
+3. Scaffolds whatever's missing — generates `design-system.css` from the theme config, injects the `<link>` tag into `index.html`
+4. Begins migration via tickets — one component at a time, from inline `<style>` into `design-system.css`
 
-The EDS project config for Early Bird is at: `https://github.com/elikagan/eds/blob/main/projects/early-bird.json`
+See the EDS SPEC.md ["Project Onboarding"](https://github.com/elikagan/eds/blob/main/SPEC.md#project-onboarding) section for the full contract and validation checklist.
+
+**Do not manually create `design-system.css` or add link tags.** Let EDS do it so the scaffolded CSS has proper M3 tokens and `@eds-` metadata comments that the design system panel can parse.
 
 ---
 
