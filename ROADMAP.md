@@ -246,6 +246,16 @@ Complete notes in `QA-NOTES.md`. Below is the full detail, not just summaries.
 4. 6 different header implementations instead of one component
 5. Multiple "consolidated" comments in CSS for deleted classes, but replacements inconsistently applied
 
+## Preparing for EDS Onboarding
+When EDS is built, it will onboard this repo as its first project. To be ready:
+
+1. **Create an empty `design-system.css`** in the repo root (EDS will bootstrap it with M3 tokens from the theme config in `eds/projects/early-bird.json`)
+2. **Add `<link rel="stylesheet" href="design-system.css">` to `index.html`** — before the inline `<style>` block so the DS file loads first and inline styles can gradually be deleted as they're migrated
+3. **Keep the inline `<style>` block intact** — EDS migrates rules out of it one component at a time via tickets. Don't delete anything preemptively.
+4. **Docs that EDS sessions will read:** `ROADMAP.md` (this file), `QA-NOTES.md`, `CLAUDE.md`, `HANDOFF.md`
+
+The EDS project config for Early Bird is at: `https://github.com/elikagan/eds/blob/main/projects/early-bird.json`
+
 ---
 
 ## Development History
