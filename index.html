@@ -3620,7 +3620,7 @@ function renderWatching(items) {
     const chatSvg = w.hasConversation ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' : '';
 
     // Tap target
-    const href = w.hasConversation ? `#/c/${w.conversationToken}` : `javascript:openItem('${w.itemId}')`;
+    const href = `javascript:openItem('${w.itemId}')`;
 
     return `<a href="${href}" class="conv-item" style="text-decoration:none">
       <div class="conv-thumb" style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0">
@@ -3906,7 +3906,15 @@ function route() {
   }
 
   const convMatch = hash.match(/^#\/c\/(.+)$/);
-  if (convMatch) { loadConversation(convMatch[1]); return; }
+  if (convMatch) {
+    // Resolve conversation token to item → render State 2 via loadItemDetail
+    api(`/api/conversations/${convMatch[1]}`).then(res => {
+      const itemId = res.conversation?.item_id || res.conversation?.item?.id;
+      if (itemId) { openItem(itemId); }
+      else { loadConversation(convMatch[1]); } // fallback
+    }).catch(() => loadConversation(convMatch[1]));
+    return;
+  }
 
   if (hash.startsWith('#/admin')) {
     const token = localStorage.getItem('eb_admin_token');
@@ -4006,6 +4014,143 @@ function openItem(itemId) {
   loadItemDetail(itemId);
 }
 
+// ── Compact Header (shared State 2 + State 4) ──────────────────
+function renderCompactHeader(item, opts = {}) {
+  const price = '$' + (item.price / 100).toLocaleString();
+  const dealer = item.dealer?.name || item.dealer?.business_name || '';
+  const photo = item.photos?.[0] || '';
+  const statusPill = item.status !== 'live' ? `<span class="status-pill ${item.status}">${item.status}</span>` : '';
+  const backLabel = opts.backLabel || 'Back';
+  const backAction = opts.backAction || 'history.back()';
+
+  // Expandable detail — same content as State 1's info section
+  const photos = item.photos || [];
+  let expandHtml = '';
+  if (photos.length) {
+    expandHtml += `<div class="detail-photo" style="aspect-ratio:1;overflow:hidden"><img src="${photos[0]}" style="width:100%;height:100%;object-fit:cover"></div>`;
+  }
+  expandHtml += `<div style="padding:16px var(--side)">`;
+  if (item.title) expandHtml += `<div class="detail-title">${item.title}</div>`;
+  if (item.notes) expandHtml += `<div class="detail-notes">${item.notes}</div>`;
+  expandHtml += `<div class="detail-seller"><div class="detail-seller-name">${dealer}</div>`;
+  if (item.dealer?.booth_number) expandHtml += `<div class="detail-seller-biz">Booth ${item.dealer.booth_number}</div>`;
+  expandHtml += `</div></div>`;
+
+  return `<div class="compact-header" id="compact-header">
+    <a href="#" class="compact-header-back" onclick="event.preventDefault(); ${backAction}">&#8592; ${backLabel}</a>
+    <div class="compact-header-row">
+      <div class="compact-header-thumb">${photo ? `<img src="${photo}">` : ''}</div>
+      <div class="compact-header-meta">
+        <div class="compact-header-price">${price} ${statusPill}</div>
+        <div class="compact-header-name">${dealer}${opts.subtitle ? ' · ' + opts.subtitle : ''}</div>
+      </div>
+      <button class="compact-header-chevron" onclick="document.getElementById('compact-header').classList.toggle('expanded')" aria-label="Expand details">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+    </div>
+    <div class="compact-header-expand">${expandHtml}</div>
+  </div>`;
+}
+
+// ── State 2: Buyer with active conversation ─────────────────────
+async function renderState2(item, photosEl, infoEl, actionsEl) {
+  const token = item.my_conversation.token;
+
+  // Show bottom nav
+  document.getElementById('bottom-nav')?.classList.remove('hidden');
+
+  // Compact header
+  photosEl.innerHTML = renderCompactHeader(item, {
+    backLabel: 'Back to watching',
+    backAction: "switchTab('messages')",
+  });
+
+  // Loading state for messages
+  infoEl.innerHTML = '<div class="state2-thread" id="state2-thread"><div class="loading-center"><span class="spinner"></span></div></div>';
+
+  // Reply bar
+  actionsEl.innerHTML = `<div class="reply-bar">
+    <textarea class="reply-textarea" id="state2-reply" placeholder="Reply..."
+      oninput="autoExpandTextarea(this)"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendState2Reply('${token}','${item.id}');}"></textarea>
+    <button class="btn-primary btn-compact" onclick="sendState2Reply('${token}','${item.id}')">Send</button>
+  </div>`;
+
+  // Fetch conversation
+  try {
+    const res = await api(`/api/conversations/${token}`);
+    const conv = res.conversation;
+    const messages = res.messages || [];
+    const role = res.you;
+    const otherPhotoUrl = role === 'buyer' ? conv.seller?.photo_url : conv.buyer?.photo_url;
+
+    const thread = document.getElementById('state2-thread');
+    if (!thread) return;
+
+    if (messages.length === 0) {
+      thread.innerHTML = '<div class="conv-no-messages">No messages yet. Seller notified via SMS.</div>';
+    } else {
+      let html = '';
+      let lastTime = 0;
+      messages.forEach(msg => {
+        const isMe = msg.sender_id === currentUser?.id
+          || (role === 'buyer' && msg.direction === 'buyer_to_seller')
+          || (role === 'seller' && msg.direction === 'seller_to_buyer');
+        const dir = isMe ? 'sent' : 'received';
+        if (msg.created_at) {
+          const t = new Date(msg.created_at).getTime();
+          if (!lastTime || t - lastTime > 300000) {
+            const d = new Date(msg.created_at);
+            const now = new Date();
+            const isToday = d.toDateString() === now.toDateString();
+            const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            const label = isToday ? timeStr : d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + timeStr;
+            html += `<div class="msg-time">${label}</div>`;
+          }
+          lastTime = t;
+        }
+        const avatar = (!isMe && otherPhotoUrl) ? `<img src="${otherPhotoUrl}" class="msg-avatar">` : '';
+        html += `<div class="msg-row ${dir}">${!isMe && avatar ? avatar : ''}<div class="msg-bubble ${dir}">${msg.body}</div></div>`;
+      });
+      thread.innerHTML = html;
+    }
+    // Auto-scroll to bottom
+    thread.scrollTop = thread.scrollHeight;
+  } catch (e) {
+    const thread = document.getElementById('state2-thread');
+    if (thread) thread.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load conversation</div></div>';
+  }
+}
+
+function autoExpandTextarea(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 112) + 'px';
+}
+
+async function sendState2Reply(token, itemId) {
+  const input = document.getElementById('state2-reply');
+  const msg = input?.value?.trim();
+  if (!msg) return;
+  input.value = '';
+  input.style.height = '40px';
+
+  // Append message to DOM immediately (optimistic)
+  const thread = document.getElementById('state2-thread');
+  if (thread) {
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-row sent';
+    bubble.innerHTML = `<div class="msg-bubble sent">${msg}</div>`;
+    thread.appendChild(bubble);
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  try {
+    await api(`/api/conversations/${token}/messages`, { method: 'POST', body: { message: msg } });
+  } catch (e) {
+    showToast('Could not send message');
+  }
+}
+
 async function loadItemDetail(itemId) {
   document.getElementById('item-detail').classList.remove('conv-mode');
   const photosEl = document.getElementById('detail-photos');
@@ -4024,8 +4169,13 @@ async function loadItemDetail(itemId) {
     const isOwner = item.is_owner === true;
     const hasConversation = item.my_conversation != null;
     const detailEl = document.getElementById('item-detail');
-    // State will be fully used in Chunks B-D. For now, set data attribute for CSS targeting.
     detailEl.dataset.state = isOwner ? 'seller' : hasConversation ? '2' : '1';
+
+    // State 2: buyer with active conversation
+    if (hasConversation && !isOwner) {
+      renderState2(item, photosEl, infoEl, actionsEl);
+      return;
+    }
 
     // Photos — carousel if multiple
     const photos = item.photos || [];
@@ -4212,8 +4362,8 @@ async function sendFirstMessage(itemId, directMsg) {
       document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); });
       return;
     }
-    // Navigate to conversation immediately
-    window.location.hash = `#/c/${res.conversation_token}`;
+    // Re-render as State 2 (conversation now exists on this item)
+    loadItemDetail(itemId);
   } catch (e) {
     document.querySelectorAll('.btn-chip').forEach(b => { b.disabled = false; b.classList.remove('disabled'); b.classList.remove('active'); });
     if (btn) { btn.textContent = 'Send'; btn.disabled = false; }
