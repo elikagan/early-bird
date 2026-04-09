@@ -2792,9 +2792,7 @@
 
 <!-- ITEM DETAIL -->
 <div id="item-detail" class="screen">
-  <div class="detail-back">
-    <a href="#" onclick="event.preventDefault(); history.back();">&#8592; Back</a>
-  </div>
+  <div class="detail-back" id="detail-back"></div>
   <div class="detail-photos" id="detail-photos"></div>
   <div class="detail-info" id="detail-info"></div>
   <div class="detail-actions" id="detail-actions"></div>
@@ -4153,6 +4151,7 @@ async function sendState2Reply(token, itemId) {
 
 async function loadItemDetail(itemId) {
   document.getElementById('item-detail').classList.remove('conv-mode');
+  const backEl = document.getElementById('detail-back');
   const photosEl = document.getElementById('detail-photos');
   const infoEl = document.getElementById('detail-info');
   const actionsEl = document.getElementById('detail-actions');
@@ -4171,11 +4170,15 @@ async function loadItemDetail(itemId) {
     const detailEl = document.getElementById('item-detail');
     detailEl.dataset.state = isOwner ? 'seller' : hasConversation ? '2' : '1';
 
-    // State 2: buyer with active conversation
+    // State 2: buyer with active conversation — compact header has its own back link
     if (hasConversation && !isOwner) {
+      backEl.innerHTML = '';
       renderState2(item, photosEl, infoEl, actionsEl);
       return;
     }
+
+    // States 1 and seller: standard back button
+    backEl.innerHTML = '<a href="#" onclick="event.preventDefault(); history.back();">&#8592; Back</a>';
 
     // Photos — carousel if multiple
     const photos = item.photos || [];
