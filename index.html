@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-system.css">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -2747,7 +2748,7 @@
 <div id="dealer-home" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo">My Booth</div>
+      <div class="feed-logo">Sell</div>
       <div id="booth-number-row" class="booth-number"></div>
     </div>
     <a href="#" id="booth-event-name" class="booth-event-name" onclick="event.preventDefault(); openMarketPicker();"></a>
@@ -2775,30 +2776,12 @@
 <div id="messages" class="screen">
   <div class="feed-header">
     <div class="feed-header-top">
-      <div class="feed-logo">Messages</div>
+      <div class="feed-logo">Watching</div>
     </div>
-  </div>
-  <div class="msg-toggle seg-ctrl nav-dealer-only hidden" id="msg-filter-toggle">
-    <button class="seg-btn active" onclick="filterMessages('all', this)">All</button>
-    <button class="seg-btn" onclick="filterMessages('buying', this)">Buying</button>
-    <button class="seg-btn" onclick="filterMessages('selling', this)">Selling</button>
   </div>
   <div id="messages-content">
-    <div class="empty-state">
-      <h2>No messages yet</h2>
-      <p>Conversations with sellers will show up here.</p>
-    </div>
+    <div class="loading-center"><span class="spinner"></span></div>
   </div>
-</div>
-
-<!-- FAVORITES -->
-<div id="favorites" class="screen">
-  <div class="feed-header">
-    <div class="feed-header-top">
-      <div class="feed-logo">Favorites</div>
-    </div>
-  </div>
-  <div id="favorites-content"></div>
 </div>
 
 <!-- MARKET TEASER -->
@@ -2970,19 +2953,19 @@
       <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
       <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
     </svg>
-    Shop
+    Buy
+  </button>
+  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>
+    </svg>
+    <span class="nav-tab-label">Watching<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
   </button>
   <button class="nav-tab nav-dealer-only hidden" data-tab="dealer-home" onclick="switchTab('dealer-home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/>
     </svg>
-    Booth
-  </button>
-  <button class="nav-tab" data-tab="messages" onclick="switchTab('messages')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-    </svg>
-    <span class="nav-tab-label">Messages<span class="unread-badge hidden" id="nav-unread-badge"></span></span>
+    Sell
   </button>
   <button class="nav-tab" data-tab="settings" onclick="switchTab('settings')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3056,7 +3039,7 @@ function switchTab(tab, skipPush) {
   }
   if (tab === 'feed') loadFeed();
   if (tab === 'dealer-home') loadDealerHome();
-  if (tab === 'messages') loadMessages();
+  if (tab === 'messages') loadWatching();
   if (tab === 'settings') loadSettings();
 }
 
@@ -3137,15 +3120,6 @@ function setBrowseMode(mode, el) {
 }
 
 // ── Message filter (All / Buying / Selling) ──────────────────
-let msgFilter = 'all';
-let allConversations = [];
-function filterMessages(filter, el) {
-  msgFilter = filter;
-  document.querySelectorAll('#msg-filter-toggle .seg-btn').forEach(b => b.classList.remove('active'));
-  if (el) el.classList.add('active');
-  renderConversations();
-}
-
 // ── Landing ───────────────────────────────────────────────────
 function formatCountdown(dropTime) {
   const diff = dropTime - new Date();
@@ -3249,7 +3223,7 @@ async function openMarketTeaser(marketId) {
         <div><span class="teaser-stat-value">${dealerCount}</span> <span class="teaser-stat-label">dealers</span></div>
       </div>
       ${previewHtml}
-      ${isLive ? `<button class="btn-primary btn-dark mt-24" onclick="selectMarket('${m.id}'); enterApp();">Shop inventory</button>` : ''}
+      ${isLive ? `<button class="btn-primary btn-dark mt-24" onclick="selectMarket('${m.id}'); enterApp();">Browse inventory</button>` : ''}
     </div>`;
 }
 
@@ -3538,92 +3512,131 @@ async function toggleFavorite(itemId, btn) {
   if (browseMode === 'saved') applyFeedFilters();
 }
 
-async function loadFavorites() {
-  const content = document.getElementById('favorites-content');
+async function loadWatching() {
+  const content = document.getElementById('messages-content');
   content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
   try {
-    const favs = await api('/api/favorites');
-    if (!favs?.length) {
-      content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#9825;</div><h2>No favorites yet</h2><p>Heart items to save them here.</p></div>';
-      return;
+    const [favsRes, convsRes] = await Promise.all([
+      api('/api/favorites'),
+      api('/api/conversations')
+    ]);
+    const favs = Array.isArray(favsRes) ? favsRes : [];
+    const convsBuyer = convsRes.as_buyer || []; // Only buyer conversations — seller inquiries belong on item detail
+
+    // Build map keyed by item_id
+    const watchMap = new Map();
+
+    // Add favorites
+    for (const fav of favs) {
+      const item = fav.item || {};
+      watchMap.set(item.id, {
+        itemId: item.id,
+        title: item.title || '',
+        price: item.price,
+        previousPrice: item.previous_price,
+        photo: item.photos?.[0] || '',
+        dealerName: item.dealer?.name || item.dealer?.business_name || '',
+        dealerPhoto: item.dealer?.photo_url || '',
+        status: item.status || 'live',
+        isFavorited: true,
+        hasConversation: false,
+        conversationToken: null,
+        lastMessage: null,
+        lastActivity: fav.created_at,
+      });
     }
-    content.innerHTML = '<div class="fav-grid">' + favs.map(fav => {
-      const item = fav.item;
-      const price = '$' + (item.price / 100).toLocaleString();
-      const photo = item.photos?.[0] || '';
-      const dealer = item.dealer?.name || item.dealer?.business_name || '';
-      return `<div class="fav-card" onclick="openItem('${item.id}')">
-        <div class="fav-card-img">
-          ${photo ? `<img src="${photo}" loading="lazy">` : ''}
-          <button class="fav-btn fav-active" onclick="event.stopPropagation(); toggleFavorite('${item.id}', this)" aria-label="Unfavorite"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
-        </div>
-        <div class="fav-card-info">
-          <div class="fav-card-price">${price}</div>
-          <div class="fav-card-meta">${dealer}${item.firm ? ' · Firm' : ''}</div>
-        </div>
-      </div>`;
-    }).join('') + '</div>';
+
+    // Merge conversations (as buyer only)
+    for (const conv of convsBuyer) {
+      const itemId = conv.item_id || conv.item?.id;
+      if (!itemId) continue;
+      const existing = watchMap.get(itemId);
+      const convActivity = conv.last_message_at || conv.created_at;
+      if (existing) {
+        existing.hasConversation = true;
+        existing.conversationToken = conv.token;
+        existing.lastMessage = conv.last_message;
+        if (new Date(convActivity) > new Date(existing.lastActivity)) {
+          existing.lastActivity = convActivity;
+        }
+        // Backfill any missing data from conversation
+        if (!existing.title) existing.title = conv.item?.title || '';
+        if (!existing.price) existing.price = conv.item?.price;
+        if (!existing.dealerName) existing.dealerName = conv.seller?.name || conv.seller?.business_name || '';
+        if (!existing.dealerPhoto) existing.dealerPhoto = conv.seller?.photo_url || '';
+        if (!existing.photo) existing.photo = conv.item?.photos?.[0] || '';
+      } else {
+        watchMap.set(itemId, {
+          itemId,
+          title: conv.item?.title || '',
+          price: conv.item?.price,
+          previousPrice: null,
+          photo: conv.item?.photos?.[0] || '',
+          dealerName: conv.seller?.name || conv.seller?.business_name || '',
+          dealerPhoto: conv.seller?.photo_url || '',
+          status: conv.item?.status || 'live',
+          isFavorited: false,
+          hasConversation: true,
+          conversationToken: conv.token,
+          lastMessage: conv.last_message,
+          lastActivity: convActivity,
+        });
+      }
+    }
+
+    // Sort by most recent activity
+    const items = [...watchMap.values()].sort((a, b) =>
+      new Date(b.lastActivity) - new Date(a.lastActivity)
+    );
+
+    renderWatching(items);
   } catch (e) {
-    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load favorites</div><button class="btn-secondary" onclick="loadFavorites()">Try again</button></div>';
+    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Could not load watching list</div><button class="btn-secondary" onclick="loadWatching()">Try again</button></div>';
   }
 }
 
-async function loadMessages() {
+function renderWatching(items) {
   const content = document.getElementById('messages-content');
-  content.innerHTML = '<div class="loading-center"><span class="spinner"></span></div>';
-  try {
-    const res = await api('/api/conversations');
-    const asBuyer = res.as_buyer || [];
-    const asSeller = res.as_seller || [];
-
-    allConversations = [
-      ...asBuyer.map(c => ({ ...c, _role: 'buyer', _other: c.seller?.name || c.seller?.business_name || 'Seller', _otherPhoto: c.seller?.photo_url })),
-      ...asSeller.map(c => ({ ...c, _role: 'seller', _other: c.buyer?.name || c.buyer?.business_name || 'Buyer', _otherPhoto: c.buyer?.photo_url })),
-    ].sort((a, b) => new Date(b.last_message_at || b.created_at) - new Date(a.last_message_at || a.created_at));
-
-    renderConversations();
-  } catch (e) {
-    content.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load messages</div><button class="btn-secondary" onclick="loadMessages()">Try again</button></div>';
-  }
-}
-
-function renderConversations() {
-  const content = document.getElementById('messages-content');
-  let convs = allConversations;
-  if (msgFilter === 'buying') convs = convs.filter(c => c._role === 'buyer');
-  if (msgFilter === 'selling') convs = convs.filter(c => c._role === 'seller');
-
-  if (!convs.length) {
-    const msg = msgFilter === 'all'
-      ? 'Conversations with sellers will show up here.'
-      : msgFilter === 'buying'
-        ? 'No conversations as a buyer yet.'
-        : 'No conversations as a seller yet.';
-    content.innerHTML = '<div class="empty-state"><h2>No messages</h2><p>' + msg + '</p></div>';
+  if (!items.length) {
+    content.innerHTML = '<div class="empty-state"><div class="empty-state-icon">&#9825;</div><h2>Nothing yet</h2><p>Items you favorite or message about will appear here.</p></div>';
     return;
   }
 
-  content.innerHTML = convs.map(conv => {
-    const photo = conv.item?.photos?.[0] || '';
-    const price = conv.item?.price ? '$' + (conv.item.price / 100).toLocaleString() : '';
-    const title = conv.item?.title || '';
-    const timeAgo = getTimeAgo(conv.last_message_at || conv.created_at, true);
-    const initials = conv._other.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    const avatarEl = conv._otherPhoto
-      ? `<div class="conv-thumb-avatar"><img src="${conv._otherPhoto}"></div>`
-      : `<div class="conv-thumb-avatar-placeholder">${initials}</div>`;
-    const preview = conv.last_message
-      ? `<div class="conv-preview">${conv.last_message.length > 50 ? conv.last_message.slice(0, 50) + '...' : conv.last_message}</div>`
-      : '';
-    return `<a href="#/c/${conv.token}" class="conv-item">
-      <div class="conv-thumb-composite">
-        <div class="conv-thumb">${photo ? `<img src="${photo}">` : ''}</div>
-        ${avatarEl}
+  content.innerHTML = items.map(w => {
+    const price = w.price ? '$' + (w.price / 100).toLocaleString() : '';
+    const timeAgo = getTimeAgo(w.lastActivity, true);
+    const statusClass = w.status !== 'live' ? w.status : '';
+    const statusPill = w.status !== 'live' ? `<span class="status-pill ${w.status}">${w.status}</span>` : '';
+
+    // Price drop indicator
+    let priceDrop = '';
+    if (w.previousPrice && w.previousPrice > w.price) {
+      const oldPrice = '$' + (w.previousPrice / 100).toLocaleString();
+      priceDrop = `<span class="status-pill" style="background:#E8F0FE;color:var(--accent);margin-left:6px">PRICE DROP</span> <span style="text-decoration:line-through;color:var(--dim);font-size:12px;margin-left:4px">${oldPrice}</span>`;
+    }
+
+    // Indicators
+    const heartSvg = w.isFavorited ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="#FF3B5C" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg>' : '';
+    const chatSvg = w.hasConversation ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' : '';
+
+    // Tap target
+    const href = w.hasConversation ? `#/c/${w.conversationToken}` : `javascript:openItem('${w.itemId}')`;
+
+    return `<a href="${href}" class="conv-item" style="text-decoration:none">
+      <div class="conv-thumb" style="width:52px;height:52px;border-radius:8px;overflow:hidden;flex-shrink:0">
+        ${w.photo ? `<img src="${w.photo}" style="width:100%;height:100%;object-fit:cover">` : ''}
       </div>
-      <div class="conv-info flex-1">
-        <div class="conv-name-row"><span class="name">${conv._other}</span><span class="conv-time">${timeAgo}</span></div>
-        <div class="conv-price-line">${title ? title + ' · ' : ''}${price}</div>
-        ${preview}
+      <div class="conv-info flex-1" style="min-width:0">
+        <div class="conv-name-row">
+          <span style="font-weight:600;font-size:14px">${price}</span>
+          ${statusPill}${priceDrop}
+          <span class="conv-time">${timeAgo}</span>
+        </div>
+        <div style="font-size:13px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${w.title}</div>
+        <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px">
+          <span>${w.dealerName}</span>
+          <span style="display:flex;align-items:center;gap:4px;margin-left:auto">${heartSvg}${chatSvg}</span>
+        </div>
       </div>
     </a>`;
   }).join('');
@@ -4007,6 +4020,13 @@ async function loadItemDetail(itemId) {
     }
     currentItem = item;
 
+    // State detection (used by render functions)
+    const isOwner = item.is_owner === true;
+    const hasConversation = item.my_conversation != null;
+    const detailEl = document.getElementById('item-detail');
+    // State will be fully used in Chunks B-D. For now, set data attribute for CSS targeting.
+    detailEl.dataset.state = isOwner ? 'seller' : hasConversation ? '2' : '1';
+
     // Photos — carousel if multiple
     const photos = item.photos || [];
     if (photos.length > 1) {
@@ -4246,7 +4266,7 @@ async function loadConversation(token) {
       : '';
 
     let html = '<div class="conv-detail-header">';
-    html += `<a href="#" class="conv-back-link" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back to messages</a>`;
+    html += `<a href="#" class="conv-back-link" onclick="event.preventDefault(); switchTab('messages'); window.location.hash='';">&#8592; Back to watching</a>`;
     html += `<div class="conv-item-row">`;
     if (photo) html += `<div class="conv-item-thumb"><img src="${photo}"></div>`;
     html += `<div class="conv-item-meta">`;
@@ -4301,7 +4321,7 @@ async function loadConversation(token) {
       </div>`;
 
   } catch (e) {
-    infoEl.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load conversation</div><button class="btn-secondary" onclick="switchTab(\'messages\')">Back to messages</button></div>';
+    infoEl.innerHTML = '<div class="state-error"><div class="state-error-msg">Couldn\'t load conversation</div><button class="btn-secondary" onclick="switchTab(\'messages\')">Back to watching</button></div>';
     actionsEl.innerHTML = '';
   }
 }

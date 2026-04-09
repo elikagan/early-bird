@@ -22,7 +22,44 @@
 - QA tool: `qa/index.html` (live at `elikagan.github.io/early-bird/qa/`)
 
 ## Design System (EDS)
-This project will be built using [EDS (Eli Design Studio)](https://github.com/elikagan/eds). EDS enforces component-based development through a structured ticket system. See the EDS repo for how it works.
+This project will be built using [EDS (Eli Design Studio)](https://github.com/elikagan/eds). EDS enforces component-based development through a structured ticket system.
+
+### EDS Contract — MUST FOLLOW
+When building or modifying screens in this repo:
+1. **Read `design-system.css` first.** Know what components exist (marked with `@eds-` comments).
+2. **Use only classes from the design system.** Never write inline `style=""` attributes. Never create ad-hoc CSS classes.
+3. **Need a new component?** Create an EDS ticket — do not build it yourself. The ticket text should describe what you need (e.g., "Need a compact item row for Watching tab: thumbnail 48px, price, dealer name, status pill").
+4. **After creating/restructuring a screen**, update `eds/projects/early-bird.json` with the screen entry (id, name, section, desc, setup).
+5. **`design-system.css` is the styling source of truth.** `@eds-` comments tell you what components exist and what classes to use. Read them.
+
+EDS handles design/styling. Claude Code handles structure/features. The contract between them is `design-system.css` (styling) and `eds/projects/early-bird.json` (screens).
+
+### Running EDS for Early Bird
+```bash
+# EDS repo is at: /Users/elikagan/Desktop/Claude stuff/eds/
+# Start the server (serves both the app and EDS studio):
+node "/Users/elikagan/Desktop/Claude stuff/eds/studio/server.js" early-bird 8097
+
+# Open EDS studio:
+open http://localhost:8097/eds/
+
+# The app is also directly accessible at:
+open http://localhost:8097/
+```
+
+### EDS Screen Config
+The screen definitions live at `eds/projects/early-bird.json` (in the EDS repo, NOT this repo). Each screen entry tells EDS how to set up the iframe (which user to auth as, what JS to eval). When you create or restructure a screen in this repo, update that config file so EDS knows about it.
+
+Screen entry format:
+```json
+{
+  "id": "screen-id",
+  "name": "Human Readable Name",
+  "section": "Buyer",
+  "desc": "What this screen shows and why",
+  "setup": { "user": "loubna", "eval": "switchTab('feed');" }
+}
+```
 
 ## Test Users
 | Role | Name | ID |

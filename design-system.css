@@ -1,0 +1,505 @@
+/* ═══════════════════════════════════════════════════════════════
+   EARLY BIRD — Design System
+   Material Design 3 structure, customized with Early Bird brand.
+   JetBrains Mono everywhere. Warm muted palette. 8dp grid.
+
+   This file is the single source of truth for all styling.
+   Every component class has @eds- metadata for the EDS panel.
+   Do NOT add styles to <style> blocks in index.html.
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* @eds-foundation: Colors */
+:root {
+  /* @eds-token: primary | Primary brand color | Buttons, links, active states */
+  --md-sys-color-primary: #0066FF;
+  /* @eds-token: on-primary | Text on primary | Button labels, icon on primary bg */
+  --md-sys-color-on-primary: #FFFFFF;
+  /* @eds-token: primary-hover | Primary hover state | Button hover, link hover */
+  --md-sys-color-primary-hover: #0052CC;
+
+  /* @eds-token: surface | Page background | Main app background */
+  --md-sys-color-surface: #FAFAF8;
+  /* @eds-token: on-surface | Primary text | Headlines, body text, labels */
+  --md-sys-color-on-surface: #1A1A1A;
+  /* @eds-token: on-surface-variant | Secondary text | Descriptions, metadata, muted labels */
+  --md-sys-color-on-surface-variant: #555555;
+  /* @eds-token: surface-container | Input backgrounds | Form fields, cards, containers */
+  --md-sys-color-surface-container: #F0EFEC;
+  /* @eds-token: surface-container-high | Elevated surfaces | Headers, nav bars */
+  --md-sys-color-surface-container-high: #E8E7E4;
+
+  /* @eds-token: outline | Borders, dividers | Input borders, card outlines */
+  --md-sys-color-outline: #555555;
+  /* @eds-token: outline-variant | Subtle borders | Lighter dividers, inactive borders */
+  --md-sys-color-outline-variant: #888888;
+
+  /* @eds-token: error | Error states | Validation, destructive actions */
+  --md-sys-color-error: #D32F2F;
+  /* @eds-token: on-error | Text on error | Error button labels */
+  --md-sys-color-on-error: #FFFFFF;
+  /* @eds-token: error-container | Error background | Error message bg, alert bg */
+  --md-sys-color-error-container: #FDECEA;
+
+  /* @eds-token: success | Success states | Confirmations, live status */
+  --md-sys-color-success: #2E7D32;
+  /* @eds-token: success-container | Success background | Success message bg */
+  --md-sys-color-success-container: #E8F5E9;
+
+  /* @eds-token: warning | Warning/hold states | Hold status, caution */
+  --md-sys-color-warning: #B8960C;
+  /* @eds-token: warning-container | Warning background | Hold status bg */
+  --md-sys-color-warning-container: #FFF8E1;
+
+  /* @eds-token: favorite | Like/favorite color | Heart icon active state */
+  --md-sys-color-favorite: #FF3B5C;
+
+  /* ── Legacy aliases (map old variables to new tokens) ── */
+  --bg: var(--md-sys-color-surface);
+  --text: var(--md-sys-color-on-surface);
+  --muted: var(--md-sys-color-on-surface-variant);
+  --dim: var(--md-sys-color-outline-variant);
+  --accent: var(--md-sys-color-primary);
+  --accent-hover: var(--md-sys-color-primary-hover);
+  --error: var(--md-sys-color-error);
+  --success: var(--md-sys-color-success);
+  --input-bg: var(--md-sys-color-surface-container);
+  --side: var(--md-sys-spacing-side);
+}
+
+
+/* @eds-foundation: Typography */
+:root {
+  --md-sys-typescale-font: 'JetBrains Mono', monospace;
+
+  /* @eds-token: headline-lg | Headline Large | Market names on landing, page titles */
+  --md-sys-typescale-headline-lg-size: 24px;
+  --md-sys-typescale-headline-lg-weight: 700;
+  --md-sys-typescale-headline-lg-lh: 1.2;
+
+  /* @eds-token: headline-md | Headline Medium | Prices, stat values */
+  --md-sys-typescale-headline-md-size: 20px;
+  --md-sys-typescale-headline-md-weight: 700;
+  --md-sys-typescale-headline-md-lh: 1.2;
+
+  /* @eds-token: headline-sm | Headline Small | Section headers, logo */
+  --md-sys-typescale-headline-sm-size: 16px;
+  --md-sys-typescale-headline-sm-weight: 700;
+  --md-sys-typescale-headline-sm-lh: 1.3;
+
+  /* @eds-token: title-lg | Title Large | Item card prices */
+  --md-sys-typescale-title-lg-size: 15px;
+  --md-sys-typescale-title-lg-weight: 700;
+  --md-sys-typescale-title-lg-lh: 1.3;
+
+  /* @eds-token: title-md | Title Medium | Names, emphasis */
+  --md-sys-typescale-title-md-size: 14px;
+  --md-sys-typescale-title-md-weight: 600;
+  --md-sys-typescale-title-md-lh: 1.3;
+
+  /* @eds-token: title-sm | Title Small | Secondary titles */
+  --md-sys-typescale-title-sm-size: 13px;
+  --md-sys-typescale-title-sm-weight: 600;
+  --md-sys-typescale-title-sm-lh: 1.3;
+
+  /* @eds-token: body-lg | Body Large | Primary body text */
+  --md-sys-typescale-body-lg-size: 14px;
+  --md-sys-typescale-body-lg-weight: 400;
+  --md-sys-typescale-body-lg-lh: 1.5;
+
+  /* @eds-token: body-md | Body Medium | Secondary body text */
+  --md-sys-typescale-body-md-size: 13px;
+  --md-sys-typescale-body-md-weight: 400;
+  --md-sys-typescale-body-md-lh: 1.5;
+
+  /* @eds-token: body-sm | Body Small | Metadata, descriptions */
+  --md-sys-typescale-body-sm-size: 12px;
+  --md-sys-typescale-body-sm-weight: 400;
+  --md-sys-typescale-body-sm-lh: 1.5;
+
+  /* @eds-token: label-lg | Label Large | Button text, nav labels */
+  --md-sys-typescale-label-lg-size: 12px;
+  --md-sys-typescale-label-lg-weight: 600;
+  --md-sys-typescale-label-lg-lh: 1.3;
+
+  /* @eds-token: label-md | Label Medium | Form labels (uppercase, tracked) */
+  --md-sys-typescale-label-md-size: 11px;
+  --md-sys-typescale-label-md-weight: 600;
+  --md-sys-typescale-label-md-lh: 1.3;
+  --md-sys-typescale-label-md-tracking: 0.15em;
+  --md-sys-typescale-label-md-transform: uppercase;
+
+  /* @eds-token: label-sm | Label Small | Status pills, tiny labels */
+  --md-sys-typescale-label-sm-size: 10px;
+  --md-sys-typescale-label-sm-weight: 600;
+  --md-sys-typescale-label-sm-lh: 1.3;
+}
+
+
+/* @eds-foundation: Spacing */
+:root {
+  /* @eds-token: spacing-side | Page side margins | Consistent horizontal padding */
+  --md-sys-spacing-side: 24px;
+  /* @eds-token: spacing-xs | Extra small | 4dp fine adjustment */
+  --md-sys-spacing-xs: 4px;
+  /* @eds-token: spacing-sm | Small | 8dp baseline unit */
+  --md-sys-spacing-sm: 8px;
+  /* @eds-token: spacing-md | Medium | 12dp */
+  --md-sys-spacing-md: 12px;
+  /* @eds-token: spacing-lg | Large | 16dp (gutter) */
+  --md-sys-spacing-lg: 16px;
+  /* @eds-token: spacing-xl | Extra large | 24dp (section gap) */
+  --md-sys-spacing-xl: 24px;
+  /* @eds-token: spacing-2xl | Double extra large | 32dp */
+  --md-sys-spacing-2xl: 32px;
+  /* @eds-token: spacing-3xl | Triple extra large | 48dp */
+  --md-sys-spacing-3xl: 48px;
+}
+
+
+/* @eds-foundation: Shape */
+:root {
+  /* @eds-token: shape-none | No rounding | Square elements */
+  --md-sys-shape-none: 0px;
+  /* @eds-token: shape-xs | Extra small radius | Subtle rounding */
+  --md-sys-shape-xs: 4px;
+  /* @eds-token: shape-sm | Small radius | Buttons, inputs, chips */
+  --md-sys-shape-sm: 8px;
+  /* @eds-token: shape-md | Medium radius | Cards, sheets */
+  --md-sys-shape-md: 12px;
+  /* @eds-token: shape-lg | Large radius | Modals, large cards */
+  --md-sys-shape-lg: 16px;
+  /* @eds-token: shape-xl | Extra large radius | Bottom sheets, drawers */
+  --md-sys-shape-xl: 28px;
+  /* @eds-token: shape-full | Full rounding | Pills, avatars, FABs */
+  --md-sys-shape-full: 9999px;
+}
+
+
+/* @eds-foundation: Elevation */
+:root {
+  /* @eds-token: elevation-0 | No elevation | Flat surfaces */
+  --md-sys-elevation-0: none;
+  /* @eds-token: elevation-1 | Low elevation | Subtle lift for cards */
+  --md-sys-elevation-1: 0 1px 3px rgba(0,0,0,0.08);
+  /* @eds-token: elevation-2 | Medium elevation | Sheets, dropdowns */
+  --md-sys-elevation-2: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+
+/* @eds-foundation: Grid */
+:root {
+  /* @eds-token: grid-columns | Column count | 4 columns on mobile */
+  --md-sys-grid-columns: 4;
+  /* @eds-token: grid-margin | Side margins | 16dp on each side */
+  --md-sys-grid-margin: 16px;
+  /* @eds-token: grid-gutter | Column gutter | 16dp between columns */
+  --md-sys-grid-gutter: 16px;
+  /* @eds-token: grid-baseline | Baseline grid | 8dp vertical rhythm */
+  --md-sys-grid-baseline: 8px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ATOMS — Individual components
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* @eds-component: Button > Filled (Primary) */
+/* @eds-class: btn-primary */
+/* @eds-variants: btn-compact, btn-sm, loading */
+/* @eds-states: enabled, disabled, hovered, pressed, loading */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none; border-radius: var(--md-sys-shape-sm);
+  padding: 14px 24px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-label-lg-size);
+  font-weight: var(--md-sys-typescale-label-lg-weight);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer; transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px; width: 100%;
+}
+.btn-primary:hover { background: var(--md-sys-color-primary-hover); }
+.btn-primary:disabled, .btn-primary.disabled {
+  opacity: 0.5; cursor: default; pointer-events: none;
+}
+
+
+/* @eds-component: Button > Outlined (Secondary) */
+/* @eds-class: btn-secondary */
+/* @eds-variants: btn-filled, btn-sm, btn-compact, btn-muted, btn-dark */
+/* @eds-states: enabled, disabled, hovered */
+.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-sm);
+  padding: 10px 20px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-label-lg-size);
+  font-weight: var(--md-sys-typescale-label-lg-weight);
+  letter-spacing: 0.05em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-secondary:hover { border-color: var(--md-sys-color-on-surface); }
+.btn-secondary.btn-filled {
+  background: var(--md-sys-color-on-surface);
+  color: var(--md-sys-color-surface);
+  border-color: var(--md-sys-color-on-surface);
+}
+
+
+/* @eds-component: Button > Chip */
+/* @eds-class: btn-chip */
+/* @eds-states: enabled, hovered */
+.btn-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-full);
+  padding: 8px 16px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-body-sm-size);
+  font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-chip:hover { border-color: var(--md-sys-color-on-surface); }
+
+
+/* @eds-component: Button > Danger */
+/* @eds-class: btn-danger */
+/* @eds-states: enabled, hovered */
+.btn-danger {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  color: var(--md-sys-color-error);
+  border: 1.5px solid var(--md-sys-color-error);
+  border-radius: var(--md-sys-shape-sm);
+  padding: 10px 20px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-label-lg-size);
+  font-weight: var(--md-sys-typescale-label-lg-weight);
+  letter-spacing: 0.05em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-danger:hover { background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); }
+
+
+/* @eds-component: Input > Text */
+/* @eds-class: fi */
+/* @eds-states: enabled, focused, disabled */
+.fi {
+  width: 100%;
+  background: var(--md-sys-color-surface-container);
+  border: 1.5px solid transparent;
+  border-radius: var(--md-sys-shape-sm);
+  padding: 14px 16px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-body-lg-size);
+  color: var(--md-sys-color-on-surface);
+  outline: none; transition: border-color 0.15s;
+}
+.fi::placeholder { color: var(--md-sys-color-outline-variant); }
+.fi:focus { border-color: var(--md-sys-color-primary); }
+
+
+/* @eds-component: Input > Select */
+/* @eds-class: fs */
+/* @eds-states: enabled, focused */
+.fs {
+  width: 100%;
+  background: var(--md-sys-color-surface-container);
+  border: 1.5px solid transparent;
+  border-radius: var(--md-sys-shape-sm);
+  padding: 14px 16px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-body-lg-size);
+  color: var(--md-sys-color-on-surface);
+  outline: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23888' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+
+
+/* @eds-component: Input > Label */
+/* @eds-class: fl */
+/* @eds-states: enabled */
+.fl {
+  display: block;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-label-md-size);
+  font-weight: var(--md-sys-typescale-label-md-weight);
+  letter-spacing: var(--md-sys-typescale-label-md-tracking);
+  text-transform: var(--md-sys-typescale-label-md-transform);
+  color: var(--md-sys-color-on-surface-variant);
+  margin-bottom: 6px;
+}
+
+
+/* @eds-component: Status Pill */
+/* @eds-class: status-pill */
+/* @eds-variants: live, hold, sold, upcoming, past, deleted, inactive, today, test */
+.status-pill {
+  display: inline-flex; align-items: center;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-label-sm-size);
+  font-weight: var(--md-sys-typescale-label-sm-weight);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--md-sys-shape-full);
+  line-height: 1;
+}
+.status-pill.live { background: var(--md-sys-color-success-container); color: var(--md-sys-color-success); }
+.status-pill.hold { background: var(--md-sys-color-warning-container); color: var(--md-sys-color-warning); }
+.status-pill.sold { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-outline-variant); }
+.status-pill.upcoming { background: #E8F0FE; color: var(--md-sys-color-primary); }
+.status-pill.past { background: var(--md-sys-color-surface-container); color: var(--md-sys-color-outline-variant); }
+.status-pill.deleted { background: var(--md-sys-color-error-container); color: var(--md-sys-color-error); }
+.status-pill.today { background: var(--md-sys-color-success-container); color: var(--md-sys-color-success); }
+
+
+/* @eds-component: Favorite Button */
+/* @eds-class: fav-btn */
+/* @eds-variants: fav-active */
+/* @eds-states: enabled, active */
+.fav-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.3);
+  border: none; border-radius: 50%;
+  color: #fff; font-size: 18px;
+  cursor: pointer; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fav-btn.fav-active {
+  color: var(--md-sys-color-favorite);
+  background: rgba(255,255,255,0.9);
+}
+
+
+/* @eds-component: Spinner */
+/* @eds-class: spinner */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--md-sys-color-surface-container);
+  border-top-color: var(--md-sys-color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* @eds-component: Back Link */
+/* @eds-class: back-link */
+/* @eds-states: enabled, hovered */
+.back-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--md-sys-color-primary);
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-body-md-size);
+  text-decoration: none; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* @eds-component: Segmented Control */
+/* @eds-class: seg-ctrl */
+.seg-ctrl {
+  display: inline-flex;
+  background: var(--md-sys-color-surface-container);
+  border-radius: var(--md-sys-shape-sm);
+  padding: 3px;
+}
+
+/* @eds-component: Segmented Control > Button */
+/* @eds-class: seg-btn */
+/* @eds-variants: active */
+/* @eds-states: enabled, active */
+.seg-btn {
+  padding: 6px 16px;
+  border: none; background: transparent;
+  border-radius: 6px;
+  font-family: var(--md-sys-typescale-font);
+  font-size: var(--md-sys-typescale-label-lg-size);
+  font-weight: var(--md-sys-typescale-label-lg-weight);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer; transition: all 0.15s;
+}
+.seg-btn.active {
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES — Spacing, text, layout helpers
+   ═══════════════════════════════════════════════════════════════ */
+
+/* @eds-component: Utility > Text Colors */
+/* @eds-class: text-muted */
+.text-muted { color: var(--md-sys-color-on-surface-variant); }
+/* @eds-class: text-dim */
+.text-dim { color: var(--md-sys-color-outline-variant); }
+/* @eds-class: text-error */
+.text-error { color: var(--md-sys-color-error); }
+/* @eds-class: text-success */
+.text-success { color: var(--md-sys-color-success); }
+
+/* @eds-component: Utility > Margin Bottom */
+/* @eds-class: mb-4 */
+.mb-4 { margin-bottom: 4px; }
+/* @eds-class: mb-8 */
+.mb-8 { margin-bottom: 8px; }
+/* @eds-class: mb-12 */
+.mb-12 { margin-bottom: 12px; }
+/* @eds-class: mb-16 */
+.mb-16 { margin-bottom: 16px; }
+
+/* @eds-component: Utility > Margin Top */
+/* @eds-class: mt-8 */
+.mt-8 { margin-top: 8px; }
+/* @eds-class: mt-16 */
+.mt-16 { margin-top: 16px; }
+/* @eds-class: mt-24 */
+.mt-24 { margin-top: 24px; }
+
+/* @eds-component: Utility > Layout */
+/* @eds-class: pad-side */
+.pad-side { padding-left: var(--md-sys-spacing-side); padding-right: var(--md-sys-spacing-side); }
+/* @eds-class: hidden */
+.hidden { display: none !important; }
+/* @eds-class: w-full */
+.w-full { width: 100%; }
+/* @eds-class: flex-1 */
+.flex-1 { flex: 1; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MOLECULES — Composed components
+   These will be migrated from inline CSS via EDS tickets.
+   Each ticket moves one molecule from <style> to here.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Molecules to migrate (via tickets):
+   - Item Card (.item-card, .item-card-img, .item-card-info, etc.)
+   - Conversation Item (.conv-item, .conv-thumb, .conv-info, etc.)
+   - Message Bubble (.msg-row, .msg-bubble, .msg-avatar, etc.)
+   - Detail Header (.detail-back, .detail-photos, .detail-info, etc.)
+   - Booth Card (.my-item-card, etc.)
+   - Sheet (.sheet, .sheet-overlay, .sheet-handle)
+   - Bottom Nav (.nav-tab, .nav-tab-label)
+   - App Header (to be unified — currently 6 different implementations)
+   - FAB (.fab)
+   - Toast (.toast, .save-toast)
+   - Empty State (.empty-state, .empty-state-icon)
+*/

@@ -246,17 +246,28 @@ Complete notes in `QA-NOTES.md`. Below is the full detail, not just summaries.
 4. 6 different header implementations instead of one component
 5. Multiple "consolidated" comments in CSS for deleted classes, but replacements inconsistently applied
 
-## EDS Onboarding
-This repo will be onboarded into [EDS (Eli Design Studio)](https://github.com/elikagan/eds) as its first project. **No manual prep is needed.** EDS has a built-in onboarding process that:
+## EDS Integration (Status: v1 Built)
+This repo is the first project onboarded into [EDS (Eli Design Studio)](https://github.com/elikagan/eds).
 
-1. Reads the project config at `eds/projects/early-bird.json`
-2. Validates the repo (checks for CSS file, link tag, local server)
-3. Scaffolds whatever's missing — generates `design-system.css` from the theme config, injects the `<link>` tag into `index.html`
-4. Begins migration via tickets — one component at a time, from inline `<style>` into `design-system.css`
+### What exists now
+- **EDS studio (v1):** Three-column design tool with iPhone/Safari frame, ticket system, 22-screen navigation. Source: `/Users/elikagan/Desktop/Claude stuff/eds/`
+- **Project config:** `eds/projects/early-bird.json` — 22 screens, 5 test users, theme (JetBrains Mono, #0066FF primary, warm palette)
+- **Ticket storage:** `eds/tickets/early-bird.json` — local JSON, committed to git
 
-See the EDS SPEC.md ["Project Onboarding"](https://github.com/elikagan/eds/blob/main/SPEC.md#project-onboarding) section for the full contract and validation checklist.
+### What's next (not yet built)
+1. **Design system bootstrapper:** Extract the existing ~2000 lines of inline CSS from `index.html` into `design-system.css` with M3 structure and `@eds-` metadata comments. This is EDS's job — do NOT create `design-system.css` manually.
+2. **CSS parser for the DS panel:** Reads `@eds-` comments and populates the design system panel (Column 2).
+3. **Ticket processing loop:** Claude reading pending tickets and executing them (writing CSS/HTML changes).
+4. **Migration:** One component at a time, from inline `<style>` into `design-system.css`, verified visually in the iframe.
 
-**Do not manually create `design-system.css` or add link tags.** Let EDS do it so the scaffolded CSS has proper M3 tokens and `@eds-` metadata comments that the design system panel can parse.
+### How to run EDS for this project
+```bash
+node "/Users/elikagan/Desktop/Claude stuff/eds/studio/server.js" early-bird 8097
+open http://localhost:8097/eds/
+```
+
+### Contract
+See `CLAUDE.md` "EDS Contract" section. Key rule: **never write inline styles or ad-hoc CSS classes.** If you need a component, create an EDS ticket.
 
 ---
 

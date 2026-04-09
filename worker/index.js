@@ -97,7 +97,7 @@ export default {
         res = await handleCreateItem(request, env, dealer);
       } else if (path.match(/^\/api\/items\/[^/]+$/) && method === 'GET') {
         const itemId = path.split('/api/items/')[1];
-        res = await handleGetItem(itemId, env);
+        res = await handleGetItem(itemId, request, env);
       } else if (path.match(/^\/api\/items\/[^/]+$/) && method === 'PATCH') {
         const dealer = await getDealer(request, env);
         if (!dealer) return json({ error: 'Unauthorized' }, 401, corsHeaders);
@@ -539,9 +539,9 @@ async function handleGetItems(url, env) {
   return json(items);
 }
 
-async function handleGetItem(itemId, env) {
+async function handleGetItem(itemId, request, env) {
   const query = 'items?id=eq.' + itemId + '&select=*,' +
-    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number,phone),' +
+    'dealer:dealers!items_dealer_id_fkey(id,name,business_name,booth_number,phone,photo_url),' +
     'buyer:dealers!items_buyer_id_fkey(id,name,business_name,show_name_on_sold)';
   const res = await supabase(env, query);
   const items = await res.json();
@@ -549,6 +549,25 @@ async function handleGetItem(itemId, env) {
   const item = items[0];
   if (item.buyer && !item.buyer.show_name_on_sold) item.buyer = null;
   if (item.buyer) item.buyer = { name: item.buyer.name, business_name: item.buyer.business_name };
+
+  // Optionally resolve caller for state detection (don't 401 if unauthenticated)
+  try {
+    const dealer = await getDealer(request, env);
+    if (dealer) {
+      if (dealer.id === item.dealer_id) {
+        // Caller is the seller
+        item.is_owner = true;
+      } else {
+        // Caller is a buyer — check for existing conversation
+        const convRes = await supabase(env,
+          `conversations?buyer_id=eq.${dealer.id}&item_id=eq.${itemId}&active=eq.true&select=token&limit=1`
+        );
+        const convs = await convRes.json();
+        item.my_conversation = (Array.isArray(convs) && convs.length) ? convs[0] : null;
+      }
+    }
+  } catch (e) { /* unauthenticated — no state enrichment */ }
+
   return json(item);
 }
 
@@ -780,7 +799,7 @@ async function handleListConversations(env, dealer) {
 // ── Favorites ────────────────────────────────────────────────
 
 async function handleGetFavorites(env, dealer) {
-  const res = await supabase(env, `favorites?dealer_id=eq.${dealer.id}&select=id,item_id,created_at,item:items!inner(id,price,photos,condition,firm,status,notes,dealer:dealers!items_dealer_id_fkey(id,name,business_name))&order=created_at.desc`);
+  const res = await supabase(env, `favorites?dealer_id=eq.${dealer.id}&select=id,item_id,created_at,item:items!inner(id,title,price,previous_price,photos,condition,firm,status,notes,dealer:dealers!items_dealer_id_fkey(id,name,business_name,photo_url))&order=created_at.desc`);
   const favs = await res.json();
   return json(favs);
 }

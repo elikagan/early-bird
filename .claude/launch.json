@@ -6,6 +6,12 @@
       "runtimeExecutable": "ruby",
       "runtimeArgs": ["-run", "-ehttpd", "/Users/elikagan/Desktop/Claude stuff/dealer-exchange"],
       "port": 8094
+    },
+    {
+      "name": "early-bird-qa",
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["-run", "-ehttpd", "/Users/elikagan/Desktop/Claude stuff/dealer-exchange/qa"],
+      "port": 8095
     }
   ]
 }
